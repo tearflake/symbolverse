@@ -1,5 +1,5 @@
 ---
-title-heading: false
+title: false
 ---
 
 ```
