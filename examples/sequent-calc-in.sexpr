@@ -1,0 +1,9 @@
+(
+    isValid
+    (
+        eq
+        (and A B)
+        (not (or (not A) (not B)))
+    )
+)
+

@@ -1,0 +1,6 @@
+(
+    eq
+    (and true false)
+    (not (or (not true) (not false)))
+)
+

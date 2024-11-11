@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<!--?xml version="1.0"?-->
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:svg="http://www.w3.org/2000/svg">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>Symbolverse playground</title>
+
+<link rel="icon" type="image/png" href="">
+<script src="edit.js"></script>
+<script src="examples.js"></script>
+
+<style type="text/css" media="screen">
+    /*
+    @font-face {
+        font-family: 'Fira';
+        src: url('FiraCode-Regular.ttf');
+    }
+    */
+
+    html, body
+    {
+        height: 100%;
+        width: 100%;
+        margin-top: 0px;
+        margin-left: 0px;
+        background-color: white;
+    }
+    
+    body {
+        overflow: hidden;
+        filter: invert(0);
+    }
+
+    #RLset1 {
+        position:relative;
+        width: 100%;
+        height: 100%;
+    }
+    #input1 {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+    #output1 {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+    #nodes1 {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+    
+    #title  {color: #555555;}
+    #foot   {color: #000000;}
+    #all    {border-radius: 0px; border-spacing: 0px; border:0px solid #555555; color:#EEEEEE; background-color:#555555;}
+    #top    {border-radius: 0px 0px 0px 0px; border-spacing: 0px; border:0px; color:rgb(208,208,208); background-color:rgb(48,48,48);}
+    #bot    {border-radius: 0px 0px 0px 0px; border-spacing: 0px; border:0px; color:rgb(208,208,208); background-color:rgb(48,48,48);}
+    #bot1    {border-radius: 0px 0px 0px 0px; border-spacing: 0px; border:0px; color:rgb(48,48,48); background-color:rgb(208,208,208);}
+    #none   {border-radius: 0px 0px 0px 0px; color:#EEEEEE; background-color:#555555;}
+    #in     {border:0px solid #555555; border-spacing: 0px; color:#EEEEEE; background-color:rgba(0,0,0,0);}
+    #dark   {border-spacing: 0px; border-left: 1px solid #4466DD; border-right: 1px solid #4466DD; border-bottom: 1px solid #4466DD; color:#DDEEFF; background-color:#334488;}
+
+    .dropdown-content {
+      margin: 10px;
+      margin-top: 0px;
+      margin-bottom: 0px;
+      border: 3px solid rgb(48,48,48);
+      padding: 3px;
+      border-radius: 0px;
+      display: block;
+      /*position: absolute;*/
+      background-color: rgb(208,208,208);
+      overflow-y: auto;
+      z-index: 65525;
+      font-size: 0.8em;
+      height: calc(100vh - 144px);
+    }
+
+    .dropdown-content a {
+      text-align: left;
+      color: rgb(48,48,48);
+      padding: 4px 2px;
+      padding-right: 20px;
+      text-decoration: none;
+      display: block;
+      font-weight: normal;
+      font-size: 14px;
+    }
+
+    .dropdown-content div {
+      text-align: left;
+      color: rgb(48,48,48);
+      padding: 2px 2px;
+      padding-right: 10px;
+      text-decoration: none;
+      display: block;
+      font-size: 14px;
+    }
+
+    
+    .dropdown-content a:hover {background-color:rgb(48,48,48); color:rgb(208,208,208);}
+    .dropdown-content a:active {color:rgb(48,48,48); background-color:rgb(208,208,208);}
+    
+    .button a {
+        border: 3px solid rgb(48,48,48);
+        color: rgb(48,48,48);
+        background-color: rgb(208,208,208);
+    }
+    
+    .button a:hover {
+        color: rgb(208,208,208);
+        background-color: rgb(48,48,48);
+    }
+
+    .button a:active {
+        color: rgb(48,48,48);
+        background-color: rgb(208,208,208);
+    }
+</style>
+</head>
+<body style="font-family: Times New Roman, Georgia, Garamond;">
+<table id="tbl" width="100%" height="100%" align="center" valign="middle" cellspacing="0" cellpadding="0" border="20" style="border: 20px solid rgba(0,0,0,0); ">
+<tbody>
+<tr>
+<td class="exRound" id="top" cellpadding="10" align="center" valign="middle" height="30">
+<font style="font-size:24px"><strong>Symbolverse playground</strong></font>
+</td>
+</tr>
+<tr>
+<td id="in">
+    <table width="100%" cellspacing="0" cellpadding="0" height="100%" border="0" style="background-color:rgb(208,208,208); padding-top: 2px;">
+        <tbody><tr height="100%">
+        <td width="0%">
+    <div id="drpdwncntnt" class="dropdown-content" style="margin-top: 8px;">
+        <b><nobr>
+        
+<!--red>❎</red><grn>✅</grn><blu>🟩</blu-->
+
+<a href="javascript:populate('example-test');">test</a>
+
+<div class="droplbl">1. world modeling examples</div>
+
+<!--div class="droplbl">&nbsp;&nbsp;&nbsp;&nbsp; 1.1. s-expressions</div>
+
+        <a href="javascript:populate('example0-1');">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; hello world 1</a>
+        <a href="javascript:populate('example0-2');">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; hello world 2</a>
+
+<br/-->
+
+<div class="droplbl">&nbsp;&nbsp;&nbsp;&nbsp; 1.1. single rule</div>
+
+        <a href="javascript:populate('example1-1');">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; hello machine</a>
+        <a href="javascript:populate('example1-2');">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; greet entity</a>
+
+<br/>
+
+<div class="droplbl">&nbsp;&nbsp;&nbsp;&nbsp; 1.2. set of rules</div>
+        <a href="javascript:populate('example1-3');">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; toy making decision</a>
+        <a href="javascript:populate('example1-4');">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; job title decision</a>
+
+<br/>
+
+<div class="droplbl">&nbsp;&nbsp;&nbsp;&nbsp; 1.3. chaining rules</div>
+
+        <a href="javascript:populate('example1-5');">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; shadows decision</a>
+        <a href="javascript:populate('example1-6');">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; weighting decision</a>
+
+<br/>
+
+<div class="droplbl">&nbsp;&nbsp;&nbsp;&nbsp; 1.4. scoped rules</div>
+
+        <a href="javascript:populate('example1-8');">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; planting cyclus</a>
+        <a href="javascript:populate('example1-9');">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; fun meeting</a>
+
+<br/>
+
+<div class="droplbl">2. programming examples</div>
+
+<div class="droplbl">&nbsp;&nbsp;&nbsp;&nbsp; 2.1. booleans and numbers</div>
+
+        <a href="javascript:populate('example-branch'    );">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; branching choice</a>
+        <a href="javascript:populate('example-bool'      );">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Boolean evaluator</a>
+        <a href="javascript:populate('example-binadd'    );">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; binary number addition</a>
+        <a href="javascript:populate('example-bincompare');">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; binary number comparison</a>
+
+<br/>
+
+<div class="droplbl">&nbsp;&nbsp;&nbsp;&nbsp; 2.2. operations on lists</div>
+
+        <a href="javascript:populate('example-append'    );">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; append list</a>
+        <a href="javascript:populate('example-reverse'   );">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; reverse list</a>
+        <a href="javascript:populate('example-replace'   );">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; replace element</a>
+        <a href="javascript:populate('example-remove'    );">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; remove element</a>
+
+<br/>
+
+<div class="droplbl">3. abstraction examples</div>
+
+        <a href="javascript:populate('example-lamb'      );">&nbsp;&nbsp;&nbsp;&nbsp; lambda calculus</a>
+        <a href="javascript:populate('example-seq'       );">&nbsp;&nbsp;&nbsp;&nbsp; sequent calculus</a>
+
+<br/>
+        </nobr></b>
+    </div>
+</td>
+        </td>
+        <td width="100%">
+        <table width="100%" cellspacing="0" cellpadding="0" height="100%" border="0" style="padding-top: 5px;">
+        <tbody>
+        <tr height="100%">
+        <td width="50%">
+            <table width="100%" cellspacing="0" cellpadding="0" height="100%" border="0">
+            <tbody><tr>
+             <td class="exRound" id="top" valign="middle" height="28" width="100%" style="color:rgb(48,48,48); background-color:rgb(208,208,208);">
+                <font style="font-size:14px">
+                <b>
+                  rules: &nbsp;&nbsp;
+                </b>
+                </font>
+             </td>
+            </tr>
+            <tr height="100%">
+             <!-- style="margin-top:-8px;"-->
+             <td class="exRound" id="in" valign="top" width="100%">
+                <div id="rules" class="container"  width="100%" style="position: relative; width: 100%; height: 100%;">
+                </div>
+                <script>
+                    var options = {
+                        font: "8pt monospace",
+                        tabWidth: 4,
+                        colorCaret: "rgb(208,208,208)",
+                        colorText: "rgb(208,208,208)",
+                        colorTextBack: "rgb(48,48,48)",
+                        colorSelection: "rgb(48,48,48)",
+                        colorSelectionBack: "rgb(208,208,208)",
+                    }
+                    var rules1 = edit ("rules", options);
+
+                    document.addEventListener('selectionchange', function(e) {
+                        var pos = getCoords(rules1.getValue(), rules1.getSelectionStart());
+                        document.getElementById('lblGrammarCaret').innerHTML = "(" + pos.row + ", " + pos.column + ")";
+                    });                    
+                </script>
+             </td>
+            </tr>
+            <tr>
+              <td class="exRound" id="bot1" height="5" align="right" style="color: rgb(208,208,208); background-color: rgb(48,48,48); font-family: monospace; font-size:10px; padding: 1px;">
+                <span id="lblGrammarCaret">(1, 1)</span>
+              </td>
+            </tr>
+            </tbody></table>
+        </td>
+        <td width="50%" height="100%" style="padding-left: 10px; padding-right: 10px;">
+            <table width="100%" cellspacing="0" cellpadding="0" height="50%" border="0" style="">
+            <tbody><tr style="">
+             <td class="exRound" id="top" valign="middle" height="28" style="color:rgb(48,48,48); background-color:rgb(208,208,208);">
+                <font style="font-size:14px">
+                <b>
+                  input: &nbsp;&nbsp;
+                </b>
+                </font>
+             </td>
+            </tr>
+            <tr height="100%">
+             <td class="exRound" id="in" style="border-radius: 0px 0px 0px 0px;">
+                <div id="input" class="container" style="position: relative; width: 100%; height: 100%;">
+                </div>
+                <script>
+                    var options = {
+                        font: "8pt monospace",
+                        tabWidth: 4,
+                        colorCaret: "rgb(208,208,208)",
+                        colorText: "rgb(208,208,208)",
+                        colorTextBack: "rgb(48,48,48)",
+                        colorSelection: "rgb(48,48,48)",
+                        colorSelectionBack: "rgb(208,208,208)",
+                    }
+                    var input1 = edit ("input", options);
+
+                    document.addEventListener('selectionchange', function(e) {
+                        var pos = getCoords(input1.getValue(), input1.getSelectionStart());
+                        document.getElementById('lblGrammarCaret1').innerHTML = "(" + pos.row + ", " + pos.column + ")";
+                    });                    
+                </script>
+             </td>
+            </tr>
+            <tr>
+              <td class="exRound" id="bot1" height="5" align="right" style="color: rgb(208,208,208); background-color: rgb(48,48,48); font-family: monospace; font-size:10px; padding: 1px;">
+                <span id="lblGrammarCaret1">(1, 1)</span>
+              </td>
+            </tr>
+            </tbody></table>
+            <table width="100%" cellspacing="0" cellpadding="0" height="50%" border="0" style="padding-top: 0px;">
+            <tbody><tr>
+             <td class="exRound" id="top" valign="middle" height="28" style="color:rgb(48,48,48); background-color:rgb(208,208,208); padding-bottom: 1px; padding-top: 7px; white-space: nowrap; overflow: hidden; max-width: 0vw;">
+                <font style="font-size:14px">
+                <b class="button">
+                  output:
+                    <a id="bck1" onclick="process()" href="javascript:" style="text-decoration: none;">
+                    <span style="padding-left: 10px; padding-right: 10px;">
+                    <b>rewrite</b>
+                    </span>
+                    </a>
+                    &nbsp;
+                    <div id="tm" style="display: inline-block;">
+                    </div>
+                </b>
+                </font>
+             </td>
+            </tr>
+            <tr height="100%">
+             <td class="exRound" id="in" style="border-radius: 0px 0px 0px 0px;">
+              <textarea id="output" readonly wrap="off" spellcheck="false" id="output" style="outline: none; box-sizing: border-box; width: 100%; height:100%; resize: none; display: block; border-style: none; background-color: rgb(48,48,48); color: rgb(208,208,208); font: 8pt monospace; border-radius: 0px 0px 0px 0px; margin: 0; padding:5px;"></textarea>
+                <script>
+                    output1 = document.getElementById('output');
+                </script>
+             </td>
+            </tr>
+            </tbody></table>
+        </td>
+        </tr>
+        </tbody>
+        </table>
+        </tr>
+    </tbody></table>
+</td>
+</tr>
+<tr>
+ <td id="bot1" valign="middle" height="5">
+    <table width="100%" height="100%" style="padding-top: 10px; padding-bottom: 8px; padding-right: 17px">
+    <tr>
+        <td align="left">
+        </td>
+        <td align="right">
+            <font style="font-size:24px">
+                <b class="button">
+                <a id="bck2" href="https://github.com/tearflake/symbolverse" target="new" style="text-decoration: none;">
+                <span style="padding-left: 20px; padding-right: 20px;">
+                visit me on GitHub
+                </span>
+                </a>
+                </b>
+            </font>
+        </td>
+    </tr>
+    </table>
+ </td>
+</tr>
+</tbody>
+</table>
+
+<script>
+    function getRaster (quant, color1, color2) {
+        var cnv = document.createElement ("canvas");
+        var pr = Math.min (window.devicePixelRatio, 2)
+        var ps = Math.round (quant / 100 * 4 * Math.max (screen.width, 1920) / 1920);
+        
+        if (ps < pr)
+            ps = pr;
+        
+        cnv.width = ps * 2;
+        cnv.height = ps * 2;
+        var ctx = cnv.getContext('2d');
+        ctx.fillStyle = "rgb(208,208,208)";
+        ctx.fillStyle = color1;
+        ctx.fillRect (0, 0, ps, ps);
+        ctx.fillRect (ps, ps, ps, ps);
+        ctx.fillStyle = "rgb(48,48,48)";
+        ctx.fillStyle = color2;
+        ctx.fillRect (0, ps, ps, ps);
+        ctx.fillRect (ps, 0, ps, ps);
+        
+        var img = document.createElement ("img");
+        img.src = cnv.toDataURL('image/png');
+        
+        return img;
+    }
+    
+    var img = getRaster (75, "rgb(48,48,48)", "rgb(208,208,208)");
+    
+    document.body.style.backgroundImage = "url('" + img.src + "')";
+    document.body.style.backgroundRepeat = "repeat";
+    document.body.style.imageRendering = "pixelated";
+
+    function getCoords (text, offset) {
+        var i, ch, row = 1, col = 1;
+        if (text.length > 0)
+            for (i = 0; i < offset; i += 1) {
+                ch = text.charCodeAt(i);
+                if (ch === 13 || ch === 10) {
+                    if (ch === 13 && text.charCodeAt (i + 1) === 10)
+                        i += 1;
+
+                    row += 1;
+                    col = 1;
+                    
+                } else
+                  col += 1;
+            }
+        
+        return {row: row, column: col};
+    }
+
+    function populate (param) {
+        rules1.setValue (examples[param]);
+        if (examples[param + "-input"])
+            input1.setValue (examples[param + "-input"]);
+        else
+            input1.setValue ("");
+            
+        output1.value = "";
+        document.getElementById("tm").innerHTML = "";
+        setTimeout(function() {
+            rules1.setSelectionStart (0);
+            rules1.setSelectionEnd (0);
+            input1.setSelectionStart (0);
+            input1.setSelectionEnd (0);
+            output1.selectionStart = 0;
+            output1.selectionEnd = 0;
+            input1.setFocus ();
+        }, 0);
+    }
+
+    populate ('example1-1');
+    //populate ('example-test');
+</script>
+
+<script src="../symbolverse.js"></script>
+
+<script>
+    function process () {
+        //output1.value = JSON.stringify (Sexpression.getNode (rules1.getValue ()),null,2);
+        
+        output1.value = "";
+        document.getElementById("tm").innerHTML = "(compiling rules...)";
+        setTimeout (function (){
+            var tm = Date.now ();
+            var rules = Rewriter.compile (rules1.getValue ());
+            if (rules.err) {
+                //var c = getCoords (rules1.getValue (), rules.pos)
+                //output1.value = "rules:\n" + rules.err + " at " + "(" + c.row + ", " + c.column + ")";
+                output1.value = "rules:\n" + rules.err + " at " + "(" + (rules.pos.y + 1) + ", " + (rules.pos.x + 1) + ")" + (rules.found ? ", found: " + rules.found : "");
+                document.getElementById("tm").innerHTML = "";
+            } else {
+                var tcompiled = (Date.now () - tm);
+                document.getElementById("tm").innerHTML = "(rules compiled in " + tcompiled + "ms) (rewriting input...)";
+                var tm = Date.now ();
+                setTimeout (function (){
+                    var output = Rewriter.rewrite (rules, input1.getValue ());
+                    if (output.err) {
+                        //var c = getCoords (input1.getValue (), output.pos)
+                        //output1.value = "input:\n" + output.err + " at " + "(" + c.row + ", " + c.column + ")";
+                        output1.value = "input:\n" + output.err + " at " + "(" + (output.pos.y + 1) + ", " + (output.pos.x + 1) + ")" + (rules.found ? ", found: " + rules.found : "");
+                        document.getElementById("tm").innerHTML = "";
+                    } else {
+                        var trewritten = (Date.now () - tm)
+                        document.getElementById("tm").innerHTML = "(rules compiled in " + tcompiled + "ms)" + " (input rewritten in " + trewritten + "ms)";
+                        output1.value = output;
+                    }
+                }, 0);
+            }
+            output1.selectionStart = 0;
+            output1.selectionEnd = 0;
+        }, 0);
+        
+    }
+</script>
+
+</body>
+</html>
+
