@@ -3,7 +3,7 @@
 ```
 ---
 
-# symbolverse v0.2.8
+# symbolverse v0.2.9
 
 _**tags:** term rewriting, s-expression_
 
@@ -80,10 +80,10 @@ const Rewriter = require('@tearflake/symbolverse');
 To access the API from browser, clone this repository from GitHub: `git clone https://github.com/tearflake/symbolverse`, and include the following line in your code:
 
 ```
-<script src="./src/sexpression.js"></script>
+<script src="path-to-symbolverse-package/symbolverse.js"></script>
 ```
 
-Below, regardless of using browser or Node.js, use the API as:
+Below, regardless of using Node.js or browser, use the API as:
 
 ```
 var strRules = `
