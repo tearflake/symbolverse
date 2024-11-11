@@ -1,3 +1,7 @@
+---
+title-heading: false
+---
+
 ```
 // work in progress //
 ```
