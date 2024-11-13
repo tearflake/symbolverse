@@ -1,7 +1,7 @@
 {
   "name": "@tearflake/symbolverse",
-  "version": "0.2.8",
-  "description": "Symbolic term rewriting system",
+  "version": "0.2.10",
+  "description": "Symbolic term graph rewriting system",
   "main": "symbolverse.js",
   "directories": {
     "docs": "docs",
@@ -18,8 +18,10 @@
     "url": "git+https://github.com/tearflake/symbolverse.git"
   },
   "keywords": [
+    "s-expression",
+    "rewriting",
     "term-rewriting",
-    "s-expression"
+    "term-graph-rewriting"
   ],
   "author": "tearflake",
   "license": "MIT",

@@ -3,9 +3,9 @@
 ```
 ---
 
-# symbolverse v0.2.9
+# symbolverse v0.2.10
 
-_**tags:** term rewriting, s-expression_
+_**tags:** s-expression, rewriting, term-rewriting, term-graph-rewriting_
 
 **project roadmap:**
 
@@ -58,10 +58,10 @@ There are a couple resources about *Symbolverse* to check out:
 
 1. make sure you have git, Node.js, and npm installed in your system
 2. enter OS command prompt
-3. change to your project directory
-4. clone this repository: `git clone https://github.com/tearflake/symbolverse`
-5. change directory: `cd symbolverse`
-6. install pkg: `sudo npm install -g pkg` on Linux, or `npm install -g pkg` on Windows
+3. install pkg: `sudo npm install -g pkg` on Linux, or `npm install -g pkg` on Windows
+4. change to your project directory
+5. clone this repository: `git clone https://github.com/tearflake/symbolverse`
+6. change directory: `cd symbolverse`
 7. run pkg: `pkg . --out-path bin/`
 8. if everything goes well, executables for Linux, Windows, and MacOS will be in `./bin/` directory
 

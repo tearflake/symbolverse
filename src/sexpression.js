@@ -364,32 +364,60 @@ var Sexpression = (
         };
         
         var normalizeSexpr = function (expr) {
-            if (Array.isArray (expr)) {
-                var lastExpr = [];
-                for (var i = expr.length - 1; i >= 0; i--) {
-                    lastExpr = [normalizeSexpr (expr[i]), lastExpr];
+            var stack = [], item;
+            var car = expr, cdr = [];
+            stack.push ({car: expr});
+            while (stack.length > 0) {
+                item = stack.pop ();
+                if (item.car) {
+                    car = item.car;
+                    if (Array.isArray (car)) {
+                        stack.push ({cdr: cdr})
+                        cdr = [];
+                        for (var i = 0;  i < car.length; i++) {
+                            stack.push ({car: car[i]})
+                        }
+                    }
+                    else {
+                        cdr = [car, cdr];
+                    }
                 }
-                
-                return lastExpr;
+                else {
+                    car = cdr;
+                    cdr = [car, item.cdr];
+                }
             }
-            else {
-                return expr;
-            }
+            
+            return car;
         };
         
         var denormalizeSexpr = function (expr) {
-            if (!Array.isArray(expr)) {
-                return expr;
-            }
-            else {
-                var dnm = [];
-                while (expr.length === 2) {
-                    dnm.push (denormalizeSexpr (expr[0]))
-                    expr = expr[1];
+            var stack = [], item;
+            var atom = expr, list = [];
+            stack.push ({atom: expr});
+            while (stack.length > 0) {
+                item = stack.pop ();
+                if (item.atom) {
+                    var atom = item.atom;
+                    if (!Array.isArray(atom)) {
+                        list.unshift (atom);
+                    }
+                    else {
+                        stack.push ({list: list});
+                        list = [];
+                        while (atom.length === 2) {
+                            stack.push ({atom: atom[0]});
+                            atom = atom[1];
+                        }
+                    }
                 }
-                
-                return dnm;
+                else {
+                    item.list.unshift (list);
+                    list = item.list;
+                }
             }
+            
+            return list[0];
         }
         
         var denormalizeIndexes = function (nm) {
@@ -411,47 +439,56 @@ var Sexpression = (
             
             return dnm;
         };
-        
-        function stringify (node, indent) {
-            if (indent === undefined) {
-                indent = ""
-            }
-            
-            if (typeof node === "string") {
-                return quoteIfNecessary (node) + "\n";
-            }
-            
-            var str = ""
-            str += indent + "(" + "\n";
-            
-            for (var i = 0; i < node.length; i++) {
-                if (Array.isArray (node[i])) {
-                    str += stringify (node[i], indent + "    ");
+
+        function stringify (node) {
+            const stack = [{ node, indent: "", index: 0, result: "" }];
+            let output = "";
+
+            while (stack.length > 0) {
+                const current = stack.pop();
+                const { node, indent, index, result } = current;
+
+                if (index === 0) {
+                    if (typeof node === "string") {
+                        output += indent + quoteIfNecessary (node) + "\n";
+                        continue;
+                    }
+                    output += indent + "(\n";
                 }
-                else {
-                    var part
-                    if (node[i] === undefined) {
-                        part = "UNDEFINED";
-                    }
-                    else if (node[i] === true) {
-                        part = "TRUE";
-                    }
-                    else if (node [i] === null) {
-                        part = "NIL";
+
+                let i = index;
+                for (; i < node.length; i++) {
+                    if (Array.isArray (node[i])) {
+                        stack.push ({ node, indent, index: i + 1, result });
+                        stack.push ({ node: node[i], indent: indent + "    ", index: 0, result: "" });
+                        break;
                     }
                     else {
-                        part = quoteIfNecessary (node[i]);
+                        let part;
+                        if (node[i] === undefined) {
+                            part = "UNDEFINED";
+                        }
+                        else if (node[i] === true) {
+                            part = "TRUE";
+                        }
+                        else if (node[i] === null) {
+                            part = "NIL";
+                        }
+                        else {
+                            part = quoteIfNecessary (node[i]);
+                        }
+                        output += indent + "    " + part + "\n";
                     }
-                    
-                    str += indent + "    " + part + "\n";
+                }
+
+                if (i === node.length) {
+                    output += indent + ")\n";
                 }
             }
-            
-            str += indent + ")" + "\n";
 
-            return str;
+            return output;
         }
-        
+
         function quoteIfNecessary (str) {
             var quoted = false;
             for (var i = 0; i < str.length; i++) {

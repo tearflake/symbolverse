@@ -651,65 +651,90 @@ var Rewriter = (
         }
         
         var arrayMatch = function (s1, s2, checkTrue) {
-            if (Array.isArray (s1) && Array.isArray (s2)) {
-                if (s1.length === s2.length) {
-                    var succ = true;
-                    for (var i = 0; i < s1.length; i++) {
-                        if (!arrayMatch (s1[i], s2[i], checkTrue)) {
-                            succ = false;
-                            break;
+            var stack = [[s1, s2]], item;
+            while (stack.length > 0) {
+                item = stack.pop ()
+                s1 = item[0];
+                s2 = item[1];
+                if (Array.isArray (s1) && Array.isArray (s2)) {
+                    if (s1.length === s2.length) {
+                        for (var i = 0; i < s1.length; i++) {
+                            stack.push ([s1[i], s2[i]]);
                         }
                     }
-                    
-                    return succ;
+                    else {
+                        return false;
+                    }
+                }
+                else {
+                    if (!((checkTrue ? s1 === true : false) || s1 === s2)) {
+                        return false;
+                    }
                 }
             }
-            else {
-                return (checkTrue ? s1 === true : false) || s1 === s2;
-            }
+            
+            return true;
         }
         
         var findInArr = function (arr, str) {
-            if (!Array.isArray (arr)) {
-                return arr === str
-            }
-            
-            for (var i = 0; i < arr.length; i++) {
-                if (findInArr (arr[i], str)) {
-                    return true;
+            var stack = [arr], item;
+            while (stack.length > 0) {;
+                item = stack.pop ()
+                if (!Array.isArray (item)) {
+                    if (item === str) {
+                        return true;
+                    }
+                }
+                else {
+                    for (var i = 0; i < item.length; i++) {
+                        stack.push (item[i]);
+                    }
                 }
             }
-            
             return false;
         }
 
         var replaceInArr = function (arr, str) {
-            if (!Array.isArray (arr)) {
-                if (arr === undefined) {
-                    return undefined;
-                }
-                else {
-                    var spl = Ruler.levelSplit (arr);
-                    if (spl.atom === str) {
-                        if (spl.esc < 0) {
-                            return "\\".repeat (-spl.esc) + "_" + spl.atom;
-                        }
-                        else {
-                            return "_" + spl.atom + "\\".repeat (spl.esc);
+            var stack = [{atom: arr}], item, result, atom, list = [];
+            while (stack.length > 0) {
+                item = stack.pop ()
+                if (item.atom) {
+                    arr = item.atom;
+                    if (Array.isArray (arr)) {
+                        stack.push ({list: list});
+                        list = []
+                        for (var i = arr.length - 1; i >= 0; i--) {
+                            stack.push ({atom: arr[i]});
                         }
                     }
                     else {
-                        return arr;
+                        if (arr === undefined) {
+                            result = undefined;
+                        }
+                        else {
+                            var spl = Ruler.levelSplit (arr);
+                            if (spl.atom === str) {
+                                if (spl.esc < 0) {
+                                    result = "\\".repeat (-spl.esc) + "_" + spl.atom;
+                                }
+                                else {
+                                    result = "_" + spl.atom + "\\".repeat (spl.esc);
+                                }
+                            }
+                            else {
+                                result = arr;
+                            }
+                        }
+                        list.push (result)
                     }
+                }
+                else {
+                    item.list.push (list)
+                    list = item.list;
                 }
             }
             
-            var arr1 = [];
-            for (var i = 0; i < arr.length; i++) {
-                arr1[i] = replaceInArr (arr[i], str)
-            }
-            
-            return arr1;
+            return list[0];
         }
         
         var getComParDist = function (p1, p2) {

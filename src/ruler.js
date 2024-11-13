@@ -38,8 +38,9 @@ var Ruler = (
                 return null;
             }
         }
-
+        
         var arrayMatch = function (arr1, arr2, vars1, vars2, varIndex) {
+            var stack = [[arr1, arr2]], item, result;
             var vi, arr1Name, arr2Name, arr1Esc, arr2Esc;
                 
             if (varIndex !== undefined) {
@@ -49,81 +50,98 @@ var Ruler = (
                 vi = "";
             }
             
-            if (typeof arr1 === 'string') {
-                var spl1 = levelSplit (arr1);
-                arr1Esc = spl1.esc;
-                arr1Name = spl1.atom;
-            }
-            else {
-                arr1Name = undefined;
-                arr1Esc = 0;
-            }
+            result = undefined;
+            while (stack.length > 0) {
+                item = stack.pop ()
+                if (result !== false) {
+                    arr1 = item[0];
+                    arr2 = item[1];
+                    
+                    if (typeof arr1 === 'string') {
+                        var spl1 = levelSplit (arr1);
+                        arr1Esc = spl1.esc;
+                        arr1Name = spl1.atom;
+                    }
+                    else {
+                        arr1Name = undefined;
+                        arr1Esc = 0;
+                    }
 
-            if (typeof arr2 === 'string') {
-                var spl2 = levelSplit (arr2);
-                arr2Esc = spl2.esc;
-                arr2Name = spl2.atom;
-            }
-            else {
-                arr2Name = undefined;
-                arr2Esc = 0;
-            }
+                    if (typeof arr2 === 'string') {
+                        var spl2 = levelSplit (arr2);
+                        arr2Esc = spl2.esc;
+                        arr2Name = spl2.atom;
+                    }
+                    else {
+                        arr2Name = undefined;
+                        arr2Esc = 0;
+                    }
 
-            if (Array.isArray (arr1) && Array.isArray (arr2)) {
-                if (arr1.length === arr2.length) {
-                    for (var i = 0; i < arr1.length; i++) {
-                        if (!arrayMatch (arr1[i], arr2[i], vars1, vars2, varIndex)) {
-                            return false;
+                    if (Array.isArray (arr1) && Array.isArray (arr2)) {
+                        if (arr1.length === arr2.length) {
+                            for (var i = 0; i < arr1.length; i++) {
+                                stack.push ([arr1[i], arr2[i]]);
+                            }
+                            
+                            result = undefined;
+                            continue;
                         }
                     }
-                    
-                    if (i === arr1.length) {
-                        return true;
+                    else if (
+                        (vars1 && typeof arr1 === 'string' && vars1[arr1Name] === null && vars1.hasOwnProperty(arr1Name)) &&
+                        (vars2 && typeof arr2 === 'string' && vars2[arr2Name + vi] === null && vars2.hasOwnProperty(arr2Name + vi))
+                    ) {
+                        vars2[arr2Name + vi] = levelOut (arr1, [], arr1Esc - arr2Esc);
+                        result = true;
+                        continue;
                     }
-                }
-            }
-            else if (
-                (vars1 && typeof arr1 === 'string' && vars1[arr1Name] === null && vars1.hasOwnProperty(arr1Name)) &&
-                (vars2 && typeof arr2 === 'string' && vars2[arr2Name + vi] === null && vars2.hasOwnProperty(arr2Name + vi))
-            ) {
-                vars2[arr2Name + vi] = levelOut (arr1, [], arr1Esc - arr2Esc);
-                return true;
-            }
-            else if (vars1 && typeof arr1 === 'string' && vars1[arr1Name] === null && vars1.hasOwnProperty(arr1Name)) {
-                vars1[arr1Name] = (arr2 === true ? null : arr2);
-                return true;
-            }
-            else if (vars2 && typeof arr2 === 'string' && vars2[arr2Name + vi] === null && vars2.hasOwnProperty(arr2Name + vi)) {
-                if (typeof arr1 !== 'string') {
-                    vars2[arr2Name + vi] = levelOut (arr1, [], -arr2Esc);
-                    return true;
+                    else if (vars1 && typeof arr1 === 'string' && vars1[arr1Name] === null && vars1.hasOwnProperty(arr1Name)) {
+                        vars1[arr1Name] = (arr2 === true ? null : arr2);
+                        result = true;
+                        continue;
+                    }
+                    else if (vars2 && typeof arr2 === 'string' && vars2[arr2Name + vi] === null && vars2.hasOwnProperty(arr2Name + vi)) {
+                        vars2[arr2Name + vi] = levelOut (arr1, [], -arr2Esc);
+                        result = true;
+                        continue;
+                    }
+                    else if (vars1 && typeof arr2 === 'string' && vars1[arr2Name] === null && vars1.hasOwnProperty(arr2Name)) {
+                        vars1[arr2Name] = arr1;
+                        result = true;
+                        continue;
+                    }
+                    else if (
+                        (vars2 && typeof arr2 === 'string' && vars2[arr2Name + vi] !== undefined && vars2.hasOwnProperty(arr2Name + vi)) &&
+                        (vars1 && typeof arr1 === 'string' && vars1[arr1Name] !== undefined && vars1.hasOwnProperty(arr1Name))
+                    ) {
+                        stack.push ([vars1[arr1Name], levelOut (vars2[arr2Name + vi], [], arr2Esc)])
+                        result = undefined;
+                        continue;
+                    }
+                    else if (vars2 && typeof arr2 === 'string' && vars2[arr2Name + vi] !== undefined && vars2.hasOwnProperty(arr2Name + vi)) {
+                        stack.push ([arr1, levelOut (vars2[arr2Name + vi], [], arr2Esc)])
+                        result = undefined;
+                        continue;
+                    }
+                    else if (vars1 && typeof arr1 === 'string' && vars1[arr1Name] !== undefined && vars1.hasOwnProperty(arr1Name)) {
+                        stack.push ([vars1[arr1Name], arr2])
+                        result = undefined;
+                        continue;
+                    }
+                    
+                    result = (arr1 === true || arr2 === true || arr1 === arr2);
+                    continue;
                 }
                 else {
-                    vars2[arr2Name + vi] = levelOut (arr1, [], -arr2Esc);
-                    return true;
+                    return false;
                 }
             }
-            else if (vars1 && typeof arr2 === 'string' && vars1[arr2Name] === null && vars1.hasOwnProperty(arr2Name)) {
-                vars1[arr2Name] = arr1;
-                return true;
-            }
-            else if (
-                (vars2 && typeof arr2 === 'string' && vars2[arr2Name + vi] !== undefined && vars2.hasOwnProperty(arr2Name + vi)) &&
-                (vars1 && typeof arr1 === 'string' && vars1[arr1Name] !== undefined && vars1.hasOwnProperty(arr1Name))
-            ) {
-                return arrayMatch (vars1[arr1Name], levelOut (vars2[arr2Name + vi], [], arr2Esc), vars1, vars2, varIndex);
-            }
-            else if (vars2 && typeof arr2 === 'string' && vars2[arr2Name + vi] !== undefined && vars2.hasOwnProperty(arr2Name + vi)) {
-                return arrayMatch (arr1, levelOut (vars2[arr2Name + vi], [], arr2Esc), vars1, vars2, varIndex);
-            }
-            else if (vars1 && typeof arr1 === 'string' && vars1[arr1Name] !== undefined && vars1.hasOwnProperty(arr1Name)) {
-                return arrayMatch (vars1[arr1Name], arr2, vars1, vars2, varIndex);
-            }
             
-            return arr1 === true || arr2 === true || arr1 === arr2;
+            return true;
         }
         
         var substVars = function (vars, arr, varIndex) {
+            var stack = [{atom: arr}], item, ret, atom, list = [];
             var vi = "_" + varIndex;
             if (!arr) {
                 return null;
@@ -132,93 +150,118 @@ var Ruler = (
                 return arr;
             }
             else {
-                var ret;
-                if (Array.isArray (arr)) {
-                    ret = [];
-                    for (var i = 0; i < arr.length; i++) {
-                        ret.push (substVars (vars, arr[i], varIndex));
-                    }
-                }
-                else {
-                    var spl = levelSplit (arr);
-                    if (varIndex !== undefined) {
-                        if (vars.hasOwnProperty(spl.atom + vi) && vars[spl.atom + vi]) {
-                            ret = levelOut (vars[spl.atom + vi], [], spl.esc)
-                        }
-                        else if (vars.hasOwnProperty(spl.atom + vi) && vars[spl.atom + vi] === null) {
-                            ret = levelOut (spl.atom + vi, [], spl.esc)
+                while (stack.length > 0) {
+                    item = stack.pop ()
+                    if (item.atom) {
+                        arr = item.atom;
+                        if (Array.isArray (arr)) {
+                            stack.push ({list: list});
+                            list = []
+                            for (var i = arr.length - 1; i >= 0; i--) {
+                                stack.push ({atom: arr[i]});
+                            }
                         }
                         else {
-                            ret = arr;
-                        }
-                    } else {
-                        if (vars.hasOwnProperty(spl.atom) && vars[spl.atom]) {
-                            ret = levelOut (vars[spl.atom], [], spl.esc)
-                        }
-                        else {
-                            ret = arr;
-                        }
-                    }
-                }
-                
-                return ret;
-            }
-        }
-        
-        var levelOut = function (arr, vars, level) {
-            if (vars === undefined) vars  = [];
-            if (!Array.isArray (arr)) {
-                if (arr !== "ATOMIC" && arr !== "COMPOUND" && arr !== "ANY" && arr !== undefined /*&& vars.indexOf (arr) === -1*/){
-                    for (var curLevelL = 0; curLevelL < arr.length && arr.charAt(curLevelL) === "\\"; curLevelL++);
-                    for (var curLevelR = 0; arr.length - curLevelR - 1 > 0 && arr.charAt(arr.length - curLevelR - 1) === "\\"; curLevelR++);
-                    
-                    if (level > 0) {
-                        var lft = curLevelL;
-                        var rgt = curLevelR;
-                        for (var i = 0; i < level; i++) {
-                            if (lft > 0) {
-                                lft--;
+                            var spl = levelSplit (arr);
+                            if (varIndex !== undefined) {
+                                if (vars.hasOwnProperty(spl.atom + vi) && vars[spl.atom + vi]) {
+                                    ret = levelOut (vars[spl.atom + vi], [], spl.esc)
+                                }
+                                else if (vars.hasOwnProperty(spl.atom + vi) && vars[spl.atom + vi] === null) {
+                                    ret = levelOut (spl.atom + vi, [], spl.esc)
+                                }
+                                else {
+                                    ret = arr;
+                                }
+                            } else {
+                                if (vars.hasOwnProperty(spl.atom) && vars[spl.atom]) {
+                                    ret = levelOut (vars[spl.atom], [], spl.esc)
+                                }
+                                else {
+                                    ret = arr;
+                                }
                             }
-                            else {
-                                rgt++;
-                            }
+                            
+                            list.push (ret)
                         }
                     }
                     else {
-                        var lft = curLevelL;
-                        var rgt = curLevelR;
-                        for (var i = 0; i > level; i--) {
-                            if (rgt > 0) {
-                                rgt--;
+                        item.list.push (list)
+                        list = item.list;
+                    }
+                }
+            }
+
+            return list[0];
+        }
+        
+        var levelOut = function (arr, vars, level) {
+            var stack = [{atom: arr}], item, result, atom, list = [];
+            if (arr === undefined) return arr;
+            if (vars === undefined) vars  = [];
+            while (stack.length > 0) {
+                item = stack.pop ()
+                if (item.atom) {
+                    arr = item.atom;
+                    if (!Array.isArray (arr)) {
+                        if (arr !== "ATOMIC" && arr !== "COMPOUND" && arr !== "ANY" && arr !== undefined /*&& vars.indexOf (arr) === -1*/){
+                            for (var curLevelL = 0; curLevelL < arr.length && arr.charAt(curLevelL) === "\\"; curLevelL++);
+                            for (var curLevelR = 0; arr.length - curLevelR - 1 > 0 && arr.charAt(arr.length - curLevelR - 1) === "\\"; curLevelR++);
+                            
+                            var lft = curLevelL;
+                            var rgt = curLevelR;
+                            if (level > 0) {
+                                for (var i = 0; i < level; i++) {
+                                    if (lft > 0) {
+                                        lft--;
+                                    }
+                                    else {
+                                        rgt++;
+                                    }
+                                }
                             }
                             else {
-                                lft++;
+                                for (var i = 0; i > level; i--) {
+                                    if (rgt > 0) {
+                                        rgt--;
+                                    }
+                                    else {
+                                        lft++;
+                                    }
+                                }
                             }
+
+                            var strMid = arr.substring (curLevelL, arr.length - curLevelR);
+                            var strLft = lft > 0 ? "\\".repeat (lft): "";
+                            var strRgt = rgt > 0 ? "\\".repeat (rgt): "";
+                            
+                            result = strLft + strMid + strRgt;
+                        }
+                        else {
+                            result = arr;
+                        }
+                        list.push (result)
+                    }
+                    else {
+                        stack.push ({list: list});
+                        list = []
+                        for (var i = arr.length - 1; i >= 0; i--) {
+                            stack.push ({atom: arr[i]});
                         }
                     }
-
-                    var strMid = arr.substring (curLevelL, arr.length - curLevelR);
-                    var strLft = lft > 0 ? "\\".repeat (lft): "";
-                    var strRgt = rgt > 0 ? "\\".repeat (rgt): "";
-                    
-                    return strLft + strMid + strRgt;
                 }
                 else {
-                    return arr;
+                    item.list.push (list)
+                    list = item.list;
                 }
             }
             
-            var arr1 = [];
-            for (var i = 0; i < arr.length; i++) {
-                arr1[i] = levelOut (arr[i], vars, level);
-            }
-            
-            return arr1;
+            return list[0];
         }
-
+        
         var getLevel = function (str, vars) {
             if (vars === undefined) vars  = [];
-            if (str !== "ATOMIC" && str !== "COMPOUND" && str !== "ANY" && str !== undefined /*&& vars.indexOf (str) === -1*/){
+            if (str !== "ATOMIC" && str !== "COMPOUND" && str !== "ANY" && str !== undefined && vars.indexOf (str) === -1){
                 for (var curLevelL = 0; curLevelL < str.length && str.charAt(curLevelL) === "\\"; curLevelL++);
                 for (var curLevelR = 0; str.length - curLevelR - 1 > 0 && str.charAt(str.length - curLevelR - 1) === "\\"; curLevelR++);
                 
@@ -230,17 +273,21 @@ var Ruler = (
         }
         
         var getMaxLevel = function (arr, vars) {
-            if (!Array.isArray (arr)) {
-                return getLevel (arr, vars);
+            var stack = [arr], item;
+            var result = -Infinity;
+            while (stack.length > 0) {
+                item = stack.pop ()
+                if (!Array.isArray (item)) {
+                    result = Math.max (result, getLevel (item, vars));
+                }
+                else {
+                    for (var i = 0; i < item.length; i++) {
+                        stack.push (item[i]);
+                    }
+                }
             }
             
-            var cl = -Infinity;
-            var nl = cl;
-            for (var i = 0; i < arr.length; i++) {
-                var nl = Math.max (nl, getMaxLevel (arr[i], vars));
-            }
-            
-            return nl;
+            return result;
         }
         
         var levelSplit = function (atom) {
