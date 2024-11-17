@@ -242,14 +242,12 @@ var Sexpression = (
                     while (m[pos1[y]][pos1[x]] !== undefined && m[pos1[y]][pos1[x]] !== bound) {
                         currAtom += m[pos1[y]][pos1[x]];
                         pos1[x]++;
-                        if (m[pos1[y]][pos1[x]] === '\\') {
-                            currAtom += m[pos1[y]][pos1[x]];
-                            pos1[x]++;
+                        if (m[pos1[y]][pos1[x] - 1] === '\\') {
                             currAtom += m[pos1[y]][pos1[x]];
                             pos1[x]++;
                         }
                     }
-                    
+
                     if (m[pos1[y]][pos1[x]] === bound) {
                         currAtom += m[pos1[y]][pos1[x]];
                         if (bound === '"') {

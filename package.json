@@ -1,7 +1,7 @@
 {
   "name": "@tearflake/symbolverse",
-  "version": "0.2.10",
-  "description": "Symbolic term graph rewriting system",
+  "version": "0.2.11",
+  "description": "S-expression based term graph rewriting system",
   "main": "symbolverse.js",
   "directories": {
     "docs": "docs",

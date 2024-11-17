@@ -427,7 +427,6 @@ var Rewriter = (
                             
                             // speed optimization begin
                             if (
-                            
                                 (Array.isArray (item.write) !== Array.isArray (item.rule.rule.read[item.readIndex])) ||
                                 (Array.isArray (item.write) && Array.isArray (item.rule.rule.read[item.readIndex]) && item.write.length !== item.rule.rule.read[item.readIndex].length)
                             ) {

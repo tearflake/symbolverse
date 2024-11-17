@@ -3,7 +3,7 @@
 ```
 ---
 
-# symbolverse v0.2.10
+# symbolverse v0.2.11
 
 _**tags:** s-expression, rewriting, term-rewriting, term-graph-rewriting_
 
@@ -19,7 +19,7 @@ A **term rewriting system** is a tool for automating the transformation of expre
 
 An **S-expression** (Symbolic Expression) is a simple and uniform way of representing nested data or code using parentheses to denote lists and atoms, commonly used in Lisp programming and symbolic computation.
 
-_**Symbolverse**_ is a term rewriting system. *Symbolverse* code functions like a set of mathematical formulas, but with a broader scope. It can transform not just mathematical expressions but any type of S-expressions. *Symbolverse* is a Turing complete system, which means it has the capability to perform any computation that can be done by any other known computational system.
+_**Symbolverse**_ is a term rewriting system. *Symbolverse* code functions like a set of mathematical formulas, but with a broader scope. It can transform not just mathematical expressions but any type of S-expressions, depending on rules we provide. *Symbolverse* is a Turing complete system, which means it has the capability to perform any computation that can be done by any other known computational system.
 
 To get a glimpse on how a *Symbolverse* program looks like, here's a simple example:
 
@@ -27,20 +27,20 @@ To get a glimpse on how a *Symbolverse* program looks like, here's a simple exam
 (
     REWRITE
     
-    // expression addition
+    /expression addition/
     (
         RULE
         (VAR A B)
-        (READ  (EXP (\add                 A A)))
-        (WRITE (EXP (\mul (((\0 \0) \1) \0) A)))
+        (READ  (EXP (\add                \A \A)))
+        (WRITE (EXP (\mul (((\0 \0) \1) \0) \A)))
     )
     
-    // reducible fraction
+    /reducible fraction/
     (
         RULE
         (VAR A B)
-        (READ  (EXP (\div (\mul A B) A)))
-        (WRITE (EXP B                  ))
+        (READ  (EXP (\div (\mul \A \B) \A)))
+        (WRITE (EXP \B                    ))
     )
 )
 ```
@@ -65,7 +65,7 @@ There are a couple resources about *Symbolverse* to check out:
 7. run pkg: `pkg . --out-path bin/`
 8. if everything goes well, executables for Linux, Windows, and MacOS will be in `./bin/` directory
 
-Executables are ran from command prompt, and take three parameters: rules-file, input-file, and output-file. If we omit the output-file parameter, the output is redirected to the terminal.
+Executables run from command prompt, and take three parameters: rules-file, input-file, and output-file. If we omit the output-file parameter, the output is redirected to the terminal.
 
 ## javascript API access
 
