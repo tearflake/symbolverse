@@ -94,37 +94,9 @@ The next example consists of only one atom:
 (EXP "hello world")
 ```
 
-The atom `hello world` is enclosed within quotes. Quoted atoms are interpreted as standard unicode strings, and we use them if we want to include special characters that have meaning in *Symbolverse* grammar syntax. The special characters are: `(`, `)`, ` `, `"`, `\`, `/*`, `*/` and `//`.
+The atom `hello world` is enclosed within quotes. Quoted atoms are interpreted as standard unicode strings, and we use them if we want to include special characters that have meaning in *Symbolverse* grammar syntax. The special characters are: `(`, `)`, ` `, `"`, `\`, and `/`.
 
-Although a great part of S-expressions power lies in its simplicity, let's introduce a couple of extensions in a hope of making expressed code more readable and functional, namely: strings and comments.
-
-##### strings
-
-Strings in *Sexpression* may be single-line or multi-line. Single-line strings are atoms enclosed within `"..."`, like in expression `"this is a single-line string"`, and represent Unicode format strings. Multi-line strings are enclosed between an odd number greater than 1 of `"` symbols in the following manner:
-
-```
-"""
-this is a
-multi-line
-string
-"""
-```
-
-Multi-line strings are indent sensitive.
-
-##### comments
-
-Comment expressions are ignored by the system, and they serve as notes to help programmers reading their code. They are parsed just like strings, only using the `/` instead of the `"` symbol. Thus, a single-line comment may be written as `/this is a single-line comment/`, and may appear repeatedly wherever a whitespace is expected. They can also be spanned over multiple lines, and an example of a multi-line comment may be:
-
-```
-///
-this is a
-multi-line
-comment
-///
-```
-
-Multi-line comments are also indent sensitive, just like strings.
+Explore more about S-expression version used in *Symbolverse* at [dedicated GitHub pages](https://github.com/tearflake/sexpression).
 
 #### 2.2.2. rewrite rules
 
@@ -344,7 +316,7 @@ In this section, we learned how to write syntactically correct rules, how to use
 
 ## 3. practical examples
 
-We assembled a number of practical examples covering programming examples (boolean operations, binary number arithmetic and comparison, operations on lists) and abstraction examples (lambda calculus, sequent calculus). These examples are covered in source code files in `examples/` directory. All the examples are paired with their example input, and can be performed from command line using *Symbolverse* executable.
+We assembled a number of practical examples covering programming examples (boolean operations, binary number arithmetic and comparison, operations on lists) and abstraction examples (lambda calculus, sequent calculus). These examples are covered in source code files in `path-to-sybolverse/examples/` directory. All the examples are paired with their example input, and can also be performed from command line using *Symbolverse* executable.
 
 ## 4. conclusion
 

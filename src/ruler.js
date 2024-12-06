@@ -5,261 +5,253 @@
 var Ruler = (
     function (obj) {
         return {
-            arrayMatch: obj.arrayMatch,
-            getVars: obj.getVars,
-            substVars: obj.substVars,
-            levelOut: obj.levelOut,
-            getLevel: obj.getLevel,
-            getMaxLevel: obj.getMaxLevel,
+            resetVarIdx: obj.resetVarIdx,
+            unify: obj.unify,
+            subst: obj.subst,
+            getMaxLvl: obj.getMaxLvl,
+            getLvl: obj.getLvl,
+            levelShift: obj.levelShift,
             levelSplit: obj.levelSplit
         };
     }
 ) (
     (function () {
         "use strict";
-
-        var getVars = function (vars, varIndex) {
-            if (varIndex !== undefined) {
-                var vi = "_" + varIndex;
-            }
-            else {
-                var vi = "";
-            }
-
-            if (vars.length > 0) {
-                var v = [];
-                for (var i = 0; i < vars.length; i++) {
-                    v[vars[i] + vi] = null;
-                }
-                
-                return v;
-            }
-            else {
-                return null;
-            }
+        
+        var varIdx = 0;
+        var resetVarIdx = function () {
+            varIdx = 0;
         }
         
-        var arrayMatch = function (arr1, arr2, vars1, vars2, varIndex) {
-            var stack = [[arr1, arr2]], item, result;
-            var vi, arr1Name, arr2Name, arr1Esc, arr2Esc;
+        var prepareVars = function (vars) {
+            var v = [];
+            if (vars) {
+                for (var i = 0; i < vars.length; i++) {
+                    v[vars[i]] = null;
+                }
+            }
                 
-            if (varIndex !== undefined) {
-                vi = "_" + varIndex;
+            return v;
+        }
+        
+        var getNextWhole = function (tokens, idx) {
+            var parens = 0;
+            if (tokens[idx] === "(") {
+                do {
+                    if (tokens[idx] === "(") {
+                        parens++;
+                    }
+                    else if (tokens[idx] === ")") {
+                        parens--;
+                    }
+                    idx++;
+                } while (parens > 0)
+                
+                return idx;
             }
             else {
-                vi = "";
+                return idx + 1;
+            }
+        }
+
+        var isEqual = function (tokW, fromW, toW, tokR, fromR, toR, uvars) {
+            for (var i = fromW, j = fromR; i < tokW.length; i++, j++) {
+                if (backVar (tokW, i, tokR, j, uvars)) {
+                    j = getNextWhole (tokR, j);
+                    i = i + 4;
+                }
+                else if (tokW[i] !== tokR[j]) {
+                    break;
+                }
             }
             
-            result = undefined;
-            while (stack.length > 0) {
-                item = stack.pop ()
-                if (result !== false) {
-                    arr1 = item[0];
-                    arr2 = item[1];
-                    
-                    if (typeof arr1 === 'string') {
-                        var spl1 = levelSplit (arr1);
-                        arr1Esc = spl1.esc;
-                        arr1Name = spl1.atom;
-                    }
-                    else {
-                        arr1Name = undefined;
-                        arr1Esc = 0;
-                    }
-
-                    if (typeof arr2 === 'string') {
-                        var spl2 = levelSplit (arr2);
-                        arr2Esc = spl2.esc;
-                        arr2Name = spl2.atom;
-                    }
-                    else {
-                        arr2Name = undefined;
-                        arr2Esc = 0;
-                    }
-
-                    if (Array.isArray (arr1) && Array.isArray (arr2)) {
-                        if (arr1.length === arr2.length) {
-                            for (var i = 0; i < arr1.length; i++) {
-                                stack.push ([arr1[i], arr2[i]]);
-                            }
-                            
-                            result = undefined;
-                            continue;
-                        }
-                    }
-                    else if (
-                        (vars1 && typeof arr1 === 'string' && vars1[arr1Name] === null && vars1.hasOwnProperty(arr1Name)) &&
-                        (vars2 && typeof arr2 === 'string' && vars2[arr2Name + vi] === null && vars2.hasOwnProperty(arr2Name + vi))
-                    ) {
-                        vars2[arr2Name + vi] = levelOut (arr1, [], arr1Esc - arr2Esc);
-                        result = true;
-                        continue;
-                    }
-                    else if (vars1 && typeof arr1 === 'string' && vars1[arr1Name] === null && vars1.hasOwnProperty(arr1Name)) {
-                        vars1[arr1Name] = (arr2 === true ? null : arr2);
-                        result = true;
-                        continue;
-                    }
-                    else if (vars2 && typeof arr2 === 'string' && vars2[arr2Name + vi] === null && vars2.hasOwnProperty(arr2Name + vi)) {
-                        vars2[arr2Name + vi] = levelOut (arr1, [], -arr2Esc);
-                        result = true;
-                        continue;
-                    }
-                    else if (vars1 && typeof arr2 === 'string' && vars1[arr2Name] === null && vars1.hasOwnProperty(arr2Name)) {
-                        vars1[arr2Name] = arr1;
-                        result = true;
-                        continue;
-                    }
-                    else if (
-                        (vars2 && typeof arr2 === 'string' && vars2[arr2Name + vi] !== undefined && vars2.hasOwnProperty(arr2Name + vi)) &&
-                        (vars1 && typeof arr1 === 'string' && vars1[arr1Name] !== undefined && vars1.hasOwnProperty(arr1Name))
-                    ) {
-                        stack.push ([vars1[arr1Name], levelOut (vars2[arr2Name + vi], [], arr2Esc)])
-                        result = undefined;
-                        continue;
-                    }
-                    else if (vars2 && typeof arr2 === 'string' && vars2[arr2Name + vi] !== undefined && vars2.hasOwnProperty(arr2Name + vi)) {
-                        stack.push ([arr1, levelOut (vars2[arr2Name + vi], [], arr2Esc)])
-                        result = undefined;
-                        continue;
-                    }
-                    else if (vars1 && typeof arr1 === 'string' && vars1[arr1Name] !== undefined && vars1.hasOwnProperty(arr1Name)) {
-                        stack.push ([vars1[arr1Name], arr2])
-                        result = undefined;
-                        continue;
-                    }
-                    
-                    result = (arr1 === true || arr2 === true || arr1 === arr2);
-                    continue;
+            return (i === toW);
+        }
+        
+        var backVar = function (tokW, idxW, tokR, idxR, uvars) {
+            if (idxW > 0 && tokW[idxW] === "(" && tokW[idxW + 1] === "UVAR" && tokW[idxW + 2] !== "(" && tokW[idxW + 2] !== ")" && tokW[idxW + 3] === ")") {
+                var lsW = levelSplit (tokW[idxW + 2])
+                var tokWEsc = lsW.esc;
+                var tokWName = lsW.atom;
+                
+                var idxRStart = idxR;
+                idxR = getNextWhole (tokR, idxR);
+                idxW = idxW + 4;
+                
+                if (!uvars.hasOwnProperty(tokWName)) {
+                    uvars[tokWName] = levelShift (tokR.slice (idxRStart, idxR), -tokWEsc);
                 }
                 else {
+                    var shifted = levelShift (uvars[tokWName], tokWEsc)
+                    if (!isEqual (tokR, idxRStart, idxR, shifted, 0, shifted.length, uvars)) {
+                        return false;
+                    }
+                }
+                
+                return true;
+            }
+            
+            return false;
+        }
+
+        var unify = function (tokW, fromW, toW, tokR, fromR, toR, vars) {
+            var idxW = fromW, idxR = fromR, idxWStart, idxRStart, uvars = [];
+            
+            vars = prepareVars (vars);
+            while (idxW < toW && idxR < toR) {
+                if (typeof tokR[idxR] === 'string' && tokR[idxR] !== "(" && tokR[idxR] !== ")") {
+                    var lsR = levelSplit (tokR[idxR]);
+                    var tokREsc = lsR.esc;
+                    var tokRName = lsR.atom;
+                }
+                else {
+                    var tokRName = "";
+                }
+                
+                if (vars[tokRName] === null && vars.hasOwnProperty(tokRName)) {
+                    idxWStart = idxW;
+                    idxW = getNextWhole (tokW, idxW);
+                    vars[tokRName] = levelShift (tokW.slice (idxWStart, idxW), -tokREsc);
+                    idxR++;
+                }
+                else if (vars[tokRName] !== undefined && vars.hasOwnProperty(tokRName)) {
+                    idxWStart = idxW;
+                    idxW = getNextWhole (tokW, idxW);
+                    var shifted = levelShift (vars[tokRName], tokREsc)
+                    if (!isEqual (tokW, idxWStart, idxW, shifted, 0, shifted.length, uvars)) {
+                        return false;
+                    }
+
+                    idxR++;
+                }
+                else if (idxW > 0 && tokW[idxW] === "(" && tokW[idxW + 1] === "UVAR" && tokW[idxW + 2] !== "(" && tokW[idxW + 2] !== ")" && tokW[idxW + 3] === ")") {
+                    if (!backVar (tokW, idxW, tokR, idxR, uvars)) {
+                        return false;
+                    }
+                    else {
+                        idxR = getNextWhole (tokR, idxR);
+                        idxW = idxW + 4;
+                    }
+                }
+                else if (tokW[idxW] !== tokR[idxR]) {
                     return false;
                 }
+                else {
+                    idxW++
+                    idxR++;
+                }
             }
             
-            return true;
-        }
-        
-        var substVars = function (vars, arr, varIndex) {
-            var stack = [{atom: arr}], item, ret, atom, list = [];
-            var vi = "_" + varIndex;
-            if (!arr) {
-                return null;
+            for (var i in vars) {
+                if (vars[i] !== null && vars[i] !== undefined) {
+                    subst (vars[i], uvars);
+                }
             }
-            else if (!vars) {
-                return arr;
+            
+            if (idxW === toW && idxR === toR) {
+                return vars;
             }
             else {
-                while (stack.length > 0) {
-                    item = stack.pop ()
-                    if (item.atom) {
-                        arr = item.atom;
-                        if (Array.isArray (arr)) {
-                            stack.push ({list: list});
-                            list = []
-                            for (var i = arr.length - 1; i >= 0; i--) {
-                                stack.push ({atom: arr[i]});
-                            }
-                        }
-                        else {
-                            var spl = levelSplit (arr);
-                            if (varIndex !== undefined) {
-                                if (vars.hasOwnProperty(spl.atom + vi) && vars[spl.atom + vi]) {
-                                    ret = levelOut (vars[spl.atom + vi], [], spl.esc)
-                                }
-                                else if (vars.hasOwnProperty(spl.atom + vi) && vars[spl.atom + vi] === null) {
-                                    ret = levelOut (spl.atom + vi, [], spl.esc)
-                                }
-                                else {
-                                    ret = arr;
-                                }
-                            } else {
-                                if (vars.hasOwnProperty(spl.atom) && vars[spl.atom]) {
-                                    ret = levelOut (vars[spl.atom], [], spl.esc)
-                                }
-                                else {
-                                    ret = arr;
-                                }
-                            }
-                            
-                            list.push (ret)
-                        }
-                    }
-                    else {
-                        item.list.push (list)
-                        list = item.list;
-                    }
-                }
+                return false;
             }
-
-            return list[0];
         }
         
-        var levelOut = function (arr, vars, level) {
-            var stack = [{atom: arr}], item, result, atom, list = [];
-            if (arr === undefined) return arr;
-            if (vars === undefined) vars  = [];
-            while (stack.length > 0) {
-                item = stack.pop ()
-                if (item.atom) {
-                    arr = item.atom;
-                    if (!Array.isArray (arr)) {
-                        if (arr !== "ATOMIC" && arr !== "COMPOUND" && arr !== "ANY" && arr !== undefined /*&& vars.indexOf (arr) === -1*/){
-                            for (var curLevelL = 0; curLevelL < arr.length && arr.charAt(curLevelL) === "\\"; curLevelL++);
-                            for (var curLevelR = 0; arr.length - curLevelR - 1 > 0 && arr.charAt(arr.length - curLevelR - 1) === "\\"; curLevelR++);
-                            
-                            var lft = curLevelL;
-                            var rgt = curLevelR;
-                            if (level > 0) {
-                                for (var i = 0; i < level; i++) {
-                                    if (lft > 0) {
-                                        lft--;
-                                    }
-                                    else {
-                                        rgt++;
-                                    }
-                                }
-                            }
-                            else {
-                                for (var i = 0; i > level; i--) {
-                                    if (rgt > 0) {
-                                        rgt--;
-                                    }
-                                    else {
-                                        lft++;
-                                    }
-                                }
-                            }
-
-                            var strMid = arr.substring (curLevelL, arr.length - curLevelR);
-                            var strLft = lft > 0 ? "\\".repeat (lft): "";
-                            var strRgt = rgt > 0 ? "\\".repeat (rgt): "";
-                            
-                            result = strLft + strMid + strRgt;
-                        }
-                        else {
-                            result = arr;
-                        }
-                        list.push (result)
+        var subst = function (tok, vars) {
+            var idx = 0, result = [], uvar = false;
+            
+            while (idx < tok.length) {
+                var spl = levelSplit (tok[idx]);
+                if (vars.hasOwnProperty(spl.atom) && vars[spl.atom]) {
+                    result = [...result, ...levelShift (vars[spl.atom], spl.esc)];
+                }
+                else if (vars.hasOwnProperty(spl.atom) && vars[spl.atom] === null) {
+                    var spl = levelSplit (tok[idx]);
+                    var indexed = spl.atom + "-" + varIdx
+                    if (spl.esc > 0) {
+                        indexed = indexed + "\\".repeat (spl.esc);
                     }
                     else {
-                        stack.push ({list: list});
-                        list = []
-                        for (var i = arr.length - 1; i >= 0; i--) {
-                            stack.push ({atom: arr[i]});
-                        }
+                        indexed = "\\".repeat (-spl.esc) + indexed;
                     }
+
+                    result = [...result, "(", "UVAR", indexed, ")"];
+                    uvar = true;
                 }
                 else {
-                    item.list.push (list)
-                    list = item.list;
+                    result = [...result, tok[idx]];
                 }
+                idx++
             }
             
-            return list[0];
+            if (uvar) {
+                varIdx++;
+            }
+            
+            return result;
         }
         
-        var getLevel = function (str, vars) {
+        var levelShift = function (tok, level) {
+            var idx = 0,result = [];
+            
+            while (idx < tok.length) {
+                var str = tok[idx];
+                if (str !== "(" && str !== ")" &&
+                    (str !== "ATOMIC" && str !== "COMPOUND" && str !== "ANY")
+                ) {
+                    for (var curLevelL = 0; curLevelL < str.length && str.charAt(curLevelL) === "\\"; curLevelL++);
+                    for (var curLevelR = 0; str.length - curLevelR - 1 > 0 && str.charAt(str.length - curLevelR - 1) === "\\"; curLevelR++);
+                    
+                    var lft = curLevelL;
+                    var rgt = curLevelR;
+                    if (level > 0) {
+                        for (var i = 0; i < level; i++) {
+                            if (lft > 0) {
+                                lft--;
+                            }
+                            else {
+                                rgt++;
+                            }
+                        }
+                    }
+                    else {
+                        for (var i = 0; i > level; i--) {
+                            if (rgt > 0) {
+                                rgt--;
+                            }
+                            else {
+                                lft++;
+                            }
+                        }
+                    }
+
+                    var strMid = str.substring (curLevelL, str.length - curLevelR);
+                    var strLft = lft > 0 ? "\\".repeat (lft): "";
+                    var strRgt = rgt > 0 ? "\\".repeat (rgt): "";
+                    
+                    str = strLft + strMid + strRgt;
+                }
+                
+                result.push (str);
+                idx++;
+            }
+            
+            return result;
+        }
+
+        var getMaxLvl = function (tok, from, to, vars) {
+            var result = -Infinity;
+            if (Array.isArray (tok)) {
+                for (var i = from; i < tok.length; i++) {
+                    if (tok[i] !== "(" && tok[i] !== ")") {
+                        result = Math.max (result, getLvl (tok[i], vars));
+                    }
+                }
+                
+                return result;
+            }
+        }
+        
+        var getLvl = function (str, vars) {
             if (vars === undefined) vars  = [];
             if (str !== "ATOMIC" && str !== "COMPOUND" && str !== "ANY" && str !== undefined && vars.indexOf (str) === -1){
                 for (var curLevelL = 0; curLevelL < str.length && str.charAt(curLevelL) === "\\"; curLevelL++);
@@ -272,24 +264,6 @@ var Ruler = (
             }
         }
         
-        var getMaxLevel = function (arr, vars) {
-            var stack = [arr], item;
-            var result = -Infinity;
-            while (stack.length > 0) {
-                item = stack.pop ()
-                if (!Array.isArray (item)) {
-                    result = Math.max (result, getLevel (item, vars));
-                }
-                else {
-                    for (var i = 0; i < item.length; i++) {
-                        stack.push (item[i]);
-                    }
-                }
-            }
-            
-            return result;
-        }
-        
         var levelSplit = function (atom) {
             var vEsc, vAtm;
             
@@ -297,7 +271,7 @@ var Ruler = (
                 return {esc: -Infinity, atom: undefined};
             }
             else {
-                vEsc = Ruler.getLevel (atom);
+                vEsc = Ruler.getLvl (atom);
                 if (vEsc < 0) {
                     vAtm = atom.substring (-vEsc, atom.length);
                 }
@@ -308,14 +282,33 @@ var Ruler = (
                 return {esc: vEsc, atom: vAtm};
             }
         }
-
+        
+        var levelSplit = function (atom) {
+            var vEsc, vAtm;
+            
+            if (atom === undefined) {
+                return {esc: -Infinity, atom: undefined};
+            }
+            else {
+                vEsc = Ruler.getLvl (atom);
+                if (vEsc < 0) {
+                    vAtm = atom.substring (-vEsc, atom.length);
+                }
+                else {
+                    vAtm = atom.substring (0, atom.length - vEsc);
+                }
+                
+                return {esc: vEsc, atom: vAtm};
+            }
+        }
+        
         return {
-            arrayMatch: arrayMatch,
-            getVars: getVars,
-            substVars: substVars,
-            levelOut: levelOut,
-            getLevel: getLevel,
-            getMaxLevel: getMaxLevel,
+            resetVarIdx: resetVarIdx,
+            unify: unify,
+            subst: subst,
+            getMaxLvl: getMaxLvl,
+            getLvl: getLvl,
+            levelShift: levelShift,
             levelSplit: levelSplit
         }
     }) ()

@@ -1,5 +1,6 @@
 ///
-propositional logic formula validity checker using sequent calculus
+propositional logic theorem checker using
+sequent calculus (exponential time complexity)
 ///
 
 (

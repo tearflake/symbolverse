@@ -806,14 +806,14 @@ remove element from list
         RULE
         (VAR A B C D)
         (READ  (EXP (\\remove \\A (\\B \\C))))
-        (WRITE (EXP (B (\\remove \\A \\C))))
+        (WRITE (EXP (\\B (\\remove \\A \\C))))
     )
     
     (
         RULE
         (VAR A)
         (READ  (EXP (\\remove \\A ())))
-        (WRITE (EXP ()            ))
+        (WRITE (EXP ()             ))
     )
 )
 `,
@@ -849,7 +849,7 @@ replace element in list
         RULE
         (VAR A B)
         (READ  (EXP (\\replace \\A \\B ())))
-        (WRITE (EXP ()               ))
+        (WRITE (EXP ()                 ))
     )
 )
 `,
@@ -906,7 +906,8 @@ lambda calculus
 "example-seq":
 `
 ///
-propositional logic formula validity checker using sequent calculus
+propositional logic theorem checker using
+sequent calculus (exponential time complexity)
 ///
 
 (
@@ -1226,12 +1227,186 @@ propositional logic formula validity checker using sequent calculus
 
 "example-seq-input":
 `
+///
+testing if De Morgan's law holds
+///
+
 (
     isValid
     (
         eq
         (and A B)
         (not (or (not A) (not B)))
+    )
+)
+`,
+
+"example-constr":
+`
+///
+constructive proof verifyer
+///
+
+(
+    REWRITE
+    
+    /logic rules/
+    (RULE (VAR a b) (READ (EXP (\\[andIntro] a b))                                  ) (WRITE (EXP (\\and a b)) ))
+    (RULE (VAR a b) (READ (EXP (\\[andElim1] (\\and a b)))                           ) (WRITE (EXP a)          ))
+    (RULE (VAR a b) (READ (EXP (\\[andElim2] (\\and a b)))                           ) (WRITE (EXP b)          ))
+    (RULE (VAR a b) (READ (EXP (\\[orIntro1] a))                                    ) (WRITE (EXP (\\or a b))  ))
+    (RULE (VAR a b) (READ (EXP (\\[orIntro2] b))                                    ) (WRITE (EXP (\\or a b))  ))
+    (RULE (VAR a b) (READ (EXP (\\[orElim] (\\or a b) (\\seq a False) (\\seq b False)))) (WRITE (EXP False)      ))
+    (RULE (VAR a b) (READ (EXP (\\[implIntro] (\\seq a b)))                          ) (WRITE (EXP (\\impl a b))))
+    (RULE (VAR a b) (READ (EXP (\\[implElim] (\\impl a b) a))                        ) (WRITE (EXP b)          ))
+    (RULE (VAR a b) (READ (EXP (\\[eqIntro] (\\impl a b) (\\impl b a)))               ) (WRITE (EXP (\\eq a b))  ))
+    (RULE (VAR a b) (READ (EXP (\\[eqElim1] (\\eq a b) a))                           ) (WRITE (EXP b)          ))
+    (RULE (VAR a b) (READ (EXP (\\[eqElim2] (\\eq a b) b))                           ) (WRITE (EXP a)          ))
+    (RULE (VAR a)   (READ (EXP (\\[notIntro] (\\seq a False)))                       ) (WRITE (EXP (\\not a))   ))
+    (RULE (VAR a)   (READ (EXP (\\[notElim] (\\not a) a))                            ) (WRITE (EXP False)      ))
+    (RULE (VAR a)   (READ (EXP (\\[X] False))                                       ) (WRITE (EXP a)          ))
+    (RULE (VAR a)   (READ (EXP (\\[IP] (\\seq (\\not a) False)))                      ) (WRITE (EXP a)          ))
+
+    (RULE (VAR a) (READ (EXP (\\[Assume] a))) (WRITE (EXP a)))
+)
+`,
+"example-constr-input":
+`
+///
+verifying a proof for De Morgan's law
+///
+
+(
+    [eqIntro]
+    (
+        [implIntro]
+        (
+            seq
+            (
+                [Assume]
+                (and A B)
+            )
+            (
+                [notIntro]
+                (
+                    seq
+                    (
+                        [Assume]
+                        (or (not A) (not B))
+                    )
+                    (
+                        [orElim]
+                        (
+                            [Assume]
+                            (or (not A) (not B))
+                        )
+                        (
+                            seq
+                            (
+                                [Assume]
+                                (not A)
+                            )
+                            (
+                                [notElim]
+                                (
+                                    [Assume]
+                                    (not A)
+                                )
+                                (
+                                    [andElim1]
+                                    (
+                                        [Assume]
+                                        (and A B)
+                                    )
+                                )
+                            )
+                        )
+                        (
+                            seq
+                            (
+                                [Assume]
+                                (not B)
+                            )
+                            (
+                                [notElim]
+                                (
+                                    [Assume]
+                                    (not B)
+                                )
+                                (
+                                    [andElim2]
+                                    (
+                                        [Assume]
+                                        (and A B)
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
+    (
+        [implIntro]
+        (
+            seq
+            (
+                [Assume]
+                (not (or (not A) (not B)))
+            )
+            (
+                [andIntro]
+                (
+                    [IP]
+                    (
+                        seq
+                        (
+                            [Assume]
+                            (not A)
+                        )
+                        (
+                            [notElim]
+                            (
+                                [Assume]
+                                (not (or (not A) (not B)))
+                            )
+                            (
+                                [orIntro1]
+                                (
+                                    [Assume]
+                                    (not A)
+                                )
+                            )
+                        )
+                    )
+                )
+                (
+                    [IP]
+                    (
+                        seq
+                        (
+                            [Assume]
+                            (not B)
+                        )
+                        (
+                            [notElim]
+                            (
+                                [Assume]
+                                (not (or (not A) (not B)))
+                            )
+                            (
+                                [orIntro2]
+                                (
+                                    [Assume]
+                                    (not B)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
     )
 )
 `

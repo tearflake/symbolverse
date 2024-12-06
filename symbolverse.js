@@ -153,13 +153,17 @@ else {
         var script = document.createElement('script')
         script.src = path + "sexpression.js"
         document.body.appendChild(script);
-
+        
         var script = document.createElement('script')
-        script.src = path + "ruler.js"
+        script.src = path + "compiler.js"
         document.body.appendChild(script);
         
         var script = document.createElement('script')
         script.src = path + "rewriter.js"
+        document.body.appendChild(script);
+        
+        var script = document.createElement('script')
+        script.src = path + "ruler.js"
         document.body.appendChild(script);
     })()        
 }

@@ -3,7 +3,7 @@
 ```
 ---
 
-# symbolverse v0.2.11
+# symbolverse v0.2.12
 
 _**tags:** s-expression, rewriting, term-rewriting, term-graph-rewriting_
 
@@ -45,7 +45,7 @@ To get a glimpse on how a *Symbolverse* program looks like, here's a simple exam
 )
 ```
 
-Providing the input `(div (add x x) (((0 0) 1) 0))`, this example outputs `x`.
+Providing the input `(div (add x x) (((0 0) 1) 0))`, the example outputs `x`.
 
 There are a couple resources about *Symbolverse* to check out:
 
@@ -99,13 +99,17 @@ var strRules = `
 
 var arrRules = Rewriter.compile (strRules);
 
-var strInput = `
-    (hello machine)
-`;
+if (!arrRules.err) {
+    var strInput = `
+        (hello machine)
+    `;
 
-var strOutput = Rewriter.rewrite (arrRules, strInput);
+    var strOutput = Rewriter.rewrite (arrRules, strInput);
 
-console.log (strOutput);
+    if (!strOutput.err) {
+        console.log (strOutput);
+    }
+}
 ```
 
 ## further work

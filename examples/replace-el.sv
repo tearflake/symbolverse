@@ -23,7 +23,7 @@ replace element in list
         RULE
         (VAR A B)
         (READ  (EXP (\replace \A \B ())))
-        (WRITE (EXP ()               ))
+        (WRITE (EXP ()                 ))
     )
 )
 

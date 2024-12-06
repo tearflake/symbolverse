@@ -12,6 +12,7 @@ var Sexpression = (
             normalizeSexpr: obj.normalizeSexpr,
             denormalizeSexpr: obj.denormalizeSexpr,
             denormalizeIndexes: obj.denormalizeIndexes,
+            flatten: obj.flatten,
             stringify: obj.stringify
         };
     }
@@ -23,12 +24,12 @@ var Sexpression = (
         err[2] = "Expected end of S-expression error";
         err[3] = "Unexpected end of S-expression error";
         err[4] = "Unicode string syntax error";
-        err[5] = "Unexpected end of line error";
+        err[5] = "Block not terminated error";
         err[6] = "Block not terminated error";
         err[7] = "Unresolved block error";
         err[8] = "Expected whitespace error";
         err[9] = "Expected newline error";
-        err[10] = "Expected atom error";
+        err[10] = "incorrect escaping error";
         
         var parse = function (text) {
             var m = createMatrix (text);
@@ -49,20 +50,15 @@ var Sexpression = (
         }
         
         var parseMatrix = function (m, verbose) {
-            var x, y, pos, i, esc, tmpPos, stack, currChar, currAtom, val;
+            var x, y, pos, i, tmpPos, stack, currChar, currAtom, val;
             
             y = 0;
             x = 1;
             pos = [0, 0];
-            esc = 0;
             stack = [];
             while (pos[y] < m.length) {
                 currChar = m[pos[y]][pos[x]];
                 if (currChar === '/' || currChar === ' ' || currChar === undefined) {
-                    if (esc > 0) {
-                        return {err: err[10], pos: {y: tmpPos[y], x: tmpPos[x]}};
-                    }
-                    
                     tmpPos = skipWhitespace (m, pos[y], pos[x]);
                     if (tmpPos.err) {
                         return tmpPos;
@@ -80,17 +76,7 @@ var Sexpression = (
                     
                     pos = tmpPos;
                 }
-                else if (currChar === '\\') {
-                    for (i = pos[x]; m[pos[y]][i] === "\\"; i++) {
-                        esc++;
-                    }
-                    pos[x] = i;
-                }
                 else if (currChar === '(') {
-                    if (esc > 0) {
-                        return {err: err[10], pos: {y: tmpPos[y], x: tmpPos[x]}};
-                    }
-
                     if (verbose) {
                         stack.push ({val: [], pos: {y: pos[y], x: pos[x]}});
                     }
@@ -101,10 +87,6 @@ var Sexpression = (
                     pos[x]++;
                 }
                 else if (currChar === ')') {
-                    if (esc > 0) {
-                        return {err: err[10], pos: {y: tmpPos[y], x: tmpPos[x]}};
-                    }
-
                     pos[x]++;
                     if (stack.length > 1) {
                         if (verbose) {
@@ -116,7 +98,12 @@ var Sexpression = (
                         stack.pop ();
                     }
                     else {
-                        val = stack[stack.length - 1];
+                        if (verbose) {
+                            val = stack[stack.length - 1];
+                        }
+                        else {
+                            val = stack[stack.length - 1];
+                        }
                         break;
                     }
                 }
@@ -126,50 +113,64 @@ var Sexpression = (
                         return currAtom;
                     }
                     else {
-                        var start = [pos[y], pos[x] - esc];
+                        var start = [pos[y], pos[x]];
                         pos[y] = currAtom.pos[y];
                         pos[x] = currAtom.pos[x];
                         if (stack.length > 0) {
                             if (verbose) {
-                                stack[stack.length - 1].push ({val: "\\".repeat(esc) + currAtom.val, pos: {y: pos[y], x: pos[x]}});
+                                stack[stack.length - 1].push ({val: currAtom.val, pos: {y: pos[y], x: pos[x]}});
                             }
                             else {
-                                stack[stack.length - 1].push ("\\".repeat(esc) + currAtom.val);
+                                stack[stack.length - 1].push (currAtom.val);
                             }
-                            esc = 0;
+
                             if (m[pos[y]][pos[x]] === undefined) {
                                 pos[y]++;
                                 pos[x] = 0;
                             }
                         }
                         else {
-                            val = "\\".repeat(esc) + currAtom.val;
-                            esc = 0;
+                            if (verbose) {
+                                val = {val: currAtom.val, pos: start};
+                            }
+                            else {
+                                val = currAtom.val;
+                            }
                             break;
                         }
                     }
                 }
-                else if (' ()"/'.indexOf (currChar) === -1 && currChar !== undefined) {
+                else if (' ()"'.indexOf (currChar) === -1 && currChar !== undefined) {
                     currAtom = "";
-                    var start = {y: pos[y], x: pos[x] - esc};
-                    while (' ()"/\\'.indexOf (currChar) === -1 && currChar !== undefined) {
+                    var start = {y: pos[y], x: pos[x]};
+                    while (' ()"'.indexOf (currChar) === -1 && currChar !== undefined) {
                         currAtom += currChar;
                         pos[x]++;
                         currChar = m[pos[y]][pos[x]];
                     }
+                    
+                    if ("\\".repeat (currAtom.length) === currAtom) {
+                        return {err: err[10], pos: start};
+                    }
+                    else if (currAtom.charAt (0) === "\\" && currAtom.charAt (currAtom.length - 1) === "\\") {
+                        return {err: err[10], pos: start};
+                    }
 
                     if (stack.length > 0) {
                         if (verbose) {
-                            stack[stack.length - 1].val.push ({val: "\\".repeat(esc) + currAtom, pos: start});
+                            stack[stack.length - 1].val.push ({val: currAtom, pos: start});
                         }
                         else {
-                            stack[stack.length - 1].push ("\\".repeat(esc) + currAtom);
+                            stack[stack.length - 1].push (currAtom);
                         }
-                        esc = 0;
                     }
                     else {
-                        val = "\\".repeat(esc) + currAtom;
-                        esc = 0;
+                        if (verbose) {
+                            val = {val: currAtom, pos: start}
+                        }
+                        else {
+                            val = currAtom;
+                        }
                         break;
                     }
                 }
@@ -239,7 +240,7 @@ var Sexpression = (
                 if (numBounds1 === 1 || numBounds1 % 2 === 0) {
                     currAtom = bound;
                     pos1[x]++;
-                    while (m[pos1[y]][pos1[x]] !== undefined && m[pos1[y]][pos1[x]] !== bound) {
+                    while (m[pos1[y]][pos1[x]] !== undefined && (m[pos1[y]][pos1[x]] !== bound)) {
                         currAtom += m[pos1[y]][pos1[x]];
                         pos1[x]++;
                         if (m[pos1[y]][pos1[x] - 1] === '\\') {
@@ -265,7 +266,7 @@ var Sexpression = (
                         return {pos: [pos1[y], pos1[x] + 1], val: val};
                     }
                     else {
-                        return {err: err[5], pos: {y: pos1[y], x: pos1[x]}};
+                        return {err: err[5], pos: {y: pos0[y], x: pos0[x]}};
                     }
                 }
                 else {
@@ -337,8 +338,11 @@ var Sexpression = (
         }
         
         var getNode = function (text, path) {
+            var x = 1, y = 0;
             if (path.length === 0) {
-                return {err: "Top node error", pos: skipWhitespace(text, 0).pos};
+                var m = createMatrix(text);
+                var pos = skipWhitespace(m, 0, 0);
+                return {err: "Top node error", pos: {y: pos[y], x: pos[x]}};
             }
             else {
                 var expr = parseMatrix (createMatrix(text), true);
@@ -437,6 +441,33 @@ var Sexpression = (
             
             return dnm;
         };
+        
+        var flatten = function (arr) {
+            var result = [], stack = [arr], item, i;
+            
+            if (arr === undefined) {
+                return [];
+            }
+            
+            while (stack.length > 0) {
+                item = stack.pop ();
+                if (item.arr) {
+                    result.push (")");
+                }
+                else if (Array.isArray (item)) {
+                    result.push ("(");
+                    stack.push ({arr: true});
+                    for (i = item.length - 1; i >= 0 ; i--) {
+                        stack.push (item[i]);
+                    }
+                }
+                else {
+                    result.push (quoteIfNecessary (item));
+                }
+            }
+            
+            return (result);
+        }
 
         function stringify (node) {
             const stack = [{ node, indent: "", index: 0, result: "" }];
@@ -513,7 +544,8 @@ var Sexpression = (
             normalizeSexpr: normalizeSexpr,
             denormalizeSexpr: denormalizeSexpr,
             denormalizeIndexes: denormalizeIndexes,
-            stringify: stringify
+            stringify: stringify,
+            flatten: flatten
         }
     }) ()
 );

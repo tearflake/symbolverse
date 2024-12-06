@@ -23,7 +23,7 @@ remove element from list
         RULE
         (VAR A)
         (READ  (EXP (\remove \A ())))
-        (WRITE (EXP ()            ))
+        (WRITE (EXP ()             ))
     )
 )
 

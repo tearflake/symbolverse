@@ -15,3 +15,4 @@
 
 - v0.2.x
     - introducing scoped rules
+    - order of magnitude speed-up (also removed infinite recursion detect)
