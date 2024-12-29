@@ -30,7 +30,7 @@ Term rewriting is a formal method used to systematically transform expressions o
 
 Using S-expressions as terms in a term rewriting system provides a simple and effective way to represent and manipulate symbolic expressions. S-expressions, with their uniform, tree-like structure of nested lists and atoms, naturally align with the hierarchical nature of terms in rewriting systems. This structure makes it easy to parse and apply rewriting rules, where patterns within the S-expressions can be matched and transformed according to specified rules.
 
-Symbolverse is a term rewriting system that operates on S-expressions. Its main strength is in its simplicity while not compromising all the benefits of term rewriting. Its very simple syntax and semantics ensure a gradual learning curve where users are able to grasp the essence of term rewriting in a short time. However, further exploration of terms bound in rules may unleash a power granted by being a Turing complete system capable of computations of any complexity.
+Symbolverse is a term rewriting system that operates on S-expressions. Its main strength is in its simplicity while not compromising all the benefits of term rewriting. Its very simple syntax and semantics ensure a gradual learning curve where users are able to grasp the essence of term rewriting in a short time. However, further exploration of terms bound in rules may unleash a power granted by being a computationally complete system.
 
 ## 2. theoretical background
 
@@ -57,7 +57,7 @@ In computer science, the syntax of a computer language is the set of rules that 
 
 The above grammar defines the syntax of *Symbolverse*. To interpret these grammar rules, we use special symbols: `<...>` for noting identifiers, `... := ...` for expressing assignment, `...+` for one or more occurrences, `...*` for zero or more occurrences, `...?` for optional appearance, and `... | ...` for alternation between expressions. All other symbols are considered as parts of the *Symbolverse* language.
 
-In addition to the above grammar, user comments have no meaning to the system, but may be descriptive to readers, and may be placed wherever a whitespace is expected. Single line comments begin with `//`, and reach to the end of line. Multiline comments begin with `/*` and end with `*/`, so that everything in between is considered as a comment.
+In addition to the above grammar, user comments have no meaning to the system, but may be descriptive to readers, and may be placed wherever a whitespace is expected. Single line comments are embraced within a pair of `/` symbols. Multiline comments are embraced within an odd number of `/` symbols placed at the same distance from the beginning of line, so that everything in between is considered as a comment.
 
 ### 2.2. semantics
 
@@ -134,12 +134,12 @@ The left hand side of the rules is enclosed within `(READ ...)` section while th
 The next example:
 
 ```
-/*
-    hello world example
-    
-     input: `(hello machine)`
-    output: `(hello world)`
-*/
+///
+hello world example
+
+ input: `(hello machine)`
+output: `(hello world)`
+///
 
 (
     REWRITE
@@ -153,12 +153,12 @@ reads `(hello machine)` from input, and outputs `(hello world)` instead of input
 The next example uses variables:
 
 ```
-/*
-    hello entity example
-    
-     input: `(greet Name)`
-    output: `(hello Name)`
-*/
+///
+hello entity example
+
+ input: `(greet Name)`
+output: `(hello Name)`
+///
 
 (
     REWRITE
@@ -174,12 +174,12 @@ In our case, variable name is `Name`. By convention, we write variables with upp
 Naturally, we can also have a set of rules defining the rewriting process. Thus, the next example:
 
 ```
-/*
-    toy making decision
-    
-     input: `(isGood girl/boy)`
-    output: `(makeToy doll/car)`
-*/
+///
+toy making decision
+
+ input: `(isGood girl/boy)`
+output: `(makeToy doll/car)`
+///
 
 (
     REWRITE
@@ -194,12 +194,12 @@ can in one case change `(isGood girl)` into `(makeToy doll)`, or in another `(is
 As an example of set of rules utilizing variables, we can consider:
 
 ```
-/*
-    job title decision
-    
-     input: `(isDoing Name drivingRocket/healingPeople)`
-    output: `(isTitled Name astronaut/doctor)`
-*/
+///
+job title decision
+
+ input: `(isDoing Name drivingRocket/healingPeople)`
+output: `(isTitled Name astronaut/doctor)`
+///
 
 (
     REWRITE
@@ -226,12 +226,12 @@ so that passing `(isDoing Jane drivingRocket)` as an input gets us the expressio
 We can also repeatedly chain rules one onto another, from its right hand side to its left hand side.
 
 ```
-/*
-    shadows decision
-    
-     input: `(sunIs rising/falling)`
-    output: `(shadowsDo expand/shrink)`
-*/
+///
+shadows decision
+
+ input: `(sunIs rising/falling)`
+output: `(shadowsDo expand/shrink)`
+///
 
 (
     REWRITE
@@ -254,12 +254,12 @@ Note the use of atoms without the escape `\` character. These atoms are used for
 The similar chaining example, but with variables would be:
 
 ```
-/*
-    weighting decision
-    
-     input: `(orbitsAround object1 object2)`
-    output: `(weigthtsMoreThan object2 object1)`
-*/
+///
+weighting decision
+
+ input: `(orbitsAround object1 object2)`
+output: `(weigthtsMoreThan object2 object1)`
+///
 
 (
     REWRITE
@@ -286,6 +286,13 @@ so that when we pass `(orbitsAround earth sun)`, we get `(weightsMoreThan sun ea
 With *Symbolverse*, it is possible or write layered code where each layer represents a certain depth of abstraction area. The objective of these layers is separating atoms and variables so we can use them as private entities not interacting between adjacent layers. New layers are denoted within `(REWRITE ...)` sections, and can be nested. Consider the following example:
 
 ```
+///
+planting cyclus
+
+ input: `(plantSeed Fruit)`
+output: `(fruitGrows Fruit)`
+///
+
 (
     REWRITE
     
@@ -308,15 +315,15 @@ With *Symbolverse*, it is possible or write layered code where each layer repres
 
 Here, in the first level, we used two rules only to pass the information down to and up from nested scope. Next, in the nested `(REWRITE ...)` section, we created a separate scope which represents a chained actions between seeding a plant and growing a fruit. To reach atoms and variables from the outer layers, we have to escape them with `\` character, like in `(READ (EXP (\plantSeed \Fruit)))` section. Similarly, atoms and variables created within that scope are not visible outside of that scope unless they are escaped with `\` character, like in `(WRITE (EXP (\fruitGrows \Fruit)))` section. It is also possible to reach more distant outer scopes by repeating a number of `\` characters where the number of repetitions denotes the depth difference to the parent scope we are referring to. Without escaping, it is not possible to refer to adjacent scopes or their children atoms and variables. Thus, without escaping, we are using scopes as private areas where their atoms and variables may interact.
 
-Scopes represent a natural way to package and separate sets of rules where only escaped atoms and variables are exposed to the outer world. Unescaped atoms and variables are considered private members of scopes where they are defined and used.
+Scopes represent a natural way to package and separate sets of rules where only escaped atoms and variables are exposed to the outer world. Unescaped atoms and variables are considered private members of scopes in which they are defined and used.
 
 ---
 
-In this section, we learned how to write syntactically correct rules, how to use variables, how to apply a set of rules, and how to chain rules one onto another. Along with a help of scopes using atom and variable escaping system to keep certain rules out of unwanted interfering with other rules, we get a fully functional Turing complete term rewriting platform.
+In this section, we learned how to write syntactically correct rules, how to use variables, how to apply a set of rules, and how to chain rules one onto another. We also skimmed over rule scoping using atom and variable escaping system to keep certain rules out of unwanted interfering with other rules. In the effect of introduced constructs, we are in possession of a computationally complete term rewriting platform.
 
 ## 3. practical examples
 
-We assembled a number of practical examples covering programming examples (boolean operations, binary number arithmetic and comparison, operations on lists) and abstraction examples (lambda calculus, sequent calculus). These examples are covered in source code files in `path-to-sybolverse/examples/` directory. All the examples are paired with their example input, and can also be performed from command line using *Symbolverse* executable.
+We assembled a number of practical examples covering programming examples (boolean operations, binary number arithmetic and comparison, operations on lists) and more abstract examples (SKI calculus, lambda calculus, sequent calculus). These examples are covered in source code files in `path-to-sybolverse/examples/` directory. All the examples are paired with their example input, and can also be examined from command line using *Symbolverse* executable.
 
 ## 4. conclusion
 

@@ -107,53 +107,59 @@ var Sexpression = (
                         break;
                     }
                 }
-                else if ('"'.indexOf (currChar) > -1) {
-                    currAtom = getBlock (m, pos, currChar);
-                    if (currAtom.err) {
-                        return currAtom;
-                    }
-                    else {
-                        var start = [pos[y], pos[x]];
-                        pos[y] = currAtom.pos[y];
-                        pos[x] = currAtom.pos[x];
-                        if (stack.length > 0) {
-                            if (verbose) {
-                                stack[stack.length - 1].push ({val: currAtom.val, pos: {y: pos[y], x: pos[x]}});
-                            }
-                            else {
-                                stack[stack.length - 1].push (currAtom.val);
-                            }
-
-                            if (m[pos[y]][pos[x]] === undefined) {
-                                pos[y]++;
-                                pos[x] = 0;
-                            }
-                        }
-                        else {
-                            if (verbose) {
-                                val = {val: currAtom.val, pos: start};
-                            }
-                            else {
-                                val = currAtom.val;
-                            }
-                            break;
-                        }
-                    }
-                }
-                else if (' ()"'.indexOf (currChar) === -1 && currChar !== undefined) {
-                    currAtom = "";
+                else if (' ()'.indexOf (currChar) === -1 && currChar !== undefined) {
                     var start = {y: pos[y], x: pos[x]};
-                    while (' ()"'.indexOf (currChar) === -1 && currChar !== undefined) {
-                        currAtom += currChar;
+                    var escaped = "";
+                    while (currChar === '\\') {
+                        escaped += currChar;
                         pos[x]++;
                         currChar = m[pos[y]][pos[x]];
                     }
                     
-                    if ("\\".repeat (currAtom.length) === currAtom) {
-                        return {err: err[10], pos: start};
+                    if (currChar === '"') {
+                        currAtom = getBlock (m, pos, currChar);
+                        if (currAtom.err) {
+                            return currAtom;
+                        }
+                        else {
+                            pos[y] = currAtom.pos[y];
+                            pos[x] = currAtom.pos[x];
+                            currChar = m[pos[y]][pos[x]];
+                            var end = {y: pos[y], x: pos[x]};
+                            if (currAtom.val === "") {
+                                currAtom.val = "NIL"
+                            }
+                            
+                            if (escaped.length > 0) {
+                                if (currChar === '\\') {
+                                    return {err: err[10], pos: start};
+                                }
+                                else {
+                                    currAtom = escaped + currAtom.val;
+                                }
+                            }
+                            else {
+                                while (currChar === '\\') {
+                                    escaped += currChar;
+                                    pos[x]++;
+                                    currChar = m[pos[y]][pos[x]];
+                                }
+                                
+                                currAtom = currAtom.val + escaped;
+                            }
+                        }
                     }
-                    else if (currAtom.charAt (0) === "\\" && currAtom.charAt (currAtom.length - 1) === "\\") {
-                        return {err: err[10], pos: start};
+                    else {
+                        currAtom = escaped;
+                        while (' ()"'.indexOf (currChar) === -1 && currChar !== undefined) {
+                            currAtom += currChar;
+                            pos[x]++;
+                            currChar = m[pos[y]][pos[x]];
+                        }
+                        
+                        if (currAtom.charAt (0) === "\\" && currAtom.charAt (currAtom.length - 1) === "\\") {
+                            return {err: err[10], pos: start};
+                        }
                     }
 
                     if (stack.length > 0) {
@@ -361,7 +367,7 @@ var Sexpression = (
                     }
                 }
                 
-                return {err: "syntax error", found: Array.isArray (expr.val) ? (expr.val.length === 0 ? "empty " : "") + "list" : '"' + expr.val + '"', pos: expr.pos};
+                return {err: "syntax error", found: Array.isArray (expr.val) ? (expr.val.length === 0 ? "empty " : "") + "list" : JSON.stringify (expr.val), pos: expr.pos};
             }
         };
         
@@ -371,7 +377,7 @@ var Sexpression = (
             stack.push ({car: expr});
             while (stack.length > 0) {
                 item = stack.pop ();
-                if (item.car) {
+                if (item.car !== undefined) {
                     car = item.car;
                     if (Array.isArray (car)) {
                         stack.push ({cdr: cdr})
@@ -527,10 +533,12 @@ var Sexpression = (
                 }
             }
             
-            for (var i = 0; i < str.length && str.charAt(i) === "\\"; i++);
-            for (var j = i; j < str.length && str.charAt(j) !== "\\"; j++);
-            
-            if (quoted || str.indexOf ("&bsol;") > -1) {
+            if ("\\".repeat (str.length) === str) {
+                return str + 'NIL';
+            }
+            else if (quoted || str.indexOf ("&bsol;") > -1) {
+                for (var i = 0; i < str.length && str.charAt(i) === "\\"; i++);
+                for (var j = i; j < str.length && str.charAt(j) !== "\\"; j++);
                 return str.substring(0, i) + JSON.stringify(str.substring(i, j).replaceAll ("&bsol;", "\\")) + str.substring(j, str.length);
             }
             else {

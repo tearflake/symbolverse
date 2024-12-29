@@ -129,7 +129,7 @@
 <tbody>
 <tr>
 <td class="exRound" id="top" cellpadding="10" align="center" valign="middle" height="30">
-<font style="font-size:24px"><strong>Symbolverse playground</strong></font>
+<font style="font-size:24px"><strong>Symbolverse playground (WIP)</strong></font>
 </td>
 </tr>
 <tr>
@@ -142,16 +142,9 @@
         
 <!--red>❎</red><grn>✅</grn><blu>🟩</blu-->
 
-<a href="javascript:populate('example-test');">test</a>
+<!--a href="javascript:populate('example-test1');">test 1</a-->
 
 <div class="droplbl">1. world modeling examples</div>
-
-<!--div class="droplbl">&nbsp;&nbsp;&nbsp;&nbsp; 1.1. s-expressions</div>
-
-        <a href="javascript:populate('example0-1');">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; hello world 1</a>
-        <a href="javascript:populate('example0-2');">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; hello world 2</a>
-
-<br/-->
 
 <div class="droplbl">&nbsp;&nbsp;&nbsp;&nbsp; 1.1. single rule</div>
 
@@ -180,6 +173,20 @@
 
 <br/>
 
+<!--div class="droplbl">&nbsp;&nbsp;&nbsp;&nbsp; 1.5. unbound variables</div>
+
+        <a href="javascript:populate('example-uvar1');">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; or introduction</a>
+        <a href="javascript:populate('example-uvar2');">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; reverse equality test</a>
+
+<br/-->
+
+<!--div class="droplbl">&nbsp;&nbsp;&nbsp;&nbsp; 1.5. nondeterminism</div>
+
+        <a href="javascript:populate('example-seq1');">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; academic citizen</a>
+        <a href="javascript:populate('example-seq2');">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; computer expert</a>
+
+<br-->
+
 <div class="droplbl">2. programming examples</div>
 
 <div class="droplbl">&nbsp;&nbsp;&nbsp;&nbsp; 2.1. booleans and numbers</div>
@@ -200,13 +207,24 @@
 
 <br/>
 
-<div class="droplbl">3. abstraction examples</div>
+<div class="droplbl">3. computing platforms examples</div>
 
-        <a href="javascript:populate('example-lamb'      );">&nbsp;&nbsp;&nbsp;&nbsp; lambda calculus</a>
-        <a href="javascript:populate('example-seq'       );">&nbsp;&nbsp;&nbsp;&nbsp; sequent calculus</a>
-        <a href="javascript:populate('example-constr'    );">&nbsp;&nbsp;&nbsp;&nbsp; constructive proving</a>
+        <a href="javascript:populate('example-ski'       );">&nbsp;&nbsp;&nbsp;&nbsp; SKI calculus interpreter</a>
+        <a href="javascript:populate('example-bool2'     );">&nbsp;&nbsp;&nbsp;&nbsp; Boolean logic to SKI compiler</a>
+        <a href="javascript:populate('example-lamb'      );">&nbsp;&nbsp;&nbsp;&nbsp; Lambda calculus to SKI compiler</a>
+        <a href="javascript:populate('example-jot'       );">&nbsp;&nbsp;&nbsp;&nbsp; Jot framework to SKI compiler</a>
+<br/>
+
+<div class="droplbl">4. theorem proving examples</div>
+
+        <a href="javascript:populate('example-constr'    );">&nbsp;&nbsp;&nbsp;&nbsp; constructive proving assistant</a>
+        <a href="javascript:populate('example-seq'       );">&nbsp;&nbsp;&nbsp;&nbsp; sequent calculus automated prover</a>
 
 <br/>
+
+<!--div class="droplbl">3. proof calculi</div-->
+<!--div class="droplbl">3. computational models</div-->
+
         </nobr></b>
     </div>
 </td>
@@ -228,20 +246,11 @@
             </tr>
             <tr height="100%">
              <!-- style="margin-top:-8px;"-->
-             <td class="exRound" id="in" valign="top" width="100%">
-                <div id="rules" class="container"  width="100%" style="position: relative; width: 100%; height: 100%;">
+             <td class="exRound" id="in" valign="top" width="100%" style="background-color: rgb(48,48,48);">
+                <div id="rules" class="container" style="position: relative; width: 100%; height: 100%;">
                 </div>
                 <script>
-                    var options = {
-                        font: "8pt monospace",
-                        tabWidth: 4,
-                        colorCaret: "rgb(208,208,208)",
-                        colorText: "rgb(208,208,208)",
-                        colorTextBack: "rgb(48,48,48)",
-                        colorSelection: "rgb(48,48,48)",
-                        colorSelectionBack: "rgb(208,208,208)",
-                    }
-                    var rules1 = edit ("rules", options);
+                    var rules1 = edit ("rules");
 
                     document.addEventListener('selectionchange', function(e) {
                         var pos = getCoords(rules1.getValue(), rules1.getSelectionStart());
@@ -251,7 +260,7 @@
              </td>
             </tr>
             <tr>
-              <td class="exRound" id="bot1" height="5" align="right" style="color: rgb(208,208,208); background-color: rgb(48,48,48); font-family: monospace; font-size:10px; padding: 1px;">
+              <td class="exRound" id="bot1" height="5" align="right" width="100%" style="width: 100%; color: rgb(208,208,208); background-color: rgb(48,48,48); font-family: monospace; font-size:10px; padding: 1px;">
                 <span id="lblGrammarCaret">(1, 1)</span>
               </td>
             </tr>
@@ -273,16 +282,7 @@
                 <div id="input" class="container" style="position: relative; width: 100%; height: 100%;">
                 </div>
                 <script>
-                    var options = {
-                        font: "8pt monospace",
-                        tabWidth: 4,
-                        colorCaret: "rgb(208,208,208)",
-                        colorText: "rgb(208,208,208)",
-                        colorTextBack: "rgb(48,48,48)",
-                        colorSelection: "rgb(48,48,48)",
-                        colorSelectionBack: "rgb(208,208,208)",
-                    }
-                    var input1 = edit ("input", options);
+                    var input1 = edit ("input");
 
                     document.addEventListener('selectionchange', function(e) {
                         var pos = getCoords(input1.getValue(), input1.getSelectionStart());

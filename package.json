@@ -1,6 +1,6 @@
 {
   "name": "@tearflake/symbolverse",
-  "version": "0.2.12",
+  "version": "0.2.14",
   "description": "Symbolic term rewriting system",
   "main": "symbolverse.js",
   "directories": {

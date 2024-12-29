@@ -8,6 +8,8 @@ var isNode = new Function ("try {return this===global;}catch(e){return false;}")
 
 if (isNode ()) {
     // begin of Node.js support
+    
+    var Rewriter = require ("./src/rewriter.js");
 
     var Files = {
         open: function (fileName) {
@@ -104,8 +106,6 @@ if (isNode ()) {
         }
     }
     
-    var Rewriter = require ("./src/rewriter.js");
-    
     function escapeRegExp(string) {
       return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
     }
@@ -155,7 +155,7 @@ else {
         document.body.appendChild(script);
         
         var script = document.createElement('script')
-        script.src = path + "compiler.js"
+        script.src = path + "parser.js"
         document.body.appendChild(script);
         
         var script = document.createElement('script')

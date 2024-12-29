@@ -15,4 +15,11 @@
 
 - v0.2.x
     - introducing scoped rules
-    - order of magnitude speed-up (also removed infinite recursion detect)
+    - stack overflow instead of infinite recursion detection
+    - one order of magnitude speed-up
+
+## Dec, 2024.
+
+- v0.2.x
+    - proper unification with unbound variables
+    

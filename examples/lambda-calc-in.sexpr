@@ -1,2 +1,2 @@
-(((lmbd x (lmbd y (y x))) a) b)
+(lc (((lmbd x (lmbd y (y x))) a) b))
 

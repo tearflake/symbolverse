@@ -1,11 +1,11 @@
 examples = {
-"example-test":
+"example-test1":
 `
 (
     REWRITE
     
     /entry point/
-    (RULE (VAR Fruit) (READ (EXP (\\plantSeed Fruit))) (WRITE (EXP (plantSeed Fruit))))
+    (RULE (VAR Fruit) (READ (EXP (\\plantSeed \\Fruit))) (WRITE (EXP (plantSeed Fruit))))
     
     /exit point/
     (RULE (VAR Fruit) (READ (EXP (fruitGrows Fruit))) (WRITE (EXP (\\fruitGrows Fruit))))
@@ -13,7 +13,7 @@ examples = {
     (
         REWRITE
         
-        (RULE (VAR Fruit) (READ (EXP (\\plantSeed Fruit)    )) (WRITE (EXP (treeForms Fruit)     )))
+        (RULE (VAR Fruit) (READ (EXP (\\plantSeed \\Fruit)    )) (WRITE (EXP (treeForms Fruit)     )))
         (RULE (VAR Fruit) (READ (EXP (treeForms Fruit)     )) (WRITE (EXP (blooms Fruit)        )))
     )
     
@@ -25,38 +25,113 @@ examples = {
     )
 )
 `,
-"example-test-input":
+"example-test1-input":
 `
 (plantSeed apple)
 `,
-"example0-1":
+
+"example-seq1":
 `
 ///
-constant output 1
+academic citizen
 
- input: NIL
-output: \`(hello world)\`
+ input: \`isBeingEducated Name\`
+output: \`willBeAcademic Name\`
 ///
 
-(EXP (\\hello \\world))
+(
+    REWRITE
+    
+    (
+        RULE
+        (VAR Name)
+        (
+            READ
+            (EXP (\\isBeingEducated \\Name))
+        )
+        (
+            WRITE
+            (EXP (\\attendsSchool \\Name))
+            (EXP (\\attendsCollege \\Name))
+        )
+    )
+
+    (RULE (VAR Name) (READ (EXP (\\attendsSchool \\Name))) (WRITE (EXP (\\willBeAcademic \\Name))))
+    (RULE (VAR Name) (READ (EXP (\\attendsCollege \\Name))) (WRITE (EXP (\\willBeAcademic \\Name))))
+)
 `,
-"example0-1-input":
+"example-seq1-input":
 `
+(isBeingEducated Jane)
 `,
 
-"example0-2":
+"example-seq2":
 `
 ///
-constant output 2
+computer expert
 
- input: NIL
-output: \`hello world\`
+ input: \`buildsARobot Name\`
+output: \`isAComputerExpert Name\`
 ///
 
-(EXP \\"hello world")
+(
+    REWRITE
+    
+    (RULE (VAR Name) (READ (EXP (\\buildsARobot \\Name))) (WRITE (EXP (\\mastersSoftware \\Name))))
+    (RULE (VAR Name) (READ (EXP (\\buildsARobot \\Name))) (WRITE (EXP (\\mastersHardware \\Name))))
+    
+    (
+        RULE
+        (VAR Name)
+        (
+            READ
+            (EXP (\\mastersSoftware \\Name))
+            (EXP (\\mastersHardware \\Name))
+        )
+        (
+            WRITE
+            (EXP (\\isAComputerExpert \\Name))
+        )
+    )
+)
 `,
-"example0-2-input":
+"example-seq2-input":
 `
+(buildsARobot John)
+`,
+
+"example-uvar1":
+`
+///
+or introduction
+///
+
+(
+    REWRITE
+    
+    (RULE (VAR A B) (READ (EXP (\\[or-intro] \\A))) (WRITE (EXP (\\or \\A \\B))))
+)
+`,
+"example-uvar1-input":
+`
+([or-intro] x)
+`,
+
+"example-uvar2":
+`
+///
+unbound variables reverse equality test
+///
+
+(
+    REWRITE
+    
+    (RULE (READ (EXP (\\equals \\abc \\abc))) (WRITE (EXP \\true)))
+)
+`,
+"example-uvar2-input":
+`
+(equals (UNBOUND A) (UNBOUND A))
 `,
 
 "example1-1":
@@ -819,7 +894,11 @@ remove element from list
 `,
 "example-remove-input":
 `
-(remove five (one (two (three (four (five (six (seven ()))))))))
+(
+    remove
+    five
+    (one (two (three (four (five (six (seven ())))))))
+)
 `,
 
 "example-replace":
@@ -855,13 +934,18 @@ replace element in list
 `,
 "example-replace-input":
 `
-(replace five kvin (one (two (three (four (five (six (seven ()))))))))
+(
+    replace
+    five
+    kvin
+    (one (two (three (four (five (six (seven ())))))))
+)
 `,
 
-"example-comb":
+"example-ski":
 `
 ///
-combinatory logic - SKI calculus
+SKI calculus interpreter
 ///
 
 (
@@ -873,41 +957,246 @@ combinatory logic - SKI calculus
     (RULE (VAR x y z) (READ (EXP (((\\S x) y) z))) (WRITE (EXP ((x z) (y z)))))
 )
 `,
-"example-comb-input":
+"example-ski-input":
 `
-((((S (K (S I))) ((S (K K)) I)) a) b)
+((((S (K (S I))) K) a) b)
 `,
 
-"example-lamb":
+"example-ski2jot":
 `
 ///
-lambda calculus
+SKI calculus interpreter
 ///
 
 (
     REWRITE
     
-    /lambda terms/
-    (RULE (VAR x) (READ (EXP (\\lmbd \\x \\x))) (WRITE (EXP \\I)))
-    (RULE (VAR x E1 E2) (READ (EXP (\\lmbd \\x (\\E1 \\E2)))) (WRITE (EXP ((\\S (\\lmbd \\x \\E1)) (\\lmbd \\x \\E2)))))
-    (RULE (VAR x y) (READ (EXP (\\lmbd \\x \\y))) (WRITE (EXP (\\K \\y))))
-
     /combinators/
-    (RULE (VAR x) (READ (EXP (\\I \\x))) (WRITE (EXP \\x)))
-    (RULE (VAR x y) (READ (EXP ((\\K \\x) \\y))) (WRITE (EXP \\x)))
-    (RULE (VAR x y z) (READ (EXP (((\\S \\x) \\y) \\z))) (WRITE (EXP ((\\x \\z) (\\y \\z)))))
+    (RULE (VAR x) (READ (EXP (\\I))) (WRITE (EXP w)))
+    (RULE (VAR w) (READ (EXP (w \\K))) (WRITE (EXP (((((((w 1) 1) 1) 0) 0))))))
+    (RULE (VAR x y z) (READ (EXP (((w \\S x) y) z))) (WRITE (EXP ((x z) (y z)))))
+)
+`,
+"example-ski2jot-input":
+`
+((((S (K (S I))) K) a) b)
+`,
+
+"example-bool2":
+`
+///
+Boolean logic to SKI compiler
+///
+
+(
+    REWRITE
+    
+    (RULE (VAR A) (READ (EXP (\\bool \\A))) (WRITE (EXP (parseBool A))))
+    (RULE (VAR A) (READ (EXP (parsedBool A))) (WRITE (EXP (compileToSKI A))))
+    (RULE (VAR A) (READ (EXP (compiledToSKI A))) (WRITE (EXP \\A)))
+
+    (
+        REWRITE /parser/
+        
+        (RULE (READ (EXP \\typeOf)) (WRITE (EXP \\_typeOf)))
+        (RULE (VAR A) (READ (EXP (\\parseBool \\A))) (WRITE (EXP (parsingBool A))))
+        
+        (
+            RULE
+            (READ (EXP true))
+            (WRITE (EXP (typeOf true\\ bool)))
+        )
+        (
+            RULE
+            (READ (EXP false))
+            (WRITE (EXP (typeOf false\\ bool)))
+        )
+        (
+            RULE
+            (VAR A)
+            (READ (EXP (not (typeOf A bool))))
+            (WRITE (EXP (typeOf (not\\ A) bool)))
+        )
+        (
+            RULE
+            (VAR A B)
+            (READ (EXP (or (typeOf A bool) (typeOf B bool))))
+            (WRITE (EXP (typeOf (or\\ A B) bool)))
+        )
+        (
+            RULE
+            (VAR A B)
+            (READ (EXP (and (typeOf A bool) (typeOf B bool))))
+            (WRITE (EXP (typeOf (and\\ A B) bool)))
+        )
+        
+        (RULE (VAR A) (READ (EXP (parsingBool (typeOf A bool)))) (WRITE (EXP (\\parsedBool \\\\A))))
+        (RULE (VAR A) (READ (EXP (parsingBool A))) (WRITE (EXP \\\\"bool syntax error")))
+    )
+    
+    (
+        REWRITE /compiler/
+
+        (RULE (VAR A) (READ (EXP (\\compileToSKI \\A))) (WRITE (EXP (compilingToSKI A))))
+
+        (RULE (READ (EXP true)) (WRITE (EXP K)))
+        (RULE (READ (EXP false)) (WRITE (EXP (S K))))
+        
+        (RULE (VAR A) (READ (EXP (not A))) (WRITE (EXP ((A false) true))))
+        (RULE (VAR A B) (READ (EXP (or A B))) (WRITE (EXP ((A true) B))))
+        (RULE (VAR A B) (READ (EXP (and A B))) (WRITE (EXP ((A B) false))))
+        
+        (RULE (VAR A) (READ (EXP (compilingToSKI A))) (WRITE (EXP (\\compiledToSKI \\A))))
+    )
+)
+`,
+"example-bool2-input":
+`
+(bool (not (and (or false true) false)))
+`,
+
+"example-lamb":
+`
+///
+Lambda calculus to SKI compiler
+///
+
+(
+    REWRITE
+    (RULE (VAR A) (READ (EXP (\\lc \\A))) (WRITE (EXP (parseLc A))))
+    (RULE (VAR A) (READ (EXP (parsedLc A))) (WRITE (EXP (compileToSKI A))))
+    (RULE (VAR A) (READ (EXP (compiledToSKI A))) (WRITE (EXP \\A)))
+
+    (
+        REWRITE /parser/
+        
+        (RULE (READ (EXP \\typeOf)) (WRITE (EXP \\_typeOf)))
+        (RULE (VAR A) (READ (EXP (\\parseLc \\A))) (WRITE (EXP (parsingLc A))))
+
+        (RULE (READ (EXP a)) (WRITE (EXP (typeOf a\\ (var term)))))
+        (RULE (READ (EXP b)) (WRITE (EXP (typeOf b\\ (var term)))))
+        (RULE (READ (EXP c)) (WRITE (EXP (typeOf c\\ (var term)))))
+        (RULE (READ (EXP d)) (WRITE (EXP (typeOf d\\ (var term)))))
+        (RULE (READ (EXP e)) (WRITE (EXP (typeOf e\\ (var term)))))
+        (RULE (READ (EXP f)) (WRITE (EXP (typeOf f\\ (var term)))))
+        (RULE (READ (EXP g)) (WRITE (EXP (typeOf g\\ (var term)))))
+        (RULE (READ (EXP h)) (WRITE (EXP (typeOf h\\ (var term)))))
+        (RULE (READ (EXP i)) (WRITE (EXP (typeOf i\\ (var term)))))
+        (RULE (READ (EXP j)) (WRITE (EXP (typeOf j\\ (var term)))))
+        (RULE (READ (EXP k)) (WRITE (EXP (typeOf k\\ (var term)))))
+        (RULE (READ (EXP l)) (WRITE (EXP (typeOf l\\ (var term)))))
+        (RULE (READ (EXP m)) (WRITE (EXP (typeOf m\\ (var term)))))
+        (RULE (READ (EXP n)) (WRITE (EXP (typeOf n\\ (var term)))))
+        (RULE (READ (EXP o)) (WRITE (EXP (typeOf o\\ (var term)))))
+        (RULE (READ (EXP p)) (WRITE (EXP (typeOf p\\ (var term)))))
+        (RULE (READ (EXP q)) (WRITE (EXP (typeOf q\\ (var term)))))
+        (RULE (READ (EXP r)) (WRITE (EXP (typeOf r\\ (var term)))))
+        (RULE (READ (EXP s)) (WRITE (EXP (typeOf s\\ (var term)))))
+        (RULE (READ (EXP t)) (WRITE (EXP (typeOf t\\ (var term)))))
+        (RULE (READ (EXP u)) (WRITE (EXP (typeOf u\\ (var term)))))
+        (RULE (READ (EXP v)) (WRITE (EXP (typeOf v\\ (var term)))))
+        (RULE (READ (EXP w)) (WRITE (EXP (typeOf w\\ (var term)))))
+        (RULE (READ (EXP x)) (WRITE (EXP (typeOf x\\ (var term)))))
+        (RULE (READ (EXP y)) (WRITE (EXP (typeOf y\\ (var term)))))
+        (RULE (READ (EXP z)) (WRITE (EXP (typeOf z\\ (var term)))))
+        (
+            RULE
+            (VAR X M ANY)
+            (READ (EXP (lmbd (typeOf X (var term)) (typeOf M (ANY term)))))
+            (WRITE (EXP (typeOf (lmbd\\ X M) (abs term))))
+        )
+        (
+            RULE
+            (VAR M N ANY1 ANY2)
+            (READ (EXP ((typeOf M (ANY1 term)) (typeOf N (ANY2 term)))))
+            (WRITE (EXP (typeOf (M N) (app term))))
+        )
+        
+        (RULE (VAR A B) (READ (EXP (parsingLc (typeOf A B)))) (WRITE (EXP (\\parsedLc \\\\A))))
+        (RULE (VAR A) (READ (EXP (parsingLc A))) (WRITE (EXP \\\\"lambda calculus syntax error")))
+    )
+    
+    (
+        REWRITE
+        
+        (RULE (VAR A) (READ (EXP (\\compileToSKI \\A))) (WRITE (EXP (compilingToSKI A))))
+        
+        (RULE (VAR x) (READ (EXP (lmbd x x))) (WRITE (EXP I)))
+        (RULE (VAR x E1 E2) (READ (EXP (lmbd x (E1 E2)))) (WRITE (EXP ((S (lmbd x E1)) (lmbd x E2)))))
+        (RULE (VAR x y) (READ (EXP (lmbd x y))) (WRITE (EXP (K y))))
+        
+        (RULE (VAR A) (READ (EXP (compilingToSKI A))) (WRITE (EXP (\\compiledToSKI \\A))))
+    )
 )
 `,
 "example-lamb-input":
 `
-(((lmbd x (lmbd y (y x))) a) b)
+(lc (((lmbd x (lmbd y (y x))) a) b))
+`,
+
+"example-jot":
+`
+///
+Jot framework to SKI compiler
+///
+
+(
+    REWRITE
+    
+    (RULE (VAR A) (READ (EXP (\\jot \\A))) (WRITE (EXP (parseJot A))))
+    (RULE (VAR A) (READ (EXP (parsedJot A))) (WRITE (EXP (compileToSKI A))))
+    (RULE (VAR A) (READ (EXP (compiledToSKI A))) (WRITE (EXP \\A)))
+
+    (
+        REWRITE /parser/
+        
+        (RULE (READ (EXP \\typeOf)) (WRITE (EXP \\_typeOf)))
+        (RULE (VAR A) (READ (EXP (\\parseJot \\A))) (WRITE (EXP (parsingJot A))))
+        
+        (
+            RULE
+            (READ (EXP NIL))
+            (WRITE (EXP (typeOf NIL\\ jot)))
+        )
+        (
+            RULE
+            (VAR A B)
+            (READ (EXP ((typeOf A jot) 0)))
+            (WRITE (EXP (typeOf (A 0\\) jot)))
+        )
+        (
+            RULE
+            (VAR A B)
+            (READ (EXP ((typeOf A jot) 1)))
+            (WRITE (EXP (typeOf (A 1\\) jot)))
+        )
+        
+        (RULE (VAR A) (READ (EXP (parsingJot (typeOf A jot)))) (WRITE (EXP (\\parsedJot \\\\A))))
+        (RULE (VAR A) (READ (EXP (parsingJot A))) (WRITE (EXP \\\\"jot syntax error")))
+    )
+    
+    (
+        REWRITE /compiler/
+
+        (RULE (VAR A) (READ (EXP (\\compileToSKI \\A))) (WRITE (EXP (compilingToSKI A))))
+
+        (RULE (VAR W) (READ (EXP (W 0))) (WRITE (EXP ((W S) K))))
+        (RULE (VAR W) (READ (EXP (W 1))) (WRITE (EXP (S (K W)))))
+        (RULE (READ (EXP NIL)) (WRITE (EXP I)))
+
+        (RULE (VAR A) (READ (EXP (compilingToSKI A))) (WRITE (EXP (\\compiledToSKI \\A))))
+    )
+)
+`,
+"example-jot-input":
+`
+(jot ((((NIL 1) 0) 1) 0))
 `,
 
 "example-seq":
 `
 ///
-propositional logic theorem checker using
-sequent calculus (exponential time complexity)
+formula validator using sequent calculus (exponential time complexity)
 ///
 
 (

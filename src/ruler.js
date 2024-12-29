@@ -69,7 +69,7 @@ var Ruler = (
         }
         
         var backVar = function (tokW, idxW, tokR, idxR, uvars) {
-            if (idxW > 0 && tokW[idxW] === "(" && tokW[idxW + 1] === "UVAR" && tokW[idxW + 2] !== "(" && tokW[idxW + 2] !== ")" && tokW[idxW + 3] === ")") {
+            if (idxW > 0 && tokW[idxW] === "(" && tokW[idxW + 1] === "UNBOUND" && tokW[idxW + 2] !== "(" && tokW[idxW + 2] !== ")" && tokW[idxW + 3] === ")") {
                 var lsW = levelSplit (tokW[idxW + 2])
                 var tokWEsc = lsW.esc;
                 var tokWName = lsW.atom;
@@ -108,7 +108,16 @@ var Ruler = (
                     var tokRName = "";
                 }
                 
-                if (vars[tokRName] === null && vars.hasOwnProperty(tokRName)) {
+                if (idxW > 0 && tokW[idxW] === "(" && tokW[idxW + 1] === "UNBOUND" && tokW[idxW + 2] !== "(" && tokW[idxW + 2] !== ")" && tokW[idxW + 3] === ")") {
+                    if (!backVar (tokW, idxW, tokR, idxR, uvars)) {
+                        return false;
+                    }
+                    else {
+                        idxR = getNextWhole (tokR, idxR);
+                        idxW = idxW + 4;
+                    }
+                }
+                else if (vars[tokRName] === null && vars.hasOwnProperty(tokRName)) {
                     idxWStart = idxW;
                     idxW = getNextWhole (tokW, idxW);
                     vars[tokRName] = levelShift (tokW.slice (idxWStart, idxW), -tokREsc);
@@ -123,15 +132,6 @@ var Ruler = (
                     }
 
                     idxR++;
-                }
-                else if (idxW > 0 && tokW[idxW] === "(" && tokW[idxW + 1] === "UVAR" && tokW[idxW + 2] !== "(" && tokW[idxW + 2] !== ")" && tokW[idxW + 3] === ")") {
-                    if (!backVar (tokW, idxW, tokR, idxR, uvars)) {
-                        return false;
-                    }
-                    else {
-                        idxR = getNextWhole (tokR, idxR);
-                        idxW = idxW + 4;
-                    }
                 }
                 else if (tokW[idxW] !== tokR[idxR]) {
                     return false;
@@ -174,7 +174,7 @@ var Ruler = (
                         indexed = "\\".repeat (-spl.esc) + indexed;
                     }
 
-                    result = [...result, "(", "UVAR", indexed, ")"];
+                    result = [...result, "(", "UNBOUND", indexed, ")"];
                     uvar = true;
                 }
                 else {
@@ -195,11 +195,16 @@ var Ruler = (
             
             while (idx < tok.length) {
                 var str = tok[idx];
-                if (str !== "(" && str !== ")" &&
-                    (str !== "ATOMIC" && str !== "COMPOUND" && str !== "ANY")
+                if (str !== "(" && str !== ")" /*&&
+                    (str !== "ATOMIC" && str !== "COMPOUND" && str !== "ANY")*/
                 ) {
                     for (var curLevelL = 0; curLevelL < str.length && str.charAt(curLevelL) === "\\"; curLevelL++);
-                    for (var curLevelR = 0; str.length - curLevelR - 1 > 0 && str.charAt(str.length - curLevelR - 1) === "\\"; curLevelR++);
+                    if ("\\".repeat (str.length) !== str) {
+                        for (var curLevelR = 0; str.length - curLevelR - 1 > 0 && str.charAt(str.length - curLevelR - 1) === "\\"; curLevelR++);
+                    }
+                    else {
+                        var curLevelR = 0;
+                    }
                     
                     var lft = curLevelL;
                     var rgt = curLevelR;
@@ -253,7 +258,7 @@ var Ruler = (
         
         var getLvl = function (str, vars) {
             if (vars === undefined) vars  = [];
-            if (str !== "ATOMIC" && str !== "COMPOUND" && str !== "ANY" && str !== undefined && vars.indexOf (str) === -1){
+            if (/*str !== "ATOMIC" && str !== "COMPOUND" && str !== "ANY" &&*/ str !== undefined /*&& vars.indexOf (str) === -1*/){
                 for (var curLevelL = 0; curLevelL < str.length && str.charAt(curLevelL) === "\\"; curLevelL++);
                 for (var curLevelR = 0; str.length - curLevelR - 1 > 0 && str.charAt(str.length - curLevelR - 1) === "\\"; curLevelR++);
                 
@@ -261,25 +266,6 @@ var Ruler = (
             }
             else {
                 return -Infinity ;
-            }
-        }
-        
-        var levelSplit = function (atom) {
-            var vEsc, vAtm;
-            
-            if (atom === undefined) {
-                return {esc: -Infinity, atom: undefined};
-            }
-            else {
-                vEsc = Ruler.getLvl (atom);
-                if (vEsc < 0) {
-                    vAtm = atom.substring (-vEsc, atom.length);
-                }
-                else {
-                    vAtm = atom.substring (0, atom.length - vEsc);
-                }
-                
-                return {esc: vEsc, atom: vAtm};
             }
         }
         
@@ -335,4 +321,5 @@ if (isNode ()) {
 
     // end of Node.js support
 }
+
 

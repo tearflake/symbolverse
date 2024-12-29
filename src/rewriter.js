@@ -13,10 +13,6 @@ var Rewriter = (
     (function () {
         "use strict";
         
-        var compile = function (strRules) {
-            return Compiler.compile (strRules);
-        }
-        
         var rewrite = function (rules, strInput) {
             var input = Sexpression.parse (strInput);
             if (input.err) {
@@ -33,6 +29,110 @@ var Rewriter = (
                 }
             }
         }
+        
+        var compile = function (rules) {
+            var syntax = `
+                (
+                    REWRITE
+                    (RULE (READ (EXP start)) (WRITE (EXP (\\REWRITE expressions))))
+                    
+                    (RULE (READ (EXP expressions)) (WRITE (EXP (expression expressions))))
+                    (RULE (READ (EXP expressions)) (WRITE (EXP (expression ())         )))
+                    
+                    (RULE (READ (EXP expression)) (WRITE (EXP start                         )))
+                    (RULE (READ (EXP expression)) (WRITE (EXP (\\RULE rd-wt)                )))
+                    (RULE (READ (EXP expression)) (WRITE (EXP (\\RULE ((\\VAR atoms) rd-wt)))))
+                    
+                    (RULE (READ (EXP rd-wt)) (WRITE (EXP (rd (wt ())))))
+                    
+                    (RULE (READ (EXP rd)) (WRITE (EXP (\\READ  ((\\EXP (ANY ())) ())))))
+                    (RULE (READ (EXP wt)) (WRITE (EXP (\\WRITE ((\\EXP (ANY ())) ())))))
+                    
+                    (RULE (READ (EXP atoms)) (WRITE (EXP (ATOMIC atoms))))
+                    (RULE (READ (EXP atoms)) (WRITE (EXP (ATOMIC ())   )))
+                )
+            `;
+            
+            var syntaxRules = getRules (Sexpression.parse (syntax));
+            var pRules = Sexpression.parse (rules.replaceAll ("_", "&lowbar;"));
+            
+            if (pRules.err) {
+                return pRules;
+            }
+            
+            var expression = Sexpression.normalizeSexpr (pRules);
+            var ret = Parser.consumeCFG (syntaxRules, "start\\", expression);
+            if (ret.err) {
+                var path = Sexpression.denormalizeIndexes (ret.path);
+                var msg = Sexpression.getNode (rules, path);
+
+                return {err: msg.err, found: msg.found, pos: msg.pos};
+            }
+            else {
+                var rls = getRules (pRules);
+                if (rls.err) {
+                    var msg = Sexpression.getNode (rules, rls.path);
+                    return {err: rls.err, found: msg.found, pos: msg.pos};
+                }
+                
+                return rls;
+            }
+        };
+        
+        var getRules = function (arr) {
+            var rules = [];
+            var stack = [];
+            var p = [];
+            stack.push ({ast: arr, level: 0});
+            while (stack.length > 0){
+                var node = stack.pop ();
+                if (node.ast[0] === "REWRITE") {
+                    if (node.index) {
+                        p.push (node.index)
+                    }
+                    
+                    for(var i = node.ast.length - 1; i >= 1 ; i--) {
+                        stack.push ({parents: [node.ast, node.parents], ast: node.ast[i], level: node.level + 1, index: i});
+                    }
+                }
+                else if (node.ast[0] === "RULE") {
+                    var rule = node.ast;
+                    var v = [];
+                    var varsOffset = 0;
+                    if (rule[1][0] === "VAR") {
+                        varsOffset = 1;
+                        for (var j = 1; j < rule[1].length; j++) {
+                            if (-Ruler.getLvl (rule[1][j]) !== 0){
+                                return {err: "Can not escape variable error", path: p.concat ([node.index, 1, j])};
+                            }
+                            v.push (rule[1][j]);
+                        }
+                    }
+                    
+                    var r = {read: [], write: []};
+                    for (var j = 1; j < rule[1 + varsOffset][1].length; j++) {
+                        r.read.push (rule[1 + varsOffset][1][j]);
+                    }
+                    
+                    for (var j = 1; j < rule[2 + varsOffset][1].length; j++) {
+                        r.write.push (rule[2 + varsOffset][1][j]);
+                    }
+                    
+                    r.read = Sexpression.flatten (r.read[0]);
+                    r.write = Sexpression.flatten (r.write[0]);
+                    
+                    r.read = Ruler.levelShift (r.read, node.level);
+                    r.write = Ruler.levelShift (r.write, node.level);
+                    
+                    r.maxLvlR = Ruler.getMaxLvl (r.read, 0, r.read.length, v);
+                    r.maxLvlW = Ruler.getMaxLvl (r.write, 0, r.write.length, v);
+                    
+                    rules.push ({vars: v, rule: r, level: node.level, parents: node.parents});
+                }
+            }
+            
+            return rules;
+        };
         
         var produce = function (rules, top) {
             var stack, item;
@@ -116,7 +216,6 @@ var Rewriter = (
                         item.processData.push (item.resultData);
                     }
                     
-                    var tmpl1 = Ruler.getMaxLvl (item.write, item.fromW, item.toW, []) - 1;
                     while (true) {
                         while (true) {
                             item.ruleIndex++;
@@ -124,25 +223,17 @@ var Rewriter = (
                                 break;
                             }
                             
-                            // level depth sensitivity
-                            if (item.curRule !== undefined && rules[item.ruleIndex].rule.read !== undefined) {
-                                var cd = getComParDist (item.curRule.parents, rules[item.ruleIndex].parents);
-                                var l1 = item.curRule.rule.maxLvlW;
-                                var l2 = rules[item.ruleIndex].rule.maxLvlR;
-                                var t1 = item.curRule.level;
-                            }
-                            else {
-                                var cd = {d1: 0, d2: 0};
-                                var l1 = tmpl1;
-                                var l2 = rules[item.ruleIndex].rule.maxLvlR - 1;
-                                var t1 = 1;
-                            }
-                            
-                            if (l1 <= t1 + cd.d1 && l2 <= rules[item.ruleIndex].level + cd.d2) {
+                            if (item.curRule === undefined) {
                                 break;
                             }
+                            else {
+                                var cpd = getCommonParDist (item.curRule.parents, rules[item.ruleIndex].parents);
+                                if (cpd.d1 === 0 || (item.curRule.rule.maxLvlW <= item.curRule.level + cpd.d1 && rules[item.ruleIndex].rule.maxLvlR <= rules[item.ruleIndex].level + cpd.d2)) {
+                                    break;
+                                }
+                            }
                         }
-                        
+
                         //item.ruleIndex++;
                         if (item.ruleIndex === rules.length || item.result === true) { // `item.result === true` for deterministic version
                             if (item.processData.length > 1) {
@@ -151,7 +242,7 @@ var Rewriter = (
                                     con = [...con, ...item.processData[i]];
                                 }
                                 //stackPop (stack, true, ["(", "CON", ...con, ")"]); // for nondeterministic version
-                                stackPop (stack, true, item.processData[0]);
+                                stackPop (stack, true, item.processData[0]); // for deterministic version
                             }
                             else if (item.processData.length === 1) {
                                 stackPop (stack, true, item.processData[0]);
@@ -182,16 +273,11 @@ var Rewriter = (
                 }
             }
             
-            var result = stack[0].resultData.join(" ");//.replaceAll (/ (.*) /g, (matches, x) => {return '"' + x + '"'});
+            var result = stack[0].resultData.join(" ");
             return Sexpression.parse (result);
-            //return Sexpression.parse (stack[0].resultData.join(" "));
         }
         
-        //var farthestPath;
         var stackPop = function (stack, result, resultData) {
-            //if (compareArr(stack[stack.length - 1].path || [], farthestPath) > 0) {
-            //    farthestPath = stack[stack.length - 1].path;
-            //}
             stack.pop ();
 
             stack[stack.length - 1].result = result;
@@ -226,7 +312,7 @@ var Rewriter = (
             }
         }
         
-        var getComParDist = function (p1, p2) {
+        var getCommonParDist = function (p1, p2) {
             var p1i = p1;
             var p2i = p2;
             var p1d = 1;
@@ -261,7 +347,7 @@ if (isNode ()) {
     // begin of Node.js support
     
     var Sexpression = require ("./sexpression.js");
-    var Compiler = require ("./compiler.js");
+    var Parser = require ("./parser.js");
     var Ruler = require ("./ruler.js");
     module.exports = Rewriter;
     
