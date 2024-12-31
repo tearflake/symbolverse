@@ -1,2 +1,2 @@
-(bool (not (and (or false true) false)))
+(bool (not (and false (or false true))))
 

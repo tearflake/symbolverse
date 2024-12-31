@@ -5,6 +5,7 @@ Boolean logic to SKI compiler
 (
     REWRITE
     
+    /workflow/
     (RULE (VAR A) (READ (EXP (\bool \A))) (WRITE (EXP (parseBool A))))
     (RULE (VAR A) (READ (EXP (parsedBool A))) (WRITE (EXP (compileToSKI A))))
     (RULE (VAR A) (READ (EXP (compiledToSKI A))) (WRITE (EXP \A)))

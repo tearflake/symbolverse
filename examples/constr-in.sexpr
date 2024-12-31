@@ -3,67 +3,70 @@ verifying a proof for De Morgan's law
 ///
 
 (
-    [eqIntro]
+    verify
     (
-        [implIntro]
+        [eqIntro]
         (
-            seq
+            [implIntro]
             (
-                [Assume]
-                (and A B)
-            )
-            (
-                [notIntro]
+                seq
                 (
-                    seq
+                    [Assume]
+                    (and A B)
+                )
+                (
+                    [notIntro]
                     (
-                        [Assume]
-                        (or (not A) (not B))
-                    )
-                    (
-                        [orElim]
+                        impl
                         (
                             [Assume]
                             (or (not A) (not B))
                         )
                         (
-                            seq
+                            [orElim]
                             (
                                 [Assume]
-                                (not A)
+                                (or (not A) (not B))
                             )
                             (
-                                [notElim]
+                                impl
                                 (
                                     [Assume]
                                     (not A)
                                 )
                                 (
-                                    [andElim1]
+                                    [notElim]
                                     (
                                         [Assume]
-                                        (and A B)
+                                        (not A)
+                                    )
+                                    (
+                                        [andElim1]
+                                        (
+                                            [Assume]
+                                            (and A B)
+                                        )
                                     )
                                 )
                             )
-                        )
-                        (
-                            seq
                             (
-                                [Assume]
-                                (not B)
-                            )
-                            (
-                                [notElim]
+                                impl
                                 (
                                     [Assume]
                                     (not B)
                                 )
                                 (
-                                    [andElim2]
+                                    [notElim]
                                     (
                                         [Assume]
-                                        (and A B)
+                                        (not B)
+                                    )
+                                    (
+                                        [andElim2]
+                                        (
+                                            [Assume]
+                                            (and A B)
+                                        )
                                     )
                                 )
                             )
@@ -72,60 +75,60 @@ verifying a proof for De Morgan's law
                 )
             )
         )
-    )
-    (
-        [implIntro]
         (
-            seq
+            [implIntro]
             (
-                [Assume]
-                (not (or (not A) (not B)))
-            )
-            (
-                [andIntro]
+                seq
                 (
-                    [IP]
+                    [Assume]
+                    (not (or (not A) (not B)))
+                )
+                (
+                    [andIntro]
                     (
-                        seq
+                        [IP]
                         (
-                            [Assume]
-                            (not A)
-                        )
-                        (
-                            [notElim]
+                            impl
                             (
                                 [Assume]
-                                (not (or (not A) (not B)))
+                                (not A)
                             )
                             (
-                                [orIntro1]
+                                [notElim]
                                 (
                                     [Assume]
-                                    (not A)
+                                    (not (or (not A) (not B)))
+                                )
+                                (
+                                    [orIntro1]
+                                    (
+                                        [Assume]
+                                        (not A)
+                                    )
                                 )
                             )
                         )
                     )
-                )
-                (
-                    [IP]
                     (
-                        seq
+                        [IP]
                         (
-                            [Assume]
-                            (not B)
-                        )
-                        (
-                            [notElim]
+                            impl
                             (
                                 [Assume]
-                                (not (or (not A) (not B)))
+                                (not B)
                             )
                             (
-                                [orIntro2]
+                                [notElim]
                                 (
                                     [Assume]
-                                    (not B)
+                                    (not (or (not A) (not B)))
+                                )
+                                (
+                                    [orIntro2]
+                                    (
+                                        [Assume]
+                                        (not B)
+                                    )
                                 )
                             )
                         )

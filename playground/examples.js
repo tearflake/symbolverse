@@ -375,7 +375,7 @@ output: \`(Who and Whom hadPartyAt Where)\`
     (
         RULE
         (VAR Char1 Char2 Site)
-        (READ  (EXP (funMeeting Char1 Char2 Site)        ))
+        (READ  (EXP (funMeeting Char1 Char2 Site)         ))
         (WRITE (EXP (\\Char1 \\and \\Char2 \\hadPartyAt \\Site)))
     )
     
@@ -962,26 +962,6 @@ SKI calculus interpreter
 ((((S (K (S I))) K) a) b)
 `,
 
-"example-ski2jot":
-`
-///
-SKI calculus interpreter
-///
-
-(
-    REWRITE
-    
-    /combinators/
-    (RULE (VAR x) (READ (EXP (\\I))) (WRITE (EXP w)))
-    (RULE (VAR w) (READ (EXP (w \\K))) (WRITE (EXP (((((((w 1) 1) 1) 0) 0))))))
-    (RULE (VAR x y z) (READ (EXP (((w \\S x) y) z))) (WRITE (EXP ((x z) (y z)))))
-)
-`,
-"example-ski2jot-input":
-`
-((((S (K (S I))) K) a) b)
-`,
-
 "example-bool2":
 `
 ///
@@ -991,6 +971,7 @@ Boolean logic to SKI compiler
 (
     REWRITE
     
+    /workflow/
     (RULE (VAR A) (READ (EXP (\\bool \\A))) (WRITE (EXP (parseBool A))))
     (RULE (VAR A) (READ (EXP (parsedBool A))) (WRITE (EXP (compileToSKI A))))
     (RULE (VAR A) (READ (EXP (compiledToSKI A))) (WRITE (EXP \\A)))
@@ -1052,7 +1033,7 @@ Boolean logic to SKI compiler
 `,
 "example-bool2-input":
 `
-(bool (not (and (or false true) false)))
+(bool (not (and false (or false true))))
 `,
 
 "example-lamb":
@@ -1063,6 +1044,8 @@ Lambda calculus to SKI compiler
 
 (
     REWRITE
+    
+    /workflow/
     (RULE (VAR A) (READ (EXP (\\lc \\A))) (WRITE (EXP (parseLc A))))
     (RULE (VAR A) (READ (EXP (parsedLc A))) (WRITE (EXP (compileToSKI A))))
     (RULE (VAR A) (READ (EXP (compiledToSKI A))) (WRITE (EXP \\A)))
@@ -1117,7 +1100,7 @@ Lambda calculus to SKI compiler
     )
     
     (
-        REWRITE
+        REWRITE /compiler/
         
         (RULE (VAR A) (READ (EXP (\\compileToSKI \\A))) (WRITE (EXP (compilingToSKI A))))
         
@@ -1131,7 +1114,7 @@ Lambda calculus to SKI compiler
 `,
 "example-lamb-input":
 `
-(lc (((lmbd x (lmbd y (y x))) a) b))
+(((lc (lmbd x (lmbd y (y x)))) a) b)
 `,
 
 "example-jot":
@@ -1143,6 +1126,7 @@ Jot framework to SKI compiler
 (
     REWRITE
     
+    /workflow/
     (RULE (VAR A) (READ (EXP (\\jot \\A))) (WRITE (EXP (parseJot A))))
     (RULE (VAR A) (READ (EXP (parsedJot A))) (WRITE (EXP (compileToSKI A))))
     (RULE (VAR A) (READ (EXP (compiledToSKI A))) (WRITE (EXP \\A)))
@@ -1160,13 +1144,13 @@ Jot framework to SKI compiler
         )
         (
             RULE
-            (VAR A B)
+            (VAR A)
             (READ (EXP ((typeOf A jot) 0)))
             (WRITE (EXP (typeOf (A 0\\) jot)))
         )
         (
             RULE
-            (VAR A B)
+            (VAR A)
             (READ (EXP ((typeOf A jot) 1)))
             (WRITE (EXP (typeOf (A 1\\) jot)))
         )
@@ -1190,7 +1174,7 @@ Jot framework to SKI compiler
 `,
 "example-jot-input":
 `
-(jot ((((NIL 1) 0) 1) 0))
+((jot ((((NIL 1) 0) 1) 0)) a)
 `,
 
 "example-seq":
@@ -1539,24 +1523,31 @@ constructive proof verifyer
 (
     REWRITE
     
-    /logic rules/
-    (RULE (VAR a b) (READ (EXP (\\[andIntro] a b))                                  ) (WRITE (EXP (\\and a b)) ))
-    (RULE (VAR a b) (READ (EXP (\\[andElim1] (\\and a b)))                           ) (WRITE (EXP a)          ))
-    (RULE (VAR a b) (READ (EXP (\\[andElim2] (\\and a b)))                           ) (WRITE (EXP b)          ))
-    (RULE (VAR a b) (READ (EXP (\\[orIntro1] a))                                    ) (WRITE (EXP (\\or a b))  ))
-    (RULE (VAR a b) (READ (EXP (\\[orIntro2] b))                                    ) (WRITE (EXP (\\or a b))  ))
-    (RULE (VAR a b) (READ (EXP (\\[orElim] (\\or a b) (\\seq a False) (\\seq b False)))) (WRITE (EXP False)      ))
-    (RULE (VAR a b) (READ (EXP (\\[implIntro] (\\seq a b)))                          ) (WRITE (EXP (\\impl a b))))
-    (RULE (VAR a b) (READ (EXP (\\[implElim] (\\impl a b) a))                        ) (WRITE (EXP b)          ))
-    (RULE (VAR a b) (READ (EXP (\\[eqIntro] (\\impl a b) (\\impl b a)))               ) (WRITE (EXP (\\eq a b))  ))
-    (RULE (VAR a b) (READ (EXP (\\[eqElim1] (\\eq a b) a))                           ) (WRITE (EXP b)          ))
-    (RULE (VAR a b) (READ (EXP (\\[eqElim2] (\\eq a b) b))                           ) (WRITE (EXP a)          ))
-    (RULE (VAR a)   (READ (EXP (\\[notIntro] (\\seq a False)))                       ) (WRITE (EXP (\\not a))   ))
-    (RULE (VAR a)   (READ (EXP (\\[notElim] (\\not a) a))                            ) (WRITE (EXP False)      ))
-    (RULE (VAR a)   (READ (EXP (\\[X] False))                                       ) (WRITE (EXP a)          ))
-    (RULE (VAR a)   (READ (EXP (\\[IP] (\\seq (\\not a) False)))                      ) (WRITE (EXP a)          ))
+    /entry point/
+    (RULE (VAR A) (READ (EXP (\\verify \\A))) (WRITE (EXP (verifying A))))
+    
+    /arbitrary introduction/
+    (RULE (VAR P) (READ (EXP ([Assume] P))) (WRITE (EXP P)))
 
-    (RULE (VAR a) (READ (EXP (\\[Assume] a))) (WRITE (EXP a)))
+    /logic Rules/
+    (RULE (VAR P Q  ) (READ (EXP ([andIntro]  P Q)                           )) (WRITE (EXP (and P Q) )))
+    (RULE (VAR P Q  ) (READ (EXP ([andElim1]  (and P Q))                     )) (WRITE (EXP P         )))
+    (RULE (VAR P Q  ) (READ (EXP ([andElim2]  (and P Q))                     )) (WRITE (EXP Q         )))
+    (RULE (VAR P Q  ) (READ (EXP ([orIntro1]  P)                             )) (WRITE (EXP (or P Q)  )))
+    (RULE (VAR P Q  ) (READ (EXP ([orIntro2]  Q)                             )) (WRITE (EXP (or P Q)  )))
+    (RULE (VAR P Q R) (READ (EXP ([orElim]    (or P Q) (impl P R) (impl Q R)))) (WRITE (EXP R         )))
+    (RULE (VAR P Q  ) (READ (EXP ([implIntro] (seq P Q))                     )) (WRITE (EXP (impl P Q))))
+    (RULE (VAR P Q  ) (READ (EXP ([implElim]  (impl P Q) P)                  )) (WRITE (EXP Q         )))
+    (RULE (VAR P Q  ) (READ (EXP ([eqIntro]   (impl P Q) (impl Q P))         )) (WRITE (EXP (eq P Q)  )))
+    (RULE (VAR P Q  ) (READ (EXP ([eqElim1]   (eq P Q) P)                    )) (WRITE (EXP Q         )))
+    (RULE (VAR P Q  ) (READ (EXP ([eqElim2]   (eq P Q) Q)                    )) (WRITE (EXP P         )))
+    (RULE (VAR P    ) (READ (EXP ([notIntro]  (impl P false))                )) (WRITE (EXP (not P)   )))
+    (RULE (VAR P    ) (READ (EXP ([notElim]   (not P) P)                     )) (WRITE (EXP false     )))
+    (RULE (VAR P    ) (READ (EXP ([X]         false)                         )) (WRITE (EXP P         )))
+    (RULE (VAR P    ) (READ (EXP ([IP]        (impl (not P) false))          )) (WRITE (EXP P         )))
+    
+    /exit point/
+    (RULE (VAR A) (READ (EXP (verifying A))) (WRITE (EXP (\\result \\A))))
 )
 `,
 "example-constr-input":
@@ -1566,67 +1557,70 @@ verifying a proof for De Morgan's law
 ///
 
 (
-    [eqIntro]
+    verify
     (
-        [implIntro]
+        [eqIntro]
         (
-            seq
+            [implIntro]
             (
-                [Assume]
-                (and A B)
-            )
-            (
-                [notIntro]
+                seq
                 (
-                    seq
+                    [Assume]
+                    (and A B)
+                )
+                (
+                    [notIntro]
                     (
-                        [Assume]
-                        (or (not A) (not B))
-                    )
-                    (
-                        [orElim]
+                        impl
                         (
                             [Assume]
                             (or (not A) (not B))
                         )
                         (
-                            seq
+                            [orElim]
                             (
                                 [Assume]
-                                (not A)
+                                (or (not A) (not B))
                             )
                             (
-                                [notElim]
+                                impl
                                 (
                                     [Assume]
                                     (not A)
                                 )
                                 (
-                                    [andElim1]
+                                    [notElim]
                                     (
                                         [Assume]
-                                        (and A B)
+                                        (not A)
+                                    )
+                                    (
+                                        [andElim1]
+                                        (
+                                            [Assume]
+                                            (and A B)
+                                        )
                                     )
                                 )
                             )
-                        )
-                        (
-                            seq
                             (
-                                [Assume]
-                                (not B)
-                            )
-                            (
-                                [notElim]
+                                impl
                                 (
                                     [Assume]
                                     (not B)
                                 )
                                 (
-                                    [andElim2]
+                                    [notElim]
                                     (
                                         [Assume]
-                                        (and A B)
+                                        (not B)
+                                    )
+                                    (
+                                        [andElim2]
+                                        (
+                                            [Assume]
+                                            (and A B)
+                                        )
                                     )
                                 )
                             )
@@ -1635,60 +1629,60 @@ verifying a proof for De Morgan's law
                 )
             )
         )
-    )
-    (
-        [implIntro]
         (
-            seq
+            [implIntro]
             (
-                [Assume]
-                (not (or (not A) (not B)))
-            )
-            (
-                [andIntro]
+                seq
                 (
-                    [IP]
+                    [Assume]
+                    (not (or (not A) (not B)))
+                )
+                (
+                    [andIntro]
                     (
-                        seq
+                        [IP]
                         (
-                            [Assume]
-                            (not A)
-                        )
-                        (
-                            [notElim]
+                            impl
                             (
                                 [Assume]
-                                (not (or (not A) (not B)))
+                                (not A)
                             )
                             (
-                                [orIntro1]
+                                [notElim]
                                 (
                                     [Assume]
-                                    (not A)
+                                    (not (or (not A) (not B)))
+                                )
+                                (
+                                    [orIntro1]
+                                    (
+                                        [Assume]
+                                        (not A)
+                                    )
                                 )
                             )
                         )
                     )
-                )
-                (
-                    [IP]
                     (
-                        seq
+                        [IP]
                         (
-                            [Assume]
-                            (not B)
-                        )
-                        (
-                            [notElim]
+                            impl
                             (
                                 [Assume]
-                                (not (or (not A) (not B)))
+                                (not B)
                             )
                             (
-                                [orIntro2]
+                                [notElim]
                                 (
                                     [Assume]
-                                    (not B)
+                                    (not (or (not A) (not B)))
+                                )
+                                (
+                                    [orIntro2]
+                                    (
+                                        [Assume]
+                                        (not B)
+                                    )
                                 )
                             )
                         )

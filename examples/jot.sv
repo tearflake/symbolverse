@@ -5,6 +5,7 @@ Jot framework to SKI compiler
 (
     REWRITE
     
+    /workflow/
     (RULE (VAR A) (READ (EXP (\jot \A))) (WRITE (EXP (parseJot A))))
     (RULE (VAR A) (READ (EXP (parsedJot A))) (WRITE (EXP (compileToSKI A))))
     (RULE (VAR A) (READ (EXP (compiledToSKI A))) (WRITE (EXP \A)))
@@ -22,13 +23,13 @@ Jot framework to SKI compiler
         )
         (
             RULE
-            (VAR A B)
+            (VAR A)
             (READ (EXP ((typeOf A jot) 0)))
             (WRITE (EXP (typeOf (A 0\) jot)))
         )
         (
             RULE
-            (VAR A B)
+            (VAR A)
             (READ (EXP ((typeOf A jot) 1)))
             (WRITE (EXP (typeOf (A 1\) jot)))
         )

@@ -4,6 +4,8 @@ Lambda calculus to SKI compiler
 
 (
     REWRITE
+    
+    /workflow/
     (RULE (VAR A) (READ (EXP (\lc \A))) (WRITE (EXP (parseLc A))))
     (RULE (VAR A) (READ (EXP (parsedLc A))) (WRITE (EXP (compileToSKI A))))
     (RULE (VAR A) (READ (EXP (compiledToSKI A))) (WRITE (EXP \A)))
@@ -58,7 +60,7 @@ Lambda calculus to SKI compiler
     )
     
     (
-        REWRITE
+        REWRITE /compiler/
         
         (RULE (VAR A) (READ (EXP (\compileToSKI \A))) (WRITE (EXP (compilingToSKI A))))
         
