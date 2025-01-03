@@ -107,7 +107,7 @@ var Sexpression = (
                         break;
                     }
                 }
-                else if (' ()'.indexOf (currChar) === -1 && currChar !== undefined) {
+                else if (' /()'.indexOf (currChar) === -1 && currChar !== undefined) {
                     var start = {y: pos[y], x: pos[x]};
                     var escaped = "";
                     while (currChar === '\\') {
@@ -151,7 +151,7 @@ var Sexpression = (
                     }
                     else {
                         currAtom = escaped;
-                        while (' ()"'.indexOf (currChar) === -1 && currChar !== undefined) {
+                        while (' /()"'.indexOf (currChar) === -1 && currChar !== undefined) {
                             currAtom += currChar;
                             pos[x]++;
                             currChar = m[pos[y]][pos[x]];
@@ -527,7 +527,7 @@ var Sexpression = (
         function quoteIfNecessary (str) {
             var quoted = false;
             for (var i = 0; i < str.length; i++) {
-                if ('() \t\n\r'.indexOf (str.charAt (i)) > -1) {
+                if ('/() \t\n\r'.indexOf (str.charAt (i)) > -1) {
                     quoted = true;
                     break;
                 }

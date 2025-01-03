@@ -147,8 +147,8 @@ if (isNode ()) {
 }
 else {
     (() => {
-        var fullf = document.currentScript.src;
-        var path = fullf.substring(0, fullf.lastIndexOf('/')) + "/src/";
+        var fullfn = document.currentScript.src;
+        var path = fullfn.substring(0, fullfn.lastIndexOf('/')) + "/src/";
         
         var script = document.createElement('script')
         script.src = path + "sexpression.js"

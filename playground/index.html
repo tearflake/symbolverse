@@ -191,39 +191,36 @@
 
 <div class="droplbl">&nbsp;&nbsp;&nbsp;&nbsp; 2.1. booleans and numbers</div>
 
-        <a href="javascript:populate('example-branch'    );">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; branching choice</a>
-        <a href="javascript:populate('example-bool'      );">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Boolean evaluator</a>
-        <a href="javascript:populate('example-binadd'    );">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; binary number addition</a>
+        <a href="javascript:populate('example-branch');    ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; branching choice</a>
+        <a href="javascript:populate('example-bool');      ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Boolean evaluator</a>
+        <a href="javascript:populate('example-binadd');    ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; binary number addition</a>
         <a href="javascript:populate('example-bincompare');">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; binary number comparison</a>
 
 <br/>
 
 <div class="droplbl">&nbsp;&nbsp;&nbsp;&nbsp; 2.2. operations on lists</div>
 
-        <a href="javascript:populate('example-append'    );">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; append list</a>
-        <a href="javascript:populate('example-reverse'   );">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; reverse list</a>
-        <a href="javascript:populate('example-replace'   );">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; replace element</a>
-        <a href="javascript:populate('example-remove'    );">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; remove element</a>
+        <a href="javascript:populate('example-append'); ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; append list</a>
+        <a href="javascript:populate('example-reverse');">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; reverse list</a>
+        <a href="javascript:populate('example-replace');">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; replace element</a>
+        <a href="javascript:populate('example-remove'); ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; remove element</a>
 
 <br/>
 
 <div class="droplbl">3. computing platforms examples</div>
 
-        <a href="javascript:populate('example-ski'       );">&nbsp;&nbsp;&nbsp;&nbsp; SKI calculus interpreter</a>
-        <a href="javascript:populate('example-bool2'     );">&nbsp;&nbsp;&nbsp;&nbsp; Boolean logic to SKI compiler</a>
-        <a href="javascript:populate('example-lamb'      );">&nbsp;&nbsp;&nbsp;&nbsp; Lambda calculus to SKI compiler</a>
-        <a href="javascript:populate('example-jot'       );">&nbsp;&nbsp;&nbsp;&nbsp; Jot framework to SKI compiler</a>
+        <a href="javascript:populate('example-ski');  ">&nbsp;&nbsp;&nbsp;&nbsp; SKI calculus interpreter</a>
+        <a href="javascript:populate('example-bool2');">&nbsp;&nbsp;&nbsp;&nbsp; Boolean logic to SKI compiler</a>
+        <a href="javascript:populate('example-lamb'); ">&nbsp;&nbsp;&nbsp;&nbsp; Lambda calculus to SKI compiler</a>
+        <a href="javascript:populate('example-jot');  ">&nbsp;&nbsp;&nbsp;&nbsp; Jot framework to SKI compiler</a>
 <br/>
 
-<div class="droplbl">4. theorem proving examples</div>
+<!--div class="droplbl">4. theorem proving examples</div>
 
         <a href="javascript:populate('example-constr'    );">&nbsp;&nbsp;&nbsp;&nbsp; propositional logic manual prover</a>
         <a href="javascript:populate('example-seq'       );">&nbsp;&nbsp;&nbsp;&nbsp; sequent calculus formula validator</a>
 
-<br/>
-
-<!--div class="droplbl">3. proof calculi</div-->
-<!--div class="droplbl">3. computational models</div-->
+<br/-->
 
         </nobr></b>
     </div>
@@ -436,16 +433,12 @@
 
 <script>
     function process () {
-        //output1.value = JSON.stringify (Sexpression.getNode (rules1.getValue ()),null,2);
-        
         output1.value = "";
         document.getElementById("tm").innerHTML = "(compiling rules...)";
         setTimeout (function (){
             var tm = Date.now ();
             var rules = Rewriter.compile (rules1.getValue ());
             if (rules.err) {
-                //var c = getCoords (rules1.getValue (), rules.pos)
-                //output1.value = "rules:\n" + rules.err + " at " + "(" + c.row + ", " + c.column + ")";
                 output1.value = "rules:\n" + rules.err + " at " + "(" + (rules.pos.y + 1) + ", " + (rules.pos.x + 1) + ")" + (rules.found ? ", found: " + rules.found : "");
                 document.getElementById("tm").innerHTML = "";
             } else {
@@ -455,8 +448,6 @@
                 setTimeout (function (){
                     var output = Rewriter.rewrite (rules, input1.getValue ());
                     if (output.err) {
-                        //var c = getCoords (input1.getValue (), output.pos)
-                        //output1.value = "input:\n" + output.err + " at " + "(" + c.row + ", " + c.column + ")";
                         output1.value = "input:\n" + output.err + " at " + "(" + (output.pos.y + 1) + ", " + (output.pos.x + 1) + ")" + (rules.found ? ", found: " + rules.found : "");
                         document.getElementById("tm").innerHTML = "";
                     } else {

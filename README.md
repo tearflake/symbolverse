@@ -3,7 +3,7 @@
 ```
 ---
 
-# symbolverse v0.2.15
+# symbolverse v0.2.16
 
 _**tags:** s-expression, rewriting, term-rewriting, term-graph-rewriting_
 

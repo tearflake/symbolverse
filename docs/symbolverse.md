@@ -21,7 +21,7 @@
     - [2.2. semantics](#22-semantics)  
         - [2.2.1. terms](#221-terms)  
         - [2.2.2. rewrite rules](#222-rewrite-rules)  
-- [3. practical examples](#3-practical examples)  
+- [3. practical examples](#3-practical-examples)  
 - [4. conclusion](#3-conclusion)  
 
 ## 1. introduction
