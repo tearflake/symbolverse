@@ -224,7 +224,9 @@ var Rewriter = (
                             }
                             
                             if (item.curRule === undefined) {
-                                break;
+                                if (rules[item.ruleIndex].rule.maxLvlR === 0) {
+                                    break;
+                                }
                             }
                             else {
                                 var cpd = getCommonParDist (item.curRule.parents, rules[item.ruleIndex].parents);
@@ -254,7 +256,7 @@ var Rewriter = (
                             break;
                         }
                         else {
-                            var uvars = Ruler.unify (item.write, item.fromW, item.toW, rules[item.ruleIndex].rule.read, 0, rules[item.ruleIndex].rule.read.length, rules[item.ruleIndex].vars);
+                            var uvars = Ruler.unify (item.write, item.fromW, item.toW, rules[item.ruleIndex].rule.read, 0, rules[item.ruleIndex].rule.read.length, rules[item.ruleIndex].level, rules[item.ruleIndex].vars);
                             if (uvars) {
                                 var substed = Ruler.subst (rules[item.ruleIndex].rule.write, uvars);
                                 stack.push ({

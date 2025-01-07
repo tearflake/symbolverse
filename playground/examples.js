@@ -952,9 +952,9 @@ SKI calculus interpreter
     REWRITE
     
     /combinators/
-    (RULE (VAR x) (READ (EXP (\\I x))) (WRITE (EXP x)))
-    (RULE (VAR x y) (READ (EXP ((\\K x) y))) (WRITE (EXP x)))
-    (RULE (VAR x y z) (READ (EXP (((\\S x) y) z))) (WRITE (EXP ((x z) (y z)))))
+    (RULE (VAR X) (READ (EXP (\\I \\X))) (WRITE (EXP \\X)))
+    (RULE (VAR X Y) (READ (EXP ((\\K \\X) \\Y))) (WRITE (EXP \\X)))
+    (RULE (VAR X Y Z) (READ (EXP (((\\S \\X) \\Y) \\Z))) (WRITE (EXP ((\\X \\Z) (\\Y \\Z)))))
 )
 `,
 "example-ski-input":
@@ -976,47 +976,50 @@ Boolean logic to SKI compiler
     (RULE (VAR A) (READ (EXP (parsedBool A))) (WRITE (EXP (compileToSKI A))))
     (RULE (VAR A) (READ (EXP (compiledToSKI A))) (WRITE (EXP \\A)))
 
+    /parser/
     (
-        REWRITE /parser/
+        REWRITE
         
-        (RULE (READ (EXP \\typeOf)) (WRITE (EXP \\_typeOf)))
-        (RULE (VAR A) (READ (EXP (\\parseBool \\A))) (WRITE (EXP (parsingBool A))))
+        (RULE (VAR A) (READ (EXP (\\parseBool \\A))) (WRITE (EXP (parsingBool\\ A))))
+        
+        (RULE (VAR x) (READ (EXP x)) (WRITE (EXP (token\\ x\\))))
         
         (
             RULE
-            (READ (EXP true))
-            (WRITE (EXP (typeOf true\\ bool)))
+            (READ (EXP (token\\ true\\)))
+            (WRITE (EXP (typeOf\\ true\\ bool\\)))
         )
         (
             RULE
-            (READ (EXP false))
-            (WRITE (EXP (typeOf false\\ bool)))
+            (READ (EXP (token\\ false\\)))
+            (WRITE (EXP (typeOf\\ false\\ bool\\)))
         )
         (
             RULE
             (VAR A)
-            (READ (EXP (not (typeOf A bool))))
-            (WRITE (EXP (typeOf (not\\ A) bool)))
+            (READ (EXP ((token\\ not\\) (typeOf\\ A\\ bool\\))))
+            (WRITE (EXP (typeOf\\ (not\\ A\\) bool\\)))
         )
         (
             RULE
             (VAR A B)
-            (READ (EXP (or (typeOf A bool) (typeOf B bool))))
-            (WRITE (EXP (typeOf (or\\ A B) bool)))
+            (READ (EXP ((token\\ or\\) (typeOf\\ A\\ bool\\) (typeOf\\ B\\ bool\\))))
+            (WRITE (EXP (typeOf\\ (or\\ A\\ B\\) bool\\)))
         )
         (
             RULE
             (VAR A B)
-            (READ (EXP (and (typeOf A bool) (typeOf B bool))))
-            (WRITE (EXP (typeOf (and\\ A B) bool)))
+            (READ (EXP ((token\\ and\\) (typeOf\\ A\\ bool\\) (typeOf\\ B\\ bool\\))))
+            (WRITE (EXP (typeOf\\ (and\\ A\\ B\\) bool\\)))
         )
         
-        (RULE (VAR A) (READ (EXP (parsingBool (typeOf A bool)))) (WRITE (EXP (\\parsedBool \\\\A))))
-        (RULE (VAR A) (READ (EXP (parsingBool A))) (WRITE (EXP \\\\"bool syntax error")))
+        (RULE (VAR A) (READ (EXP (parsingBool\\ (typeOf\\ A\\ bool\\)))) (WRITE (EXP (\\parsedBool \\A))))
+        (RULE (VAR A) (READ (EXP (parsingBool\\ A\\))) (WRITE (EXP \\\\"bool syntax error")))
     )
     
+    /compiler/
     (
-        REWRITE /compiler/
+        REWRITE
 
         (RULE (VAR A) (READ (EXP (\\compileToSKI \\A))) (WRITE (EXP (compilingToSKI A))))
 
@@ -1050,57 +1053,35 @@ Lambda calculus to SKI compiler
     (RULE (VAR A) (READ (EXP (parsedLc A))) (WRITE (EXP (compileToSKI A))))
     (RULE (VAR A) (READ (EXP (compiledToSKI A))) (WRITE (EXP \\A)))
 
+    /parser/
     (
-        REWRITE /parser/
+        REWRITE
         
-        (RULE (READ (EXP \\typeOf)) (WRITE (EXP \\_typeOf)))
-        (RULE (VAR A) (READ (EXP (\\parseLc \\A))) (WRITE (EXP (parsingLc A))))
+        (RULE (VAR A) (READ (EXP (\\parseLc \\A))) (WRITE (EXP (parsingLc\\ A))))
 
-        (RULE (READ (EXP a)) (WRITE (EXP (typeOf a\\ (var term)))))
-        (RULE (READ (EXP b)) (WRITE (EXP (typeOf b\\ (var term)))))
-        (RULE (READ (EXP c)) (WRITE (EXP (typeOf c\\ (var term)))))
-        (RULE (READ (EXP d)) (WRITE (EXP (typeOf d\\ (var term)))))
-        (RULE (READ (EXP e)) (WRITE (EXP (typeOf e\\ (var term)))))
-        (RULE (READ (EXP f)) (WRITE (EXP (typeOf f\\ (var term)))))
-        (RULE (READ (EXP g)) (WRITE (EXP (typeOf g\\ (var term)))))
-        (RULE (READ (EXP h)) (WRITE (EXP (typeOf h\\ (var term)))))
-        (RULE (READ (EXP i)) (WRITE (EXP (typeOf i\\ (var term)))))
-        (RULE (READ (EXP j)) (WRITE (EXP (typeOf j\\ (var term)))))
-        (RULE (READ (EXP k)) (WRITE (EXP (typeOf k\\ (var term)))))
-        (RULE (READ (EXP l)) (WRITE (EXP (typeOf l\\ (var term)))))
-        (RULE (READ (EXP m)) (WRITE (EXP (typeOf m\\ (var term)))))
-        (RULE (READ (EXP n)) (WRITE (EXP (typeOf n\\ (var term)))))
-        (RULE (READ (EXP o)) (WRITE (EXP (typeOf o\\ (var term)))))
-        (RULE (READ (EXP p)) (WRITE (EXP (typeOf p\\ (var term)))))
-        (RULE (READ (EXP q)) (WRITE (EXP (typeOf q\\ (var term)))))
-        (RULE (READ (EXP r)) (WRITE (EXP (typeOf r\\ (var term)))))
-        (RULE (READ (EXP s)) (WRITE (EXP (typeOf s\\ (var term)))))
-        (RULE (READ (EXP t)) (WRITE (EXP (typeOf t\\ (var term)))))
-        (RULE (READ (EXP u)) (WRITE (EXP (typeOf u\\ (var term)))))
-        (RULE (READ (EXP v)) (WRITE (EXP (typeOf v\\ (var term)))))
-        (RULE (READ (EXP w)) (WRITE (EXP (typeOf w\\ (var term)))))
-        (RULE (READ (EXP x)) (WRITE (EXP (typeOf x\\ (var term)))))
-        (RULE (READ (EXP y)) (WRITE (EXP (typeOf y\\ (var term)))))
-        (RULE (READ (EXP z)) (WRITE (EXP (typeOf z\\ (var term)))))
+        (RULE (READ (EXP lmbd)) (WRITE (EXP (token\\ lmbd\\))))
+        
+        (RULE (VAR x) (READ (EXP x)) (WRITE (EXP (typeOf\\ x\\ (var\\ term\\)))))
         (
             RULE
-            (VAR X M ANY)
-            (READ (EXP (lmbd (typeOf X (var term)) (typeOf M (ANY term)))))
-            (WRITE (EXP (typeOf (lmbd\\ X M) (abs term))))
+            (VAR x M ANY)
+            (READ (EXP ((token\\ lmbd\\) (typeOf\\ x\\ (var\\ term\\)) (typeOf\\ M\\ (ANY\\ term\\)))))
+            (WRITE (EXP (typeOf\\ (lmbd\\ x\\ M\\) (abs\\ term\\))))
         )
         (
             RULE
             (VAR M N ANY1 ANY2)
-            (READ (EXP ((typeOf M (ANY1 term)) (typeOf N (ANY2 term)))))
-            (WRITE (EXP (typeOf (M N) (app term))))
+            (READ (EXP ((typeOf\\ M\\ (ANY1\\ term\\)) (typeOf\\ N\\ (ANY2\\ term\\)))))
+            (WRITE (EXP (typeOf\\ (M\\ N\\) (app\\ term\\))))
         )
         
-        (RULE (VAR A B) (READ (EXP (parsingLc (typeOf A B)))) (WRITE (EXP (\\parsedLc \\\\A))))
-        (RULE (VAR A) (READ (EXP (parsingLc A))) (WRITE (EXP \\\\"lambda calculus syntax error")))
+        (RULE (VAR A ANY) (READ (EXP (parsingLc\\ (typeOf\\ A\\ (ANY\\ term\\))))) (WRITE (EXP (\\parsedLc \\A))))
+        (RULE (VAR A) (READ (EXP (parsingLc\\ A\\))) (WRITE (EXP \\\\"lambda calculus syntax error")))
     )
     
+    /compiler/
     (
-        REWRITE /compiler/
+        REWRITE
         
         (RULE (VAR A) (READ (EXP (\\compileToSKI \\A))) (WRITE (EXP (compilingToSKI A))))
         
@@ -1130,37 +1111,40 @@ Jot framework to SKI compiler
     (RULE (VAR A) (READ (EXP (\\jot \\A))) (WRITE (EXP (parseJot A))))
     (RULE (VAR A) (READ (EXP (parsedJot A))) (WRITE (EXP (compileToSKI A))))
     (RULE (VAR A) (READ (EXP (compiledToSKI A))) (WRITE (EXP \\A)))
-
+    
+    /parser/
     (
-        REWRITE /parser/
+        REWRITE
         
-        (RULE (READ (EXP \\typeOf)) (WRITE (EXP \\_typeOf)))
-        (RULE (VAR A) (READ (EXP (\\parseJot \\A))) (WRITE (EXP (parsingJot A))))
+        (RULE (VAR A) (READ (EXP (\\parseJot \\A))) (WRITE (EXP (parsingJot\\ A))))
+        
+        (RULE (VAR x) (READ (EXP x)) (WRITE (EXP (token\\ x\\))))
         
         (
             RULE
-            (READ (EXP NIL))
-            (WRITE (EXP (typeOf NIL\\ jot)))
+            (READ (EXP (token\\ NIL\\)))
+            (WRITE (EXP (typeOf\\ NIL\\ jot\\)))
         )
         (
             RULE
             (VAR A)
-            (READ (EXP ((typeOf A jot) 0)))
-            (WRITE (EXP (typeOf (A 0\\) jot)))
+            (READ (EXP ((typeOf\\ A\\ jot\\) (token\\ 0\\))))
+            (WRITE (EXP (typeOf\\ (A\\ 0\\) jot\\)))
         )
         (
             RULE
             (VAR A)
-            (READ (EXP ((typeOf A jot) 1)))
-            (WRITE (EXP (typeOf (A 1\\) jot)))
+            (READ (EXP ((typeOf\\ A\\ jot\\) (token\\ 1\\))))
+            (WRITE (EXP (typeOf\\ (A\\ 1\\) jot\\)))
         )
         
-        (RULE (VAR A) (READ (EXP (parsingJot (typeOf A jot)))) (WRITE (EXP (\\parsedJot \\\\A))))
-        (RULE (VAR A) (READ (EXP (parsingJot A))) (WRITE (EXP \\\\"jot syntax error")))
+        (RULE (VAR A) (READ (EXP (parsingJot\\ (typeOf\\ A\\ jot\\)))) (WRITE (EXP (\\parsedJot \\A))))
+        (RULE (VAR A) (READ (EXP (parsingJot\\ A\\))) (WRITE (EXP \\\\"jot syntax error")))
     )
     
+    /compiler/
     (
-        REWRITE /compiler/
+        REWRITE
 
         (RULE (VAR A) (READ (EXP (\\compileToSKI \\A))) (WRITE (EXP (compilingToSKI A))))
 
@@ -1204,7 +1188,7 @@ formula validator using sequent calculus (exponential time complexity)
                 (
                     cartLoop
                     (
-                        (turnstyleStack () () (cons Formula ()) ())
+                        (turnstileStack () () (cons Formula ()) ())
                         ()
                     )
                 )
@@ -1254,11 +1238,11 @@ formula validator using sequent calculus (exponential time complexity)
         (VAR LS L RS R A B Tail)
         (
             READ
-            (EXP ((turnstyleStack LS L (cons (not A) RS) R) Tail))
+            (EXP ((turnstileStack LS L (cons (not A) RS) R) Tail))
         )
         (
             WRITE
-            (EXP ((turnstyleStack (cons A LS) L RS R) Tail))
+            (EXP ((turnstileStack (cons A LS) L RS R) Tail))
         )
     )
     
@@ -1268,11 +1252,11 @@ formula validator using sequent calculus (exponential time complexity)
         (VAR LS L RS R A B Tail)
         (
             READ
-            (EXP ((turnstyleStack LS L (cons (and A B) RS) R) Tail))
+            (EXP ((turnstileStack LS L (cons (and A B) RS) R) Tail))
         )
         (
             WRITE
-            (EXP (append ((turnstyleStack LS L (cons A RS) R) ((turnstyleStack LS L (cons B RS) R) ())) Tail))
+            (EXP (append ((turnstileStack LS L (cons A RS) R) ((turnstileStack LS L (cons B RS) R) ())) Tail))
         )
     )
     
@@ -1282,11 +1266,11 @@ formula validator using sequent calculus (exponential time complexity)
         (VAR LS L RS R A B Tail)
         (
             READ
-            (EXP ((turnstyleStack LS L (cons (or A B) RS) R) Tail))
+            (EXP ((turnstileStack LS L (cons (or A B) RS) R) Tail))
         )
         (
             WRITE
-            (EXP ((turnstyleStack LS L (cons A (cons B RS)) R) Tail))
+            (EXP ((turnstileStack LS L (cons A (cons B RS)) R) Tail))
         )
     )
     
@@ -1296,11 +1280,11 @@ formula validator using sequent calculus (exponential time complexity)
         (VAR LS L RS R A B Tail)
         (
             READ
-            (EXP ((turnstyleStack LS L (cons A RS) R) Tail))
+            (EXP ((turnstileStack LS L (cons A RS) R) Tail))
         )
         (
             WRITE
-            (EXP ((turnstyleStack LS L RS (A R)) Tail))
+            (EXP ((turnstileStack LS L RS (A R)) Tail))
         )
     )
 
@@ -1314,11 +1298,11 @@ formula validator using sequent calculus (exponential time complexity)
         (VAR LS L RS R A B Tail)
         (
             READ
-            (EXP ((turnstyleStack (cons (not A) LS) L RS R) Tail))
+            (EXP ((turnstileStack (cons (not A) LS) L RS R) Tail))
         )
         (
             WRITE
-            (EXP ((turnstyleStack LS L (cons A RS) R) Tail))
+            (EXP ((turnstileStack LS L (cons A RS) R) Tail))
         )
     )
     
@@ -1328,11 +1312,11 @@ formula validator using sequent calculus (exponential time complexity)
         (VAR LS L RS R A B Tail)
         (
             READ
-            (EXP ((turnstyleStack (cons (or A B) LS) L RS R) Tail))
+            (EXP ((turnstileStack (cons (or A B) LS) L RS R) Tail))
         )
         (
             WRITE
-            (EXP (append ((turnstyleStack (cons A LS) L RS R) ((turnstyleStack (cons B LS) L RS R) ())) Tail))
+            (EXP (append ((turnstileStack (cons A LS) L RS R) ((turnstileStack (cons B LS) L RS R) ())) Tail))
         )
     )
     
@@ -1342,11 +1326,11 @@ formula validator using sequent calculus (exponential time complexity)
         (VAR LS L RS R A B Tail)
         (
             READ
-            (EXP ((turnstyleStack (cons (and A B) LS) L RS R) Tail))
+            (EXP ((turnstileStack (cons (and A B) LS) L RS R) Tail))
         )
         (
             WRITE
-            (EXP ((turnstyleStack (cons A (cons B LS)) L RS R) Tail))
+            (EXP ((turnstileStack (cons A (cons B LS)) L RS R) Tail))
         )
     )
     
@@ -1357,16 +1341,16 @@ formula validator using sequent calculus (exponential time complexity)
         (VAR LS L RS R A B Tail)
         (
             READ
-            (EXP ((turnstyleStack (cons A LS) L RS R) Tail))
+            (EXP ((turnstileStack (cons A LS) L RS R) Tail))
         )
         (
             WRITE
-            (EXP ((turnstyleStack LS (A L) RS R) Tail))
+            (EXP ((turnstileStack LS (A L) RS R) Tail))
         )
     )
     
     ///
-    converting to turnstyle
+    converting to turnstile
     ///
     
     (
@@ -1374,16 +1358,16 @@ formula validator using sequent calculus (exponential time complexity)
         (VAR L R)
         (
             READ
-            (EXP (turnstyleStack () L () R))
+            (EXP (turnstileStack () L () R))
         )
         (
             WRITE
-            (EXP (turnstyle L R))
+            (EXP (turnstile L R))
         )
     )
     
     ///
-    testing for equal atoms on both sides of turnstyle in each sequent
+    testing for equal atoms on both sides of turnstile in each sequent
     ///
     
     /cartesian loop/
@@ -1393,7 +1377,7 @@ formula validator using sequent calculus (exponential time complexity)
         (VAR L R Tail)
         (
             READ
-            (EXP (cartLoop ((turnstyle L R) Tail)))
+            (EXP (cartLoop ((turnstile L R) Tail)))
         )
         (
             WRITE

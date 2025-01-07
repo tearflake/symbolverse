@@ -3,7 +3,7 @@
 ```
 ---
 
-# symbolverse v0.2.16
+# symbolverse v0.2.18
 
 _**tags:** s-expression, rewriting, term-rewriting, term-graph-rewriting_
 
@@ -50,7 +50,7 @@ Providing the input `(div (add x x) (((0 0) 1) 0))`, the example outputs `x`.
 There are a couple resources about *Symbolverse* to check out:
 
 - Explore examples at [online playground](https://tearflake.github.io/symbolverse/playground/).
-- Read the [Symbolverse specification](https://tearflake.github.io/symbolverse/docs/symbolverse).
+- Read the [Symbolverse specification](https://github.com/tearflake/symbolverse/blob/main/docs/symbolverse.md).
 
 ## building executables from source code
 

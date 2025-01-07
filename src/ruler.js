@@ -9,6 +9,7 @@ var Ruler = (
             unify: obj.unify,
             subst: obj.subst,
             getMaxLvl: obj.getMaxLvl,
+            getMinLvl: obj.getMinLvl,
             getLvl: obj.getLvl,
             levelShift: obj.levelShift,
             levelSplit: obj.levelSplit
@@ -79,7 +80,18 @@ var Ruler = (
                 idxW = idxW + 4;
                 
                 if (!uvars.hasOwnProperty(tokWName)) {
-                    uvars[tokWName] = levelShift (tokR.slice (idxRStart, idxR), -tokWEsc);
+                    if (tokWName.charAt (0) === tokWName.charAt(0).toLowerCase () && tokR[idxRStart] === '(') {
+                        return false;
+                    }
+                    
+                    var range = tokR.slice (idxRStart, idxR);
+                    var max = getMaxLvl (range, 0, range.length, []);
+                    var min = getMinLvl (range, 0, range.length, []);
+                    if (max !== -Infinity && (max !== tokWEsc || min !== tokWEsc)) {
+                        return false;
+                    }
+
+                    uvars[tokWName] = levelShift (range, -tokWEsc);
                 }
                 else {
                     var shifted = levelShift (uvars[tokWName], tokWEsc)
@@ -94,7 +106,7 @@ var Ruler = (
             return false;
         }
 
-        var unify = function (tokW, fromW, toW, tokR, fromR, toR, vars) {
+        var unify = function (tokW, fromW, toW, tokR, fromR, toR, level, vars) {
             var idxW = fromW, idxR = fromR, idxWStart, idxRStart, uvars = [];
             
             vars = prepareVars (vars);
@@ -120,7 +132,18 @@ var Ruler = (
                 else if (vars[tokRName] === null && vars.hasOwnProperty(tokRName)) {
                     idxWStart = idxW;
                     idxW = getNextWhole (tokW, idxW);
-                    vars[tokRName] = levelShift (tokW.slice (idxWStart, idxW), -tokREsc);
+                    if (tokRName.charAt (0) === tokRName.charAt(0).toLowerCase () && tokW[idxWStart] === '(') {
+                        return false;
+                    }
+                    
+                    var range = tokW.slice (idxWStart, idxW);
+                    var max = getMaxLvl (range, 0, range.length, []);
+                    var min = getMinLvl (range, 0, range.length, []);
+                    if (max !== -Infinity && (max !== tokREsc || min !== tokREsc)) {
+                        return false;
+                    }
+                    
+                    vars[tokRName] = levelShift (range, -tokREsc);;
                     idxR++;
                 }
                 else if (vars[tokRName] !== undefined && vars.hasOwnProperty(tokRName)) {
@@ -256,6 +279,19 @@ var Ruler = (
             }
         }
         
+        var getMinLvl = function (tok, from, to, vars) {
+            var result = Infinity;
+            if (Array.isArray (tok)) {
+                for (var i = from; i < tok.length; i++) {
+                    if (tok[i] !== "(" && tok[i] !== ")") {
+                        result = Math.min (result, getLvl (tok[i], vars));
+                    }
+                }
+                
+                return result;
+            }
+        }
+        
         var getLvl = function (str, vars) {
             if (vars === undefined) vars  = [];
             if (/*str !== "ATOMIC" && str !== "COMPOUND" && str !== "ANY" &&*/ str !== undefined /*&& vars.indexOf (str) === -1*/){
@@ -293,6 +329,7 @@ var Ruler = (
             unify: unify,
             subst: subst,
             getMaxLvl: getMaxLvl,
+            getMinLvl: getMinLvl,
             getLvl: getLvl,
             levelShift: levelShift,
             levelSplit: levelSplit

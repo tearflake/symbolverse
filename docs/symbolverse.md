@@ -167,7 +167,7 @@ output: `(hello Name)`
 )
 ```
 
-In our case, variable name is `Name`. By convention, we write variables with uppercase first letter, but this is not necessary. When we pass `(greet human)` as input to this example, we get `(hello human)` as an output.
+In our case, variable name is `Name`, as stated in the `VAR` section. The first character of every variable name is meaningful to *Symbolverse*. It stands for atomic value if it is lower case, and it stands for atomic or compound value if it is upper case. The variable will match its contents only if all the content atoms match the same amount of escape characters noted by the variable appearance. To return to our example, when we pass `(greet human)` as an input, we get `(hello human)` as an output.
 
 ##### set of rules
 
@@ -313,9 +313,11 @@ output: `(fruitGrows Fruit)`
 )
 ```
 
-Here, in the first level, we used two rules only to pass the information up from and down to program input/output scope. Next, in the nested `(REWRITE ...)` section, we created a separate scope which represents a chained actions between seeding a plant and growing a fruit. To reach atoms and variables from the outer layers, we have to escape them with `\` character, like in `(READ (EXP (\plantSeed \Fruit)))` section. Similarly, atoms and variables created within that scope are not visible outside of that scope unless they are escaped with `\` character, like in `(WRITE (EXP (\fruitGrows \Fruit)))` section. It is also possible to reach more distant outer scopes by repeating a number of `\` characters where the number of repetitions denotes the depth difference to the parent scope we are referring to. Without escaping, it is not possible to refer to adjacent scopes or their children atoms and variables. Thus, without escaping, we are using scopes as private areas where their atoms and variables may interact.
+Here, in the first level, we used two rules only to pass the information up from and down to program input/output scope. Next, in the nested `(REWRITE ...)` section, we created a separate scope which represents a chained actions between seeding a plant and growing a fruit. To reach atoms and variables from the outer layers, we have to escape them with `\` character, like in `(READ (EXP (\plantSeed \Fruit)))` section. Similarly, atoms and variables created within that scope are not visible outside of that scope unless they are escaped with `\` character, like in `(WRITE (EXP (\fruitGrows \Fruit)))` section.
 
-Scopes represent a natural way to package and separate sets of rules where only escaped atoms and variables are exposed to the outer world. Unescaped atoms and variables are considered private members of scopes in which they reside.
+It is also possible to reach more distant parent scopes by repeating a number of `\` characters where the number of repetitions denotes the depth difference to the parent scope we are referring to. This way, it is possible to refer to adjacent scopes or their children escaped atoms and variables if their escaping amount matches the referrer. There is also a possibility to escape atoms and variables at the right sides, which we may use to push down the processed values, only to pull them up after the processing is done.
+
+Summing it up, scopes represent a natural way to package and separate sets of rules where unescaped atoms and variables are considered private members. Such private members do not interact with adjacent scopes unless they are escaped from the left side. However, they may interact with parent or children scopes if their escaping amount matches referring rules.
 
 ---
 
@@ -323,7 +325,7 @@ In this section, we learned how to write syntactically correct rules, how to use
 
 ## 3. practical examples
 
-We assembled a number of practical examples covering programming examples (boolean operations, binary number arithmetic and comparison, operations on lists) and more abstract examples (SKI calculus, lambda calculus, sequent calculus). These examples are covered in source code files in `path-to-sybolverse/examples/` directory. All the examples are paired with their example input, and can also be examined from command line using *Symbolverse* executable.
+We assembled a number of practical examples covering programming examples (boolean operations, binary number arithmetic and comparison, operations on lists) and more abstract examples (SKI calculus with some frameworks that compile to SKI calculus). These examples are covered in source code files in `path-to-sybolverse/examples/` directory. All the examples are paired with their example input, and can also be examined from command line using *Symbolverse* executable.
 
 ## 4. conclusion
 
