@@ -946,33 +946,57 @@ replace element in list
 `
 ///
 SKI calculus interpreter
+
+SKI calculus is a combinatory logic system used in mathematical logic and computer science to model
+computation without the need for variables. It uses three basic combinators: S, K, and I. The K
+combinator (Kxy = x) discards its second argument, the I combinator (Ix = x) returns its argument,
+and the S combinator (Sxyz = xz(yz)) applies its first argument to its third argument and the
+result of applying the second argument to the third. Through combinations of these three primitives,
+any computation can be encoded, making SKI calculus a foundation for understanding computation
+theory.
 ///
 
 (
     REWRITE
     
+    /entry point/
+    (RULE (VAR A) (READ (EXP (\\interpretSKI \\A))) (WRITE (EXP (interpretingSKI A))))
+    
     /combinators/
-    (RULE (VAR X) (READ (EXP (\\I \\X))) (WRITE (EXP \\X)))
-    (RULE (VAR X Y) (READ (EXP ((\\K \\X) \\Y))) (WRITE (EXP \\X)))
-    (RULE (VAR X Y Z) (READ (EXP (((\\S \\X) \\Y) \\Z))) (WRITE (EXP ((\\X \\Z) (\\Y \\Z)))))
+    (RULE (VAR X) (READ (EXP (I X))) (WRITE (EXP X)))
+    (RULE (VAR X Y) (READ (EXP ((K X) Y))) (WRITE (EXP X)))
+    (RULE (VAR X Y Z) (READ (EXP (((S X) Y) Z))) (WRITE (EXP ((X Z) (Y Z)))))
+    
+    /exit point/
+    (RULE (VAR A) (READ (EXP (interpretingSKI A))) (WRITE (EXP \\A)))
 )
 `,
 "example-ski-input":
 `
-((((S (K (S I))) K) a) b)
+(
+    interpretSKI
+    ((((S (K (S I))) K) a) b)
+)
 `,
 
 "example-bool2":
 `
 ///
 Boolean logic to SKI compiler
+
+Boolean logic is a branch of mathematics and logic that deals with true or false values, often
+represented as 1 (true) and 0 (false). It uses basic operators such as AND (conjunction), OR
+(disjunction), and NOT (negation) to manipulate these values. More complex operations, like XOR
+(exclusive OR) and NAND, are derived from these basics. Boolean logic is foundational in digital
+circuits, computer programming, and search algorithms, as it provides the rules for decision-making
+and data processing based on binary conditions.
 ///
 
 (
     REWRITE
     
     /workflow/
-    (RULE (VAR A) (READ (EXP (\\bool \\A))) (WRITE (EXP (parseBool A))))
+    (RULE (VAR A) (READ (EXP (\\boolToSKI \\A))) (WRITE (EXP (parseBool A))))
     (RULE (VAR A) (READ (EXP (parsedBool A))) (WRITE (EXP (compileToSKI A))))
     (RULE (VAR A) (READ (EXP (compiledToSKI A))) (WRITE (EXP \\A)))
 
@@ -987,33 +1011,33 @@ Boolean logic to SKI compiler
         (
             RULE
             (READ (EXP (token\\ true\\)))
-            (WRITE (EXP (typeOf\\ true\\ bool\\)))
+            (WRITE (EXP (typed\\ true\\ bool\\)))
         )
         (
             RULE
             (READ (EXP (token\\ false\\)))
-            (WRITE (EXP (typeOf\\ false\\ bool\\)))
+            (WRITE (EXP (typed\\ false\\ bool\\)))
         )
         (
             RULE
             (VAR A)
-            (READ (EXP ((token\\ not\\) (typeOf\\ A\\ bool\\))))
-            (WRITE (EXP (typeOf\\ (not\\ A\\) bool\\)))
+            (READ (EXP ((token\\ not\\) (typed\\ A\\ bool\\))))
+            (WRITE (EXP (typed\\ (not\\ A\\) bool\\)))
         )
         (
             RULE
             (VAR A B)
-            (READ (EXP ((token\\ or\\) (typeOf\\ A\\ bool\\) (typeOf\\ B\\ bool\\))))
-            (WRITE (EXP (typeOf\\ (or\\ A\\ B\\) bool\\)))
+            (READ (EXP ((token\\ or\\) (typed\\ A\\ bool\\) (typed\\ B\\ bool\\))))
+            (WRITE (EXP (typed\\ (or\\ A\\ B\\) bool\\)))
         )
         (
             RULE
             (VAR A B)
-            (READ (EXP ((token\\ and\\) (typeOf\\ A\\ bool\\) (typeOf\\ B\\ bool\\))))
-            (WRITE (EXP (typeOf\\ (and\\ A\\ B\\) bool\\)))
+            (READ (EXP ((token\\ and\\) (typed\\ A\\ bool\\) (typed\\ B\\ bool\\))))
+            (WRITE (EXP (typed\\ (and\\ A\\ B\\) bool\\)))
         )
         
-        (RULE (VAR A) (READ (EXP (parsingBool\\ (typeOf\\ A\\ bool\\)))) (WRITE (EXP (\\parsedBool \\A))))
+        (RULE (VAR A) (READ (EXP (parsingBool\\ (typed\\ A\\ bool\\)))) (WRITE (EXP (\\parsedBool \\A))))
         (RULE (VAR A) (READ (EXP (parsingBool\\ A\\))) (WRITE (EXP \\\\"bool syntax error")))
     )
     
@@ -1036,20 +1060,28 @@ Boolean logic to SKI compiler
 `,
 "example-bool2-input":
 `
-(bool (not (and false (or false true))))
+(boolToSKI (not (and false (or false true))))
 `,
 
 "example-lamb":
 `
 ///
 Lambda calculus to SKI compiler
+
+Lambda calculus is a formal system in mathematical logic and computer science for expressing
+computation based on function abstraction and application. It uses variable binding and
+substitution to define functions and apply them to arguments. The core components are variables,
+function definitions (lambda abstractions, e.g., λx.x), and function applications (e.g., (λx.x)y).
+Lambda calculus serves as a foundation for functional programming languages and provides a
+framework for studying computation, recursion, and the equivalence of algorithms. Its simplicity
+and expressiveness make it a cornerstone of theoretical computer science.
 ///
 
 (
     REWRITE
     
     /workflow/
-    (RULE (VAR A) (READ (EXP (\\lc \\A))) (WRITE (EXP (parseLc A))))
+    (RULE (VAR A) (READ (EXP (\\lcToSKI \\A))) (WRITE (EXP (parseLc A))))
     (RULE (VAR A) (READ (EXP (parsedLc A))) (WRITE (EXP (compileToSKI A))))
     (RULE (VAR A) (READ (EXP (compiledToSKI A))) (WRITE (EXP \\A)))
 
@@ -1059,23 +1091,24 @@ Lambda calculus to SKI compiler
         
         (RULE (VAR A) (READ (EXP (\\parseLc \\A))) (WRITE (EXP (parsingLc\\ A))))
 
-        (RULE (READ (EXP lmbd)) (WRITE (EXP (token\\ lmbd\\))))
+        (RULE (VAR x) (READ (EXP x)) (WRITE (EXP (token\\ x\\))))
         
-        (RULE (VAR x) (READ (EXP x)) (WRITE (EXP (typeOf\\ x\\ (var\\ term\\)))))
+        (RULE (READ (EXP (token\\ lmbd\\))) (WRITE (EXP (keyword\\ lmbd\\))))
+        (RULE (VAR x) (READ (EXP (token\\ x\\))) (WRITE (EXP (typed\\ x\\ (var\\ term\\)))))
         (
             RULE
             (VAR x M ANY)
-            (READ (EXP ((token\\ lmbd\\) (typeOf\\ x\\ (var\\ term\\)) (typeOf\\ M\\ (ANY\\ term\\)))))
-            (WRITE (EXP (typeOf\\ (lmbd\\ x\\ M\\) (abs\\ term\\))))
+            (READ (EXP ((keyword\\ lmbd\\) (typed\\ x\\ (var\\ term\\)) (typed\\ M\\ (ANY\\ term\\)))))
+            (WRITE (EXP (typed\\ (lmbd\\ x\\ M\\) (abs\\ term\\))))
         )
         (
             RULE
             (VAR M N ANY1 ANY2)
-            (READ (EXP ((typeOf\\ M\\ (ANY1\\ term\\)) (typeOf\\ N\\ (ANY2\\ term\\)))))
-            (WRITE (EXP (typeOf\\ (M\\ N\\) (app\\ term\\))))
+            (READ (EXP ((typed\\ M\\ (ANY1\\ term\\)) (typed\\ N\\ (ANY2\\ term\\)))))
+            (WRITE (EXP (typed\\ (M\\ N\\) (app\\ term\\))))
         )
         
-        (RULE (VAR A ANY) (READ (EXP (parsingLc\\ (typeOf\\ A\\ (ANY\\ term\\))))) (WRITE (EXP (\\parsedLc \\A))))
+        (RULE (VAR A ANY) (READ (EXP (parsingLc\\ (typed\\ A\\ (ANY\\ term\\))))) (WRITE (EXP (\\parsedLc \\A))))
         (RULE (VAR A) (READ (EXP (parsingLc\\ A\\))) (WRITE (EXP \\\\"lambda calculus syntax error")))
     )
     
@@ -1095,20 +1128,28 @@ Lambda calculus to SKI compiler
 `,
 "example-lamb-input":
 `
-(((lc (lmbd x (lmbd y (y x)))) a) b)
+(lcToSKI (((lmbd x (lmbd y (y x))) a) b))
 `,
 
 "example-jot":
 `
 ///
 Jot framework to SKI compiler
+
+The Jot computational framework is an esoteric minimalist programming language designed to encode
+and execute programs using only binary sequences (0s and 1s). Based on the SKI combinatory logic,
+Jot translates these sequences into SKI expressions, eliminating the need for variables or explicit
+syntax. Each binary sequence represents a unique program or function, and computation is performed
+through application of these encoded combinators. Its extreme simplicity makes Jot a theoretical
+tool for exploring the foundations of computation and the relationship between binary encoding and
+functional programming.
 ///
 
 (
     REWRITE
     
     /workflow/
-    (RULE (VAR A) (READ (EXP (\\jot \\A))) (WRITE (EXP (parseJot A))))
+    (RULE (VAR A) (READ (EXP (\\jotToSKI \\A))) (WRITE (EXP (parseJot A))))
     (RULE (VAR A) (READ (EXP (parsedJot A))) (WRITE (EXP (compileToSKI A))))
     (RULE (VAR A) (READ (EXP (compiledToSKI A))) (WRITE (EXP \\A)))
     
@@ -1123,22 +1164,22 @@ Jot framework to SKI compiler
         (
             RULE
             (READ (EXP (token\\ NIL\\)))
-            (WRITE (EXP (typeOf\\ NIL\\ jot\\)))
+            (WRITE (EXP (typed\\ NIL\\ jot\\)))
         )
         (
             RULE
             (VAR A)
-            (READ (EXP ((typeOf\\ A\\ jot\\) (token\\ 0\\))))
-            (WRITE (EXP (typeOf\\ (A\\ 0\\) jot\\)))
+            (READ (EXP ((typed\\ A\\ jot\\) (token\\ 0\\))))
+            (WRITE (EXP (typed\\ (A\\ 0\\) jot\\)))
         )
         (
             RULE
             (VAR A)
-            (READ (EXP ((typeOf\\ A\\ jot\\) (token\\ 1\\))))
-            (WRITE (EXP (typeOf\\ (A\\ 1\\) jot\\)))
+            (READ (EXP ((typed\\ A\\ jot\\) (token\\ 1\\))))
+            (WRITE (EXP (typed\\ (A\\ 1\\) jot\\)))
         )
         
-        (RULE (VAR A) (READ (EXP (parsingJot\\ (typeOf\\ A\\ jot\\)))) (WRITE (EXP (\\parsedJot \\A))))
+        (RULE (VAR A) (READ (EXP (parsingJot\\ (typed\\ A\\ jot\\)))) (WRITE (EXP (\\parsedJot \\A))))
         (RULE (VAR A) (READ (EXP (parsingJot\\ A\\))) (WRITE (EXP \\\\"jot syntax error")))
     )
     
@@ -1158,523 +1199,134 @@ Jot framework to SKI compiler
 `,
 "example-jot-input":
 `
-((jot ((((NIL 1) 0) 1) 0)) a)
+(jotToSKI ((((NIL 1) 0) 1) 0))
 `,
 
-"example-seq":
+"example-prfver":
 `
 ///
-formula validator using sequent calculus (exponential time complexity)
-///
+Propositional logic proof verifier
 
-(
-    REWRITE
+Verifying proofs in propositional logic is the process of checking whether a given sequence of
+statements, starting from axioms and applying inference rules, correctly leads to a target formula
+(the theorem). This task is computationally efficient and belongs to the class P (polynomial time),
+as it involves a straightforward syntactic verification. Each step in the proof is checked to
+ensure it follows logically from the previous steps according to the rules of the chosen proof
+system. Since the structure and rules of propositional logic are well-defined and finite, verifying
+the correctness of a proof requires only a linear or polynomial number of operations relative to
+the length of the proof. This makes proof verification significantly easier than finding a proof,
+which can involve an exponential search through potential derivations.
 
-    ///
-    entry point
-    ///
-    
-    (
-        RULE
-        (VAR Formula)
-        (
-            READ
-            (EXP (\\isValid \\Formula))
-        )
-        (
-            WRITE
-            (
-                EXP
-                (
-                    cartLoop
-                    (
-                        (turnstileStack () () (cons Formula ()) ())
-                        ()
-                    )
-                )
-            )
-        )
-    )
-
-    ///
-    eliminating eq, impl
-    ///
-    
-    /eq/
-    (
-        RULE
-        (VAR A B)
-        (
-            READ
-            (EXP (eq A B))
-        )
-        (
-            WRITE
-            (EXP (and (impl A B) (impl B A)))
-        )
-    )
-    
-    /impl/
-    (
-        RULE
-        (VAR A B)
-        (
-            READ
-            (EXP (impl A B))
-        )
-        (
-            WRITE
-            (EXP (or (not A) B))
-        )
-    )
-    
-    ///
-    right side stack operations
-    ///
-    
-    /not/
-    (
-        RULE
-        (VAR LS L RS R A B Tail)
-        (
-            READ
-            (EXP ((turnstileStack LS L (cons (not A) RS) R) Tail))
-        )
-        (
-            WRITE
-            (EXP ((turnstileStack (cons A LS) L RS R) Tail))
-        )
-    )
-    
-    /and/
-    (
-        RULE
-        (VAR LS L RS R A B Tail)
-        (
-            READ
-            (EXP ((turnstileStack LS L (cons (and A B) RS) R) Tail))
-        )
-        (
-            WRITE
-            (EXP (append ((turnstileStack LS L (cons A RS) R) ((turnstileStack LS L (cons B RS) R) ())) Tail))
-        )
-    )
-    
-    /or/
-    (
-        RULE
-        (VAR LS L RS R A B Tail)
-        (
-            READ
-            (EXP ((turnstileStack LS L (cons (or A B) RS) R) Tail))
-        )
-        (
-            WRITE
-            (EXP ((turnstileStack LS L (cons A (cons B RS)) R) Tail))
-        )
-    )
-    
-    /stack pop/
-    (
-        RULE
-        (VAR LS L RS R A B Tail)
-        (
-            READ
-            (EXP ((turnstileStack LS L (cons A RS) R) Tail))
-        )
-        (
-            WRITE
-            (EXP ((turnstileStack LS L RS (A R)) Tail))
-        )
-    )
-
-    ///
-    left side stack operations
-    ///
-    
-    /not/
-    (
-        RULE
-        (VAR LS L RS R A B Tail)
-        (
-            READ
-            (EXP ((turnstileStack (cons (not A) LS) L RS R) Tail))
-        )
-        (
-            WRITE
-            (EXP ((turnstileStack LS L (cons A RS) R) Tail))
-        )
-    )
-    
-    /or/
-    (
-        RULE
-        (VAR LS L RS R A B Tail)
-        (
-            READ
-            (EXP ((turnstileStack (cons (or A B) LS) L RS R) Tail))
-        )
-        (
-            WRITE
-            (EXP (append ((turnstileStack (cons A LS) L RS R) ((turnstileStack (cons B LS) L RS R) ())) Tail))
-        )
-    )
-    
-    /and/
-    (
-        RULE
-        (VAR LS L RS R A B Tail)
-        (
-            READ
-            (EXP ((turnstileStack (cons (and A B) LS) L RS R) Tail))
-        )
-        (
-            WRITE
-            (EXP ((turnstileStack (cons A (cons B LS)) L RS R) Tail))
-        )
-    )
-    
-    /stack pop/
-    
-    (
-        RULE
-        (VAR LS L RS R A B Tail)
-        (
-            READ
-            (EXP ((turnstileStack (cons A LS) L RS R) Tail))
-        )
-        (
-            WRITE
-            (EXP ((turnstileStack LS (A L) RS R) Tail))
-        )
-    )
-    
-    ///
-    converting to turnstile
-    ///
-    
-    (
-        RULE
-        (VAR L R)
-        (
-            READ
-            (EXP (turnstileStack () L () R))
-        )
-        (
-            WRITE
-            (EXP (turnstile L R))
-        )
-    )
-    
-    ///
-    testing for equal atoms on both sides of turnstile in each sequent
-    ///
-    
-    /cartesian loop/
-    
-    (
-        RULE
-        (VAR L R Tail)
-        (
-            READ
-            (EXP (cartLoop ((turnstile L R) Tail)))
-        )
-        (
-            WRITE
-            (EXP (and (cLhsLoop L R) (cartLoop Tail)))
-        )
-    )
-    
-    (
-        RULE
-        (
-            READ
-            (EXP (cartLoop ()))
-        )
-        (
-            WRITE
-            (EXP \\true)
-        )
-    )
-    
-    /left hand side loop/
-
-    (
-        RULE
-        (VAR L R Tail)
-        (
-            READ
-            (EXP (cLhsLoop (L Tail) R))
-        )
-        (
-            WRITE
-            (EXP (or (cRhsLoop L R) (cLhsLoop Tail R)))
-        )
-    )
-    
-    (
-        RULE
-        (VAR R)
-        (
-            READ
-            (EXP (cLhsLoop () R))
-        )
-        (
-            WRITE
-            (EXP \\false)
-        )
-    )
-    
-    /right hand side loop/
-
-    (
-        RULE
-        (VAR L R Tail)
-        (
-            READ
-            (EXP (cRhsLoop L (R Tail)))
-        )
-        (
-            WRITE
-            (EXP (or (isEqual L R) (cRhsLoop L Tail)))
-        )
-    )
-    
-    (
-        RULE
-        (VAR L)
-        (
-            READ
-            (EXP (cRhsLoop L ()))
-        )
-        (
-            WRITE
-            (EXP \\false)
-        )
-    )
-    
-    ///
-    utility functions
-    ///
-    
-    /append function/
-
-    (RULE (VAR A B C) (READ (EXP (append (A B) C))) (WRITE (EXP (A (append B C)))))
-    (RULE (VAR A    ) (READ (EXP (append () A)   )) (WRITE (EXP A               )))
-    
-    /atom comparison/
-
-    (RULE (VAR A  ) (READ (EXP (isEqual A A))) (WRITE (EXP \\true )))
-    (RULE (VAR A B) (READ (EXP (isEqual A B))) (WRITE (EXP \\false)))
-    
-    /boolean connectives/
-
-    (RULE (READ (EXP (and \\true  \\true ))) (WRITE (EXP \\true )))
-    (RULE (READ (EXP (and \\true  \\false))) (WRITE (EXP \\false)))
-    (RULE (READ (EXP (and \\false \\true ))) (WRITE (EXP \\false)))
-    (RULE (READ (EXP (and \\false \\false))) (WRITE (EXP \\false)))
-    
-    (RULE (READ (EXP (or \\true  \\true ))) (WRITE (EXP \\true )))
-    (RULE (READ (EXP (or \\true  \\false))) (WRITE (EXP \\true )))
-    (RULE (READ (EXP (or \\false \\true ))) (WRITE (EXP \\true )))
-    (RULE (READ (EXP (or \\false \\false))) (WRITE (EXP \\false)))
-
-)
-`,
-
-"example-seq-input":
-`
-///
-testing if De Morgan's law holds
-///
-
-(
-    isValid
-    (
-        eq
-        (and A B)
-        (not (or (not A) (not B)))
-    )
-)
-`,
-
-"example-constr":
-`
-///
-constructive proof verifyer
+-------------------------------------------------------------
+To use this verifier, assume or apply these rules
+-------------------------------------------------------------
+(Ax1 (impl A (impl B A)))
+(Ax2 (impl (impl A (impl B C)) (impl (impl A B) (impl A C))))
+(Apply (impl A B) A)
+-------------------------------------------------------------
 ///
 
 (
     REWRITE
     
-    /entry point/
-    (RULE (VAR A) (READ (EXP (\\verify \\A))) (WRITE (EXP (verifying A))))
+    /workflow/
+    (RULE (VAR A) (READ (EXP (\\verify \\A))) (WRITE (EXP (proofCheck A))))
+    (RULE (VAR x) (READ (EXP (UNBOUND x))) (WRITE (EXP x)))
+    (RULE (VAR A) (READ (EXP (proofChecked A))) (WRITE (EXP (\\"The proof is correctly stated, proved theorem is:" \\A))))
     
-    /arbitrary introduction/
-    (RULE (VAR P) (READ (EXP ([Assume] P))) (WRITE (EXP P)))
+    /verifier/
+    (
+        REWRITE
+        
+        (RULE (VAR A) (READ (EXP (\\proofCheck \\A))) (WRITE (EXP (proofChecking\\ A))))
+        
+        /tokenizing/
+        (RULE (READ (EXP Ax1)) (WRITE (EXP Ax1\\)))
+        (RULE (READ (EXP Ax2)) (WRITE (EXP Ax2\\)))
+        (RULE (READ (EXP Apply)) (WRITE (EXP Apply\\)))
+        (RULE (READ (EXP impl)) (WRITE (EXP impl\\)))
+        
+        /terminal formulas/
+        (RULE (VAR x) (READ (EXP x)) (WRITE (EXP (typed\\ x\\ terminal\\ bool\\))))
+        (
+            RULE
+            (VAR A B)
+            (READ (EXP (impl\\ (typed\\ A\\ terminal\\ bool\\) (typed\\ B\\ terminal\\ bool\\))))
+            (WRITE (EXP (typed\\ (impl\\ A\\ B\\) terminal\\ bool\\)))
+        )
 
-    /logic Rules/
-    (RULE (VAR P Q  ) (READ (EXP ([andIntro]  P Q)                           )) (WRITE (EXP (and P Q) )))
-    (RULE (VAR P Q  ) (READ (EXP ([andElim1]  (and P Q))                     )) (WRITE (EXP P         )))
-    (RULE (VAR P Q  ) (READ (EXP ([andElim2]  (and P Q))                     )) (WRITE (EXP Q         )))
-    (RULE (VAR P Q  ) (READ (EXP ([orIntro1]  P)                             )) (WRITE (EXP (or P Q)  )))
-    (RULE (VAR P Q  ) (READ (EXP ([orIntro2]  Q)                             )) (WRITE (EXP (or P Q)  )))
-    (RULE (VAR P Q R) (READ (EXP ([orElim]    (or P Q) (impl P R) (impl Q R)))) (WRITE (EXP R         )))
-    (RULE (VAR P Q  ) (READ (EXP ([implIntro] (seq P Q))                     )) (WRITE (EXP (impl P Q))))
-    (RULE (VAR P Q  ) (READ (EXP ([implElim]  (impl P Q) P)                  )) (WRITE (EXP Q         )))
-    (RULE (VAR P Q  ) (READ (EXP ([eqIntro]   (impl P Q) (impl Q P))         )) (WRITE (EXP (eq P Q)  )))
-    (RULE (VAR P Q  ) (READ (EXP ([eqElim1]   (eq P Q) P)                    )) (WRITE (EXP Q         )))
-    (RULE (VAR P Q  ) (READ (EXP ([eqElim2]   (eq P Q) Q)                    )) (WRITE (EXP P         )))
-    (RULE (VAR P    ) (READ (EXP ([notIntro]  (impl P false))                )) (WRITE (EXP (not P)   )))
-    (RULE (VAR P    ) (READ (EXP ([notElim]   (not P) P)                     )) (WRITE (EXP false     )))
-    (RULE (VAR P    ) (READ (EXP ([X]         false)                         )) (WRITE (EXP P         )))
-    (RULE (VAR P    ) (READ (EXP ([IP]        (impl (not P) false))          )) (WRITE (EXP P         )))
-    
-    /exit point/
-    (RULE (VAR A) (READ (EXP (verifying A))) (WRITE (EXP (\\result \\A))))
+        /axioms/
+        (
+            RULE
+            (VAR A B)
+            (READ (EXP (Ax1\\ (typed\\ (impl\\ A\\ (impl\\ B\\ A\\)) terminal\\ bool\\))))
+            (WRITE (EXP (typed\\ (impl\\ A\\ (impl\\ B\\ A\\)) step\\ bool\\)))
+        )
+        (
+            RULE
+            (VAR A B C)
+            (READ (EXP (Ax2\\ (typed\\ (impl\\ (impl\\ A\\ (impl\\ B\\ C\\)) (impl\\ (impl\\ A\\ B\\) (impl\\ A\\ C\\))) terminal\\ bool\\))))
+            (WRITE (EXP (typed\\ (impl\\ (impl\\ A\\ (impl\\ B\\ C\\)) (impl\\ (impl\\ A\\ B\\) (impl\\ A\\ C\\))) step\\ bool\\)))
+        )
+        
+        /modus ponens/
+        (
+            RULE
+            (VAR A B)
+            (READ (EXP (Apply\\ (typed\\ (impl\\ A\\ B\\) step\\ bool\\) (typed\\ A\\ step\\ bool\\))))
+            (WRITE (EXP (typed\\ B\\ step\\ bool\\)))
+        )
+
+        (RULE (VAR A) (READ (EXP (proofChecking\\ (typed\\ A\\ step\\ bool\\)))) (WRITE (EXP (\\proofChecked \\A))))
+        (RULE (VAR A) (READ (EXP (proofChecking\\ A\\))) (WRITE (EXP \\\\"Proof verification syntax error")))
+    )
 )
 `,
-"example-constr-input":
+"example-prfver-input":
 `
-///
-verifying a proof for De Morgan's law
-///
-
 (
     verify
     (
-        [eqIntro]
+        Apply
         (
-            [implIntro]
+            Apply
             (
-                seq
-                (
-                    [Assume]
-                    (and A B)
-                )
-                (
-                    [notIntro]
-                    (
-                        impl
-                        (
-                            [Assume]
-                            (or (not A) (not B))
-                        )
-                        (
-                            [orElim]
-                            (
-                                [Assume]
-                                (or (not A) (not B))
-                            )
-                            (
-                                impl
-                                (
-                                    [Assume]
-                                    (not A)
-                                )
-                                (
-                                    [notElim]
-                                    (
-                                        [Assume]
-                                        (not A)
-                                    )
-                                    (
-                                        [andElim1]
-                                        (
-                                            [Assume]
-                                            (and A B)
-                                        )
-                                    )
-                                )
-                            )
-                            (
-                                impl
-                                (
-                                    [Assume]
-                                    (not B)
-                                )
-                                (
-                                    [notElim]
-                                    (
-                                        [Assume]
-                                        (not B)
-                                    )
-                                    (
-                                        [andElim2]
-                                        (
-                                            [Assume]
-                                            (and A B)
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                    )
-                )
+                Ax2
+                (impl (impl A (impl (impl A A) A)) (impl (impl A (impl A A)) (impl A A)))
+            )
+            (
+                Ax1
+                (impl A (impl (impl A A) A))
             )
         )
         (
-            [implIntro]
-            (
-                seq
-                (
-                    [Assume]
-                    (not (or (not A) (not B)))
-                )
-                (
-                    [andIntro]
-                    (
-                        [IP]
-                        (
-                            impl
-                            (
-                                [Assume]
-                                (not A)
-                            )
-                            (
-                                [notElim]
-                                (
-                                    [Assume]
-                                    (not (or (not A) (not B)))
-                                )
-                                (
-                                    [orIntro1]
-                                    (
-                                        [Assume]
-                                        (not A)
-                                    )
-                                )
-                            )
-                        )
-                    )
-                    (
-                        [IP]
-                        (
-                            impl
-                            (
-                                [Assume]
-                                (not B)
-                            )
-                            (
-                                [notElim]
-                                (
-                                    [Assume]
-                                    (not (or (not A) (not B)))
-                                )
-                                (
-                                    [orIntro2]
-                                    (
-                                        [Assume]
-                                        (not B)
-                                    )
-                                )
-                            )
-                        )
-                    )
-                )
-            )
+            Ax1
+            (impl A (impl A A))
         )
     )
 )
+`,
+
+"example-prffnd":
+`
+///
+Propositional logic proof finder
+
+Finding a proof from axioms in propositional logic involves constructing a logical sequence of
+steps that begins with a set of axioms and uses inference rules to derive the target formula,
+establishing it as a theorem. This process requires systematically exploring the space of possible
+derivations, which can be vast due to the combinatorial explosion of inference sequences. The
+complexity of the task stems from the potential exponential number of steps needed to find a proof
+and the possibility of very long proofs, even for relatively simple formulas. Since propositional
+logic is decidable, the process is guaranteed to terminate, either by successfully finding a proof
+or concluding that the formula cannot be derived from the axioms. However, the worst-case time
+complexity of proof search remains exponential in the size of the formula, making it a
+computationally intensive task.
+///
+`,
+
+"example-prffnd-input":
+`
+(impl (impl A B) (impl (impl B C) (impl A C)))
 `
 }

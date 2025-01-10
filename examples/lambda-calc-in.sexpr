@@ -1,2 +1,2 @@
-(((lc (lmbd x (lmbd y (y x)))) a) b)
+(lcToSKI (((lmbd x (lmbd y (y x))) a) b))
 

@@ -1,5 +1,5 @@
 // ruler.js
-// (c) tearflake, 2024
+// (c) tearflake, 2025
 // MIT License
 
 var Ruler = (
@@ -55,22 +55,22 @@ var Ruler = (
             }
         }
 
-        var isEqual = function (tokW, fromW, toW, tokR, fromR, toR, uvars) {
-            for (var i = fromW, j = fromR; i < tokW.length; i++, j++) {
-                if (backVar (tokW, i, tokR, j, uvars)) {
-                    j = getNextWhole (tokR, j);
-                    i = i + 4;
+        var isEqual = function (tokW, fromW, toW, tokR, fromR, toR, uvars, fromBack) {
+            for (var i = fromW, j = fromR; i < tokW.length && j < tokR.length; i++, j++) {
+                if (!fromBack && backVar (tokW, i, tokR, j, uvars)) {
+                    j = getNextWhole (tokR, j) - 1;
+                    i = i + 4 - 1;
                 }
                 else if (tokW[i] !== tokR[j]) {
                     break;
                 }
             }
             
-            return (i === toW);
+            return (i === toW && j === toR);
         }
         
         var backVar = function (tokW, idxW, tokR, idxR, uvars) {
-            if (idxW > 0 && tokW[idxW] === "(" && tokW[idxW + 1] === "UNBOUND" && tokW[idxW + 2] !== "(" && tokW[idxW + 2] !== ")" && tokW[idxW + 3] === ")") {
+            if (idxW > 0 && tokW[idxW] === "(" && levelSplit (tokW[idxW + 1]).atom === "UNBOUND" && tokW[idxW + 2] !== "(" && tokW[idxW + 2] !== ")" && tokW[idxW + 3] === ")") {
                 var lsW = levelSplit (tokW[idxW + 2])
                 var tokWEsc = lsW.esc;
                 var tokWName = lsW.atom;
@@ -79,7 +79,7 @@ var Ruler = (
                 idxR = getNextWhole (tokR, idxR);
                 idxW = idxW + 4;
                 
-                if (!uvars.hasOwnProperty(tokWName)) {
+                if (uvars[tokWName] === undefined && !uvars.hasOwnProperty(tokWName)) {
                     if (tokWName.charAt (0) === tokWName.charAt(0).toLowerCase () && tokR[idxRStart] === '(') {
                         return false;
                     }
@@ -93,9 +93,9 @@ var Ruler = (
 
                     uvars[tokWName] = levelShift (range, -tokWEsc);
                 }
-                else {
+                else if (uvars[tokWName] !== undefined && uvars.hasOwnProperty(tokWName)) {
                     var shifted = levelShift (uvars[tokWName], tokWEsc)
-                    if (!isEqual (tokR, idxRStart, idxR, shifted, 0, shifted.length, uvars)) {
+                    if (!isEqual (shifted, 0, shifted.length, tokR, idxRStart, idxR, uvars, true)) {
                         return false;
                     }
                 }
@@ -120,7 +120,7 @@ var Ruler = (
                     var tokRName = "";
                 }
                 
-                if (idxW > 0 && tokW[idxW] === "(" && tokW[idxW + 1] === "UNBOUND" && tokW[idxW + 2] !== "(" && tokW[idxW + 2] !== ")" && tokW[idxW + 3] === ")") {
+                if (idxW > 0 && tokW[idxW] === "(" && levelSplit (tokW[idxW + 1]).atom === "UNBOUND" && tokW[idxW + 2] !== "(" && tokW[idxW + 2] !== ")" && tokW[idxW + 3] === ")") {
                     if (!backVar (tokW, idxW, tokR, idxR, uvars)) {
                         return false;
                     }
@@ -192,12 +192,14 @@ var Ruler = (
                     var indexed = spl.atom + "-" + varIdx
                     if (spl.esc > 0) {
                         indexed = indexed + "\\".repeat (spl.esc);
+                        var ub = "UNBOUND" + "\\".repeat (spl.esc);
                     }
                     else {
                         indexed = "\\".repeat (-spl.esc) + indexed;
+                        var ub = "\\".repeat (-spl.esc) + "UNBOUND";
                     }
 
-                    result = [...result, "(", "UNBOUND", indexed, ")"];
+                    result = [...result, "(", ub, indexed, ")"];
                     uvar = true;
                 }
                 else {

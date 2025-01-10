@@ -1,12 +1,20 @@
 ///
 Jot framework to SKI compiler
+
+The Jot computational framework is an esoteric minimalist programming language designed to encode
+and execute programs using only binary sequences (0s and 1s). Based on the SKI combinatory logic,
+Jot translates these sequences into SKI expressions, eliminating the need for variables or explicit
+syntax. Each binary sequence represents a unique program or function, and computation is performed
+through application of these encoded combinators. Its extreme simplicity makes Jot a theoretical
+tool for exploring the foundations of computation and the relationship between binary encoding and
+functional programming.
 ///
 
 (
     REWRITE
     
     /workflow/
-    (RULE (VAR A) (READ (EXP (\jot \A))) (WRITE (EXP (parseJot A))))
+    (RULE (VAR A) (READ (EXP (\jotToSKI \A))) (WRITE (EXP (parseJot A))))
     (RULE (VAR A) (READ (EXP (parsedJot A))) (WRITE (EXP (compileToSKI A))))
     (RULE (VAR A) (READ (EXP (compiledToSKI A))) (WRITE (EXP \A)))
     
@@ -21,22 +29,22 @@ Jot framework to SKI compiler
         (
             RULE
             (READ (EXP (token\ NIL\)))
-            (WRITE (EXP (typeOf\ NIL\ jot\)))
+            (WRITE (EXP (typed\ NIL\ jot\)))
         )
         (
             RULE
             (VAR A)
-            (READ (EXP ((typeOf\ A\ jot\) (token\ 0\))))
-            (WRITE (EXP (typeOf\ (A\ 0\) jot\)))
+            (READ (EXP ((typed\ A\ jot\) (token\ 0\))))
+            (WRITE (EXP (typed\ (A\ 0\) jot\)))
         )
         (
             RULE
             (VAR A)
-            (READ (EXP ((typeOf\ A\ jot\) (token\ 1\))))
-            (WRITE (EXP (typeOf\ (A\ 1\) jot\)))
+            (READ (EXP ((typed\ A\ jot\) (token\ 1\))))
+            (WRITE (EXP (typed\ (A\ 1\) jot\)))
         )
         
-        (RULE (VAR A) (READ (EXP (parsingJot\ (typeOf\ A\ jot\)))) (WRITE (EXP (\parsedJot \A))))
+        (RULE (VAR A) (READ (EXP (parsingJot\ (typed\ A\ jot\)))) (WRITE (EXP (\parsedJot \A))))
         (RULE (VAR A) (READ (EXP (parsingJot\ A\))) (WRITE (EXP \\"jot syntax error")))
     )
     

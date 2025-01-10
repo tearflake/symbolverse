@@ -1,0 +1,22 @@
+(
+    verify
+    (
+        Apply
+        (
+            Apply
+            (
+                Ax2
+                (impl (impl A (impl (impl A A) A)) (impl (impl A (impl A A)) (impl A A)))
+            )
+            (
+                Ax1
+                (impl A (impl (impl A A) A))
+            )
+        )
+        (
+            Ax1
+            (impl A (impl A A))
+        )
+    )
+)
+

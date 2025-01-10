@@ -1,2 +1,2 @@
-(bool (not (and false (or false true))))
+(boolToSKI (not (and false (or false true))))
 

@@ -1,12 +1,20 @@
 ///
 Lambda calculus to SKI compiler
+
+Lambda calculus is a formal system in mathematical logic and computer science for expressing
+computation based on function abstraction and application. It uses variable binding and
+substitution to define functions and apply them to arguments. The core components are variables,
+function definitions (lambda abstractions, e.g., λx.x), and function applications (e.g., (λx.x)y).
+Lambda calculus serves as a foundation for functional programming languages and provides a
+framework for studying computation, recursion, and the equivalence of algorithms. Its simplicity
+and expressiveness make it a cornerstone of theoretical computer science.
 ///
 
 (
     REWRITE
     
     /workflow/
-    (RULE (VAR A) (READ (EXP (\lc \A))) (WRITE (EXP (parseLc A))))
+    (RULE (VAR A) (READ (EXP (\lcToSKI \A))) (WRITE (EXP (parseLc A))))
     (RULE (VAR A) (READ (EXP (parsedLc A))) (WRITE (EXP (compileToSKI A))))
     (RULE (VAR A) (READ (EXP (compiledToSKI A))) (WRITE (EXP \A)))
 
@@ -16,23 +24,24 @@ Lambda calculus to SKI compiler
         
         (RULE (VAR A) (READ (EXP (\parseLc \A))) (WRITE (EXP (parsingLc\ A))))
 
-        (RULE (READ (EXP lmbd)) (WRITE (EXP (token\ lmbd\))))
+        (RULE (VAR x) (READ (EXP x)) (WRITE (EXP (token\ x\))))
         
-        (RULE (VAR x) (READ (EXP x)) (WRITE (EXP (typeOf\ x\ (var\ term\)))))
+        (RULE (READ (EXP (token\ lmbd\))) (WRITE (EXP (keyword\ lmbd\))))
+        (RULE (VAR x) (READ (EXP (token\ x\))) (WRITE (EXP (typed\ x\ (var\ term\)))))
         (
             RULE
             (VAR x M ANY)
-            (READ (EXP ((token\ lmbd\) (typeOf\ x\ (var\ term\)) (typeOf\ M\ (ANY\ term\)))))
-            (WRITE (EXP (typeOf\ (lmbd\ x\ M\) (abs\ term\))))
+            (READ (EXP ((keyword\ lmbd\) (typed\ x\ (var\ term\)) (typed\ M\ (ANY\ term\)))))
+            (WRITE (EXP (typed\ (lmbd\ x\ M\) (abs\ term\))))
         )
         (
             RULE
             (VAR M N ANY1 ANY2)
-            (READ (EXP ((typeOf\ M\ (ANY1\ term\)) (typeOf\ N\ (ANY2\ term\)))))
-            (WRITE (EXP (typeOf\ (M\ N\) (app\ term\))))
+            (READ (EXP ((typed\ M\ (ANY1\ term\)) (typed\ N\ (ANY2\ term\)))))
+            (WRITE (EXP (typed\ (M\ N\) (app\ term\))))
         )
         
-        (RULE (VAR A ANY) (READ (EXP (parsingLc\ (typeOf\ A\ (ANY\ term\))))) (WRITE (EXP (\parsedLc \A))))
+        (RULE (VAR A ANY) (READ (EXP (parsingLc\ (typed\ A\ (ANY\ term\))))) (WRITE (EXP (\parsedLc \A))))
         (RULE (VAR A) (READ (EXP (parsingLc\ A\))) (WRITE (EXP \\"lambda calculus syntax error")))
     )
     
