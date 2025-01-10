@@ -30,7 +30,7 @@ To get a glimpse on how a *Symbolverse* program looks like, here's a simple exam
     /expression addition/
     (
         RULE
-        (VAR A B)
+        (VAR A)
         (READ  (EXP (\add                \A \A)))
         (WRITE (EXP (\mul (((\0 \0) \1) \0) \A)))
     )
