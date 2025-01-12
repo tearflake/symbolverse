@@ -367,7 +367,7 @@ var Sexpression = (
                     }
                 }
                 
-                return {err: "syntax error", found: Array.isArray (expr.val) ? (expr.val.length === 0 ? "empty " : "") + "list" : JSON.stringify (expr.val), pos: expr.pos};
+                return {err: "syntax error", found: Array.isArray (expr.val) ? (expr.val.length === 0 ? "empty " : "") + "list" : quoteIfNecessary (expr.val), pos: expr.pos};
             }
         };
         

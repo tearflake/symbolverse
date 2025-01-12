@@ -3,7 +3,7 @@
 ```
 ---
 
-# symbolverse v0.2.19
+# symbolverse v0.2.20
 
 _**tags:** s-expression, rewriting, term-rewriting, term-graph-rewriting_
 
@@ -83,7 +83,7 @@ To access the API from browser, clone this repository from GitHub: `git clone ht
 <script src="path-to-symbolverse-package/symbolverse.js"></script>
 ```
 
-Below, regardless of using Node.js or browser, approach the API as:
+Below, regardless of accessing from Node.js or browser, use the API as:
 
 ```
 var strRules = `

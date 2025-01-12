@@ -8,6 +8,7 @@ var Ruler = (
             resetVarIdx: obj.resetVarIdx,
             unify: obj.unify,
             subst: obj.subst,
+            usubst: obj.usubst,
             getMaxLvl: obj.getMaxLvl,
             getMinLvl: obj.getMinLvl,
             getLvl: obj.getLvl,
@@ -172,7 +173,7 @@ var Ruler = (
             }
             
             if (idxW === toW && idxR === toR) {
-                return vars;
+                return {vars: vars, uvars: uvars};
             }
             else {
                 return false;
@@ -210,6 +211,45 @@ var Ruler = (
             
             if (uvar) {
                 varIdx++;
+            }
+            
+            return result;
+        }
+        
+        var usubst = function (tok, vars, item) {
+            var idx = 0, idx1 = 0, result = [];
+            
+            while (idx < tok.length) {
+                if (idx < tok.length - 2) {
+                    var spl = levelSplit (tok[idx + 2]);
+                    
+                    if (vars.hasOwnProperty(spl.atom) && vars[spl.atom] && tok[idx] === "(" && levelSplit (tok[idx + 1]).atom === "UNBOUND" && levelSplit (tok[idx + 2]).atom === spl.atom && tok[idx + 3] === ")") {
+                        result = [...result, ...levelShift (vars[spl.atom], spl.esc)];
+                        idx += 4;
+                        idx1++;
+                        if (item) {
+                            if (Number.isInteger (item.idxW) && item.idxW >= idx1) {
+                                item.idxW -= 3;
+                            }
+                            if (Number.isInteger (item.fromW) && item.fromW >= idx1) {
+                                item.fromW -= 3;
+                            }
+                            if (Number.isInteger (item.toW) && item.toW >= idx1) {
+                                item.toW -= 3;
+                            }
+                        }
+                    }
+                    else {
+                        result = [...result, tok[idx]];
+                        idx++;
+                        idx1++;
+                    }
+                }
+                else {
+                    result = [...result, tok[idx]];
+                    idx++;
+                    idx1++
+                }
             }
             
             return result;
@@ -330,6 +370,7 @@ var Ruler = (
             resetVarIdx: resetVarIdx,
             unify: unify,
             subst: subst,
+            usubst: usubst,
             getMaxLvl: getMaxLvl,
             getMinLvl: getMinLvl,
             getLvl: getLvl,

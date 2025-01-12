@@ -23,15 +23,16 @@ and expressiveness make it a cornerstone of theoretical computer science.
         REWRITE
         
         (RULE (VAR A) (READ (EXP (\parseLc \A))) (WRITE (EXP (parsingLc\ A))))
-
-        (RULE (VAR x) (READ (EXP x)) (WRITE (EXP (token\ x\))))
         
-        (RULE (READ (EXP (token\ lmbd\))) (WRITE (EXP (keyword\ lmbd\))))
-        (RULE (VAR x) (READ (EXP (token\ x\))) (WRITE (EXP (typed\ x\ (var\ term\)))))
+        /tokenizing/
+        (RULE (READ (EXP lmbd)) (WRITE (EXP lmbd\)))
+        
+        /parsing/
+        (RULE (VAR x) (READ (EXP x)) (WRITE (EXP (typed\ x\ (var\ term\)))))
         (
             RULE
             (VAR x M ANY)
-            (READ (EXP ((keyword\ lmbd\) (typed\ x\ (var\ term\)) (typed\ M\ (ANY\ term\)))))
+            (READ (EXP (lmbd\ (typed\ x\ (var\ term\)) (typed\ M\ (ANY\ term\)))))
             (WRITE (EXP (typed\ (lmbd\ x\ M\) (abs\ term\))))
         )
         (

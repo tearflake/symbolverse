@@ -103,7 +103,7 @@ var Rewriter = (
                         varsOffset = 1;
                         for (var j = 1; j < rule[1].length; j++) {
                             if (-Ruler.getLvl (rule[1][j]) !== 0){
-                                return {err: "Can not escape variable error", path: p.concat ([node.index, 1, j])};
+                                return {err: "Can not escape variable definition error", path: p.concat ([node.index, 1, j])};
                             }
                             v.push (rule[1][j]);
                         }
@@ -135,7 +135,7 @@ var Rewriter = (
         };
         
         var produce = function (rules, top) {
-            var stack, item;
+            var stack, item, uvars = [];
             
             Ruler.resetVarIdx ();
             top = Sexpression.flatten(top);
@@ -256,9 +256,10 @@ var Rewriter = (
                             break;
                         }
                         else {
-                            var uvars = Ruler.unify (item.write, item.fromW, item.toW, rules[item.ruleIndex].rule.read, 0, rules[item.ruleIndex].rule.read.length, rules[item.ruleIndex].level, rules[item.ruleIndex].vars);
-                            if (uvars) {
-                                var substed = Ruler.subst (rules[item.ruleIndex].rule.write, uvars);
+                            var v = Ruler.unify (item.write, item.fromW, item.toW, rules[item.ruleIndex].rule.read, 0, rules[item.ruleIndex].rule.read.length, rules[item.ruleIndex].level, rules[item.ruleIndex].vars);
+                            if (v) {
+                                var substed = Ruler.subst (rules[item.ruleIndex].rule.write, v.vars);
+                                //substed = Ruler.subst (rules[item.ruleIndex].rule.write, v.vars);
                                 stack.push ({
                                     phase: "test-whole",
                                     write: substed,
@@ -267,6 +268,26 @@ var Rewriter = (
                                     curRule: rules[item.ruleIndex],
                                     path: item.path
                                 });
+                                
+                                for (var key in v.uvars) {
+                                    uvars[key] = v.uvars[key];
+                                }
+                                
+                                if (Object.keys(uvars).length > 0) {
+                                    for (var si = 0; si < stack.length; si++) {
+                                        if (stack[si].processData) {
+                                            stack[si].processData = Ruler.usubst (stack[si].processData, uvars);
+                                        }
+                                        
+                                        if (stack[si].resultData) {
+                                            stack[si].resultData = Ruler.usubst (stack[si].resultData, uvars);
+                                        }
+                                        
+                                        if (stack[si].write) {
+                                            stack[si].write = Ruler.usubst (stack[si].write, uvars, stack[si]);
+                                        }
+                                    }
+                                }
                                 
                                 break;
                             }

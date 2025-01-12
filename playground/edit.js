@@ -563,6 +563,8 @@ var edit = function (node, options) {
         },
         setValue: function (value) {
             input.value = value;
+            input.scrollTop = "0px";
+            input.scrollLeft = "0px";
             undoStack = [];
             redoStack = [];
             lastKeyType = "nav";
