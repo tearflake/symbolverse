@@ -88,6 +88,7 @@ var Rewriter = (
                 var node = stack.pop ();
                 if (node.ast[0] === "REWRITE") {
                     if (node.index) {
+                        p.pop ();
                         p.push (node.index)
                     }
                     

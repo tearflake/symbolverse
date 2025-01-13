@@ -1212,35 +1212,20 @@ functional programming.
 ///
 Logic proof to SKI compiler
 
+By compiling a logic proof into SKI calculus, we're essentially transforming a constructive proof
+of a theorem into an executable program. Each step in the proof corresponds to a combinator or a
+combination of combinators, and the resulting SKI expression is guaranteed to be correct by
+construction because the program adheres to the logical structure of the proof.
+
 Compiling an implicational propositional logic proof to an SKI calculus involves translating each
 logical step of the proof into a corresponding SKI combinator. In implicational logic, the axioms
-(such as \`P -> (Q -> P)\` and \`(P -> (Q -> R)) -> ((P -> Q) -> (P -> R))\`) are represented by simple
-combinators like K (which ignores its second argument) and S (which applies a function to two
-arguments). Each application of these combinators directly encodes the logical structure of the
+(such as \`P -> (Q -> P)\` and \`(P -> (Q -> R)) -> ((P -> Q) -> (P -> R))\`) are represented by
+simple combinators like K (which ignores its second argument) and S (which applies a function to
+two arguments). Each application of these combinators directly encodes the logical structure of the
 proof in SKI calculus. For instance, the proof of an implication such as \`P -> (Q -> P)\` would be
 represented by the K combinator. By systematically replacing axioms and applying inference rules,
 the entire proof can be reduced to a sequence of SKI combinators, yielding a program that is both
 a valid logical proof and an interpretable functional program in SKI calculus.
-
-Such programs in SKI calculus offer several key advantages:
-
-- Deterministic Behavior: They are based on constructive proofs, which ensure that the program's
-  execution follows a well-defined, predictable path, avoiding non-determinism.
-  
-- Termination Guarantee: Since constructive proofs inherently avoid infinite recursion or
-  contradiction, SKI programs derived from them are guaranteed to terminate.
-  
-- Type Safety: The translation from constructive logic to SKI ensures that the program is type-safe,
-  corresponding directly to logical propositions, which guarantees correct usage of types.
-  
-- Correctness: These programs are grounded in a formal proof structure, making them reliable and
-  correct by construction.
-  
-- Reproducibility: Each step in the program corresponds to a logical step in the proof, ensuring that
-  the program can be reproduced and verified based on the original proof.
-
-In essence, SKI programs constructed from theorems are reliable, predictable, and verifiable due to
-their foundation in constructive logic and formal reasoning.
 
 -------------------------------------------------------------
 To verify and compile a proof, assume or apply these rules
