@@ -11,6 +11,7 @@ _**tags:** s-expression, rewriting, term-rewriting, term-graph-rewriting_
 
 - `[x]` v0.1.x basic rewrite rules
 - `[x]` v0.2.x scoped rewrite rules
+- `[ ]` v0.3.x importing files
 - `[ ]` v1.0.x finalizing the package
 
 ## project specifics
