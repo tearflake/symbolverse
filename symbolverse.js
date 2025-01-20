@@ -9,8 +9,9 @@ var isNode = new Function ("try {return this===global;}catch(e){return false;}")
 if (isNode ()) {
     // begin of Node.js support
     
+    var path = require('path');
     var Rewriter = require ("./src/rewriter.js");
-
+    
     var Files = {
         open: function (fileName) {
             const fs = require('fs');
@@ -44,7 +45,7 @@ if (isNode ()) {
         process.exit (1);
     }
 
-    function main(fRules, fInput, fOutput) {
+    async function main(fRules, fInput, fOutput) {
         "use strict";
 
         console.log ("Symbolverse v" + require('./package.json').version);
@@ -57,36 +58,38 @@ if (isNode ()) {
             var tm = Date.now ();
             var strRules = fr.toString();
             process.stdout.write("Compiling rules... ");
-            var arrRules = Rewriter.compile (strRules);
+            var arrRules = await Rewriter.compile (strRules, path.resolve (fRules), undefined, undefined, Files);
             if (arrRules.err) {
-                console.log ('Error compiling rules, file: "' + fRules + '"');
-                console.log (arrRules.err + " at (" + rules.pos.y + ", " + rules.pos.x + ")");
+                console.log ('Error compiling rules');
+                console.log (arrRules.err);
+                console.log ('In file: "' + path.resolve (arrRules.file ? arrRules.file : fRules) + '", pos: (' + (arrRules.pos.y + 1) + ', ' + (arrRules.pos.x + 1) + ')');
                 exitFail ();
             }
             else {
                 console.log (((Date.now () - tm) / 1000).toFixed(3) + "s");
                 var fi = Files.open (fInput);
                 if (fi === false) {
-                    console.log ('Error reading input, file: "' + fInput + '"');
+                    console.log ('Error reading input file: "' + fInput + '"');
                     exitFail ();
                 }
                 else {
                     var tm = Date.now ();
                     var strInput = fi.toString();
                     process.stdout.write("Rewriting input... ")
-                    var strOutput = Rewriter.rewrite (arrRules, strInput);
+                    var arrOutput = Rewriter.rewrite (arrRules, strInput);
                     
-                    if (strOutput.err) {
-                        console.log ('Error rewriting input, file: "' + fInput + '"');
-                        console.log (strOutput.err + " at (" + rules.pos.y + ", " + rules.pos.x + ")");
+                    if (arrOutput.err) {
+                        console.log ('Error rewriting input');
+                        console.log (arrOutput.err);
+                        console.log ('In file: ' + fInput + ",pos: (" + (rules.pos.y + 1) + ", " + (rules.pos.x + 1) + ")");
                         exitFail ();
                     }
                     else {
                         console.log (((Date.now () - tm) / 1000).toFixed(3) + "s");
                         
                         if (fOutput !== undefined) {
-                            if (!Files.save (fOutput, strOutput)) {
-                                console.log ('Error writing output, file: "' + fOutput + '"');
+                            if (!Files.save (fOutput, Rewriter.stringify (arrOutput))) {
+                                console.log ('Error writing output file: "' + fOutput + '"');
                                 exitFail ();
                             }
                             else {
@@ -97,7 +100,7 @@ if (isNode ()) {
                             console.log ("Success.");
                             console.log ("");
                             console.log ("Output:");
-                            console.log (strOutput);
+                            console.log (Rewriter.stringify (arrOutput));
                             process.exit (0);
                         }
                     }

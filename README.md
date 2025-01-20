@@ -3,7 +3,7 @@
 ```
 ---
 
-# symbolverse v0.2.21
+# symbolverse v0.3.0
 
 _**tags:** s-expression, rewriting, term-rewriting, term-graph-rewriting_
 
@@ -11,7 +11,7 @@ _**tags:** s-expression, rewriting, term-rewriting, term-graph-rewriting_
 
 - `[x]` v0.1.x basic rewrite rules
 - `[x]` v0.2.x scoped rewrite rules
-- `[ ]` v0.3.x importing files
+- `[x]` v0.3.x fetching files
 - `[ ]` v1.0.x finalizing the package
 
 ## project specifics
@@ -98,20 +98,22 @@ var strRules = `
     )
 `;
 
-var arrRules = Rewriter.compile (strRules);
+var arrRules = await Rewriter.compile (strRules);
 
 if (!arrRules.err) {
     var strInput = `
         (hello machine)
     `;
 
-    var strOutput = Rewriter.rewrite (arrRules, strInput);
+    var arrOutput = Rewriter.rewrite (arrRules, strInput);
 
-    if (!strOutput.err) {
-        console.log (strOutput);
+    if (!arrOutput.err) {
+        console.log (Rewriter.stringify (arrOutput));
     }
 }
 ```
+
+Along with `Rewriter.compile (...)` function, we also have `Rewriter.compileFile (...)` function available. The only difference is that it can read files from a server, and it enables possible use of file fetching system within rules code files.
 
 ## further work
 

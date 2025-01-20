@@ -1,22 +1,24 @@
 (
     proofToSKI
     (
-        Apply /return type: (A -> A)/
+        Apply
         (
-            Apply /return type: ((A -> (A -> A)) -> (A -> A))/
+            Apply
             (
-                AxS
+                AxmS
                 (impl (impl A (impl (impl A A) A)) (impl (impl A (impl A A)) (impl A A)))
             )
             (
-                AxK
+                AxmK
                 (impl A (impl (impl A A) A))
             )
+            /return type: ((A -> (A -> A)) -> (A -> A))/
         )
         (
-            AxK
+            AxmK
             (impl A (impl A A))
         )
+        /return type: (A -> A)/
     )
 )
 

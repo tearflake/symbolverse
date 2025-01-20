@@ -319,9 +319,13 @@ It is also possible to reach more distant parent scopes by repeating a number of
 
 Summing it up, scopes represent a natural way to package and separate sets of rules where unescaped atoms and variables are considered private members. Such private members do not interact with adjacent scopes unless they are escaped from the left side. However, they may interact with parent or children scopes if their escaping amount matches referring rules.
 
+##### fetching external files
+
+*Symbolverse* code may import rules saved in external files. To do that, we use `(FETCH ...)` section wherever we may expect `(REWRITE ...)` section. `FETCH` section accepts one parameter, a file name. The file name is typed with or without directory, relative to path of the current code file. if we use special characters, such as spaces, we embrace the file name within double quotes. Thus, `FETCH` provides us a packaging system spanned through directories of our interest. Together with constants/variables escaping system, we may form structures of any depth reachable from the inclusion code files.
+
 ---
 
-In this section, we learned how to write syntactically correct rules, how to use variables, how to apply a set of rules, and how to chain rules one onto another. We also skimmed over rule scoping using atom and variable escaping system to keep certain rules out of unwanted interfering with other rules. In the effect of introduced constructs, we are in possession of a computationally complete term rewriting platform.
+In this section, we learned how to write syntactically correct rules, how to use variables, how to apply a set of rules, and how to chain rules one onto another. We also skimmed over rule scoping using atom and variable escaping system to keep certain rules out of unwanted interfering with other rules. Lastly, we introduced a source code file fetching system.
 
 ## 3. practical examples
 

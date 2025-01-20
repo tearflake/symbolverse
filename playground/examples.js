@@ -1212,6 +1212,8 @@ functional programming.
 ///
 Logic proof to SKI compiler
 
+The Curry-Howard correspondence establishes a profound connection between logic and computation,
+where logical propositions correspond to types, and constructive proofs correspond to programs.
 By compiling a logic proof into SKI calculus, we're essentially transforming a constructive proof
 of a theorem into an executable program. Each step in the proof corresponds to a combinator or a
 combination of combinators, and the resulting SKI expression is guaranteed to be correct by
@@ -1223,21 +1225,44 @@ logical step of the proof into a corresponding SKI combinator. In implicational 
 simple combinators like K (which ignores its second argument) and S (which applies a function to
 two arguments). Each application of these combinators directly encodes the logical structure of the
 proof in SKI calculus. For instance, the proof of an implication such as \`P -> (Q -> P)\` would be
-represented by the K combinator. By systematically replacing axioms and applying inference rules,
+represented by the K combinator. By systematically replacing Axioms and applying inference rules,
 the entire proof can be reduced to a sequence of SKI combinators, yielding a program that is both
 a valid logical proof and an interpretable functional program in SKI calculus.
 
--------------------------------------------------------------
+Programs in SKI calculus offer several key advantages:
+
+- Deterministic Behavior: They are based on constructive proofs, which ensure
+  that the program's execution follows a well-defined, predictable path, avoiding
+  non-determinism.
+  
+- Termination Guarantee: Since constructive proofs inherently avoid infinite
+  recursion or contradiction, SKI programs derived from them are guaranteed to
+  terminate.
+  
+- Type Safety: The translation from constructive logic to SKI ensures that the
+  program is type-safe, corresponding directly to logical propositions, which
+  guarantees correct usage of types.
+  
+- Correctness: These programs are grounded in a formal proof structure, making
+  them reliable and correct by construction.
+  
+- Reproducibility: Each step in the program corresponds to a logical step in the
+  proof, ensuring that the program can be reproduced and verified based on the
+  original proof.
+
+In essence, SKI programs are reliable, predictable, and verifiable due to their foundation in
+constructive logic and formal reasoning.
+
+Instructions for testing the compiler:
+
+--------------------------------------------------------------
 To verify and compile a proof, assume or apply these rules
--------------------------------------------------------------
-(AxI (impl A A))
-(AxK (impl A (impl B A)))
-(AxS (impl (impl A (impl B C)) (impl (impl A B) (impl A C))))
-(AxB (impl (impl B C) (impl (impl A B) (impl A C))))
-(AxC (impl (impl A (impl B C)) (impl B (impl A C))))
-(AxW (impl (impl A (impl A B)) (impl A B))
+--------------------------------------------------------------
+(AxmI (impl A A))
+(AxmK (impl A (impl B A)))
+(AxmS (impl (impl A (impl B C)) (impl (impl A B) (impl A C))))
 (Apply (impl A B) A)
--------------------------------------------------------------
+--------------------------------------------------------------
 ///
 
 (
@@ -1255,12 +1280,9 @@ To verify and compile a proof, assume or apply these rules
         (RULE (VAR A) (READ (EXP (\\proofCheck \\A))) (WRITE (EXP (proofChecking\\ A A\\))))
         
         /tokenizing/
-        (RULE (READ (EXP AxI)) (WRITE (EXP AxI\\)))
-        (RULE (READ (EXP AxK)) (WRITE (EXP AxK\\)))
-        (RULE (READ (EXP AxS)) (WRITE (EXP AxS\\)))
-        (RULE (READ (EXP AxB)) (WRITE (EXP AxB\\)))
-        (RULE (READ (EXP AxC)) (WRITE (EXP AxC\\)))
-        (RULE (READ (EXP AxW)) (WRITE (EXP AxW\\)))
+        (RULE (READ (EXP AxmI)) (WRITE (EXP AxmI\\)))
+        (RULE (READ (EXP AxmK)) (WRITE (EXP AxmK\\)))
+        (RULE (READ (EXP AxmS)) (WRITE (EXP AxmS\\)))
         (RULE (READ (EXP Apply)) (WRITE (EXP Apply\\)))
         (RULE (READ (EXP impl)) (WRITE (EXP impl\\)))
         
@@ -1315,7 +1337,7 @@ To verify and compile a proof, assume or apply these rules
                 (
                     EXP
                     (
-                        AxI\\
+                        AxmI\\
                         (
                             typed\\
                             (impl\\ A\\ A\\)
@@ -1346,7 +1368,7 @@ To verify and compile a proof, assume or apply these rules
                 (
                     EXP
                     (
-                        AxK\\
+                        AxmK\\
                         (
                             typed\\
                             (impl\\ A\\ (impl\\ B\\ A\\))
@@ -1377,7 +1399,7 @@ To verify and compile a proof, assume or apply these rules
                 (
                     EXP
                     (
-                        AxS\\
+                        AxmS\\
                         (
                             typed\\
                             (impl\\ (impl\\ A\\ (impl\\ B\\ C\\)) (impl\\ (impl\\ A\\ B\\) (impl\\ A\\ C\\)))
@@ -1401,105 +1423,10 @@ To verify and compile a proof, assume or apply these rules
             )
         )
         
-        /utility axioms/
-        (
-            RULE
-            (VAR A B C)
-            (
-                READ
-                (
-                    EXP
-                    (
-                        AxB\\
-                        (
-                            typed\\
-                            (impl\\ (impl\\ B\\ C\\) (impl\\ (impl\\ A\\ B\\) (impl\\ A\\ C\\)))
-                            terminal\\
-                            bool\\
-                        )
-                    )
-                )
-            )
-            (
-                WRITE
-                (
-                    EXP
-                    (
-                        typed\\
-                        (impl\\ (impl\\ B\\ C\\) (impl\\ (impl\\ A\\ B\\) (impl\\ A\\ C\\)))
-                        step\\
-                        bool\\
-                    )
-                )
-            )
-        )
-        (
-            RULE
-            (VAR A B C)
-            (
-                READ
-                (
-                    EXP
-                    (
-                        AxC\\
-                        (
-                            typed\\
-                            (impl\\ (impl\\ A\\ (impl\\ B\\ C\\)) (impl\\ B\\ (impl\\ A\\ C\\)))
-                            terminal\\
-                            bool\\
-                        )
-                    )
-                )
-            )
-            (
-                WRITE
-                (
-                    EXP
-                    (
-                        typed\\
-                        (impl (impl\\ A\\ (impl\\ B\\ C\\)) (impl\\ B\\ (impl\\ A\\ C\\)))
-                        step\\
-                        bool\\
-                    )
-                )
-            )
-        )
-        (
-            RULE
-            (VAR A B C)
-            (
-                READ
-                (
-                    EXP
-                    (
-                        AxW\\
-                        (
-                            typed\\
-                            (impl\\ (impl\\ A\\ (impl\\ A\\ B\\)) (impl\\ A\\ B\\))
-                            terminal\\
-                            bool\\
-                        )
-                    )
-                )
-            )
-            (
-                WRITE
-                (
-                    EXP
-                    (
-                        typed\\
-                        (impl (impl\\ A\\ (impl\\ A\\ B\\)) (impl\\ A\\ B\\))
-                        step\\
-                        bool\\
-                    )
-                )
-            )
-        )
-        
         /modus ponens/
         (
             RULE
-            (VAR A B Original)
+            (VAR A B)
             (
                 READ
                 (
@@ -1520,8 +1447,18 @@ To verify and compile a proof, assume or apply these rules
             )
         )
 
-        (RULE (VAR A B) (READ (EXP (proofChecking\\ (typed\\ A\\ step\\ bool\\) B\\))) (WRITE (EXP (\\proofChecked \\B))))
-        (RULE (VAR ANY1 ANY2) (READ (EXP (proofChecking\\ ANY1\\ ANY2\\))) (WRITE (EXP \\\\"Proof verification syntax error")))
+        (
+            RULE
+            (VAR Type Proof)
+            (READ (EXP (proofChecking\\ (typed\\ Type\\ step\\ bool\\) Proof\\)))
+            (WRITE (EXP (\\proofChecked \\Proof)))
+        )
+        (
+            RULE
+            (VAR Type Proof)
+            (READ (EXP (proofChecking\\ Type\\ Proof\\)))
+            (WRITE (EXP (\\\\"Proof verification syntax error:" \\\\Type)))
+        )
     )
 
     /compiler/
@@ -1531,12 +1468,9 @@ To verify and compile a proof, assume or apply these rules
         (RULE (VAR A) (READ (EXP (\\compileToSKI \\A))) (WRITE (EXP (compilingToSKI A))))
 
         (RULE (VAR A B) (READ (EXP (Apply A B))) (WRITE (EXP (A B))))
-        (RULE (VAR ANY) (READ (EXP (AxI ANY))) (WRITE (EXP I)))
-        (RULE (VAR ANY) (READ (EXP (AxK ANY))) (WRITE (EXP K)))
-        (RULE (VAR ANY) (READ (EXP (AxS ANY))) (WRITE (EXP S)))
-        (RULE (VAR ANY) (READ (EXP (AxB ANY))) (WRITE (EXP ((S (K S)) K))))
-        (RULE (VAR ANY) (READ (EXP (AxC ANY))) (WRITE (EXP ((S ((S (K ((S (K S)) K))) S)) (K K)))))
-        (RULE (VAR ANY) (READ (EXP (AxW ANY))) (WRITE (EXP ((S S) (S K)))))
+        (RULE (VAR ANY) (READ (EXP (AxmI ANY))) (WRITE (EXP I)))
+        (RULE (VAR ANY) (READ (EXP (AxmK ANY))) (WRITE (EXP K)))
+        (RULE (VAR ANY) (READ (EXP (AxmS ANY))) (WRITE (EXP S)))
 
         (RULE (VAR A) (READ (EXP (compilingToSKI A))) (WRITE (EXP (\\compiledToSKI \\A))))
     )
@@ -1547,22 +1481,24 @@ To verify and compile a proof, assume or apply these rules
 (
     proofToSKI
     (
-        Apply /return type: (A -> A)/
+        Apply
         (
-            Apply /return type: ((A -> (A -> A)) -> (A -> A))/
+            Apply
             (
-                AxS
+                AxmS
                 (impl (impl A (impl (impl A A) A)) (impl (impl A (impl A A)) (impl A A)))
             )
             (
-                AxK
+                AxmK
                 (impl A (impl (impl A A) A))
             )
+            /return type: ((A -> (A -> A)) -> (A -> A))/
         )
         (
-            AxK
+            AxmK
             (impl A (impl A A))
         )
+        /return type: (A -> A)/
     )
 )
 `,
@@ -1585,8 +1521,8 @@ which can involve an exponential search through potential derivations.
 -------------------------------------------------------------
 To use this verifier, assume or apply these rules
 -------------------------------------------------------------
-(AxK (impl A (impl B A)))
-(AxS (impl (impl A (impl B C)) (impl (impl A B) (impl A C))))
+(AxmK (impl A (impl B A)))
+(AxmS (impl (impl A (impl B C)) (impl (impl A B) (impl A C))))
 (Apply (impl A B) A)
 -------------------------------------------------------------
 ///
@@ -1610,8 +1546,8 @@ To use this verifier, assume or apply these rules
         (RULE (VAR A) (READ (EXP (\\proofCheck \\A))) (WRITE (EXP (proofChecking\\ A))))
         
         /tokenizing/
-        (RULE (READ (EXP AxK)) (WRITE (EXP AxK\\)))
-        (RULE (READ (EXP AxS)) (WRITE (EXP AxS\\)))
+        (RULE (READ (EXP AxmK)) (WRITE (EXP AxmK\\)))
+        (RULE (READ (EXP AxmS)) (WRITE (EXP AxmS\\)))
         (RULE (READ (EXP Apply)) (WRITE (EXP Apply\\)))
         (RULE (READ (EXP impl)) (WRITE (EXP impl\\)))
         
@@ -1666,7 +1602,7 @@ To use this verifier, assume or apply these rules
                 (
                     EXP
                     (
-                        AxK\\
+                        AxmK\\
                         (
                             typed\\
                             (impl\\ A\\ (impl\\ B\\ A\\))
@@ -1697,7 +1633,7 @@ To use this verifier, assume or apply these rules
                 (
                     EXP
                     (
-                        AxS\\
+                        AxmS\\
                         (
                             typed\\
                             (impl\\ (impl\\ A\\ (impl\\ B\\ C\\)) (impl\\ (impl\\ A\\ B\\) (impl\\ A\\ C\\)))
@@ -1759,16 +1695,16 @@ To use this verifier, assume or apply these rules
         (
             Apply
             (
-                AxS
+                AxmS
                 (impl (impl A (impl (impl A A) A)) (impl (impl A (impl A A)) (impl A A)))
             )
             (
-                AxK
+                AxmK
                 (impl A (impl (impl A A) A))
             )
         )
         (
-            AxK
+            AxmK
             (impl A (impl A A))
         )
     )
@@ -1828,21 +1764,21 @@ computationally intensive task.
 
         (RULE (VAR A) (READ (EXP (\\resolveProof \\A))) (WRITE (EXP (resolvingProof A (((zero one) one) one)))))
         
-        (RULE (VAR A N) (READ (EXP (resolvingProof A (N one)))) (WRITE (EXP (diverge newAxK newAxS (MP A N)))))
+        (RULE (VAR A N) (READ (EXP (resolvingProof A (N one)))) (WRITE (EXP (diverge newAxmK newAxmS (MP A N)))))
         (RULE (VAR A N) (READ (EXP (resolvingProof A zero))) (WRITE (EXP terminator)))
 
         /axioms/
         (
             RULE
             (VAR A B)
-            (READ (EXP newAxK))
-            (WRITE (EXP (AxK (impl A (impl B A)))))
+            (READ (EXP newAxmK))
+            (WRITE (EXP (AxmK (impl A (impl B A)))))
         )
         (
             RULE
             (VAR A B C)
-            (READ (EXP newAxS))
-            (WRITE (EXP (AxS (impl (impl A (impl B C)) (impl (impl A B) (impl A C))))))
+            (READ (EXP newAxmS))
+            (WRITE (EXP (AxmS (impl (impl A (impl B C)) (impl (impl A B) (impl A C))))))
         )
         
         /modus ponens/

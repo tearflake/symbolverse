@@ -1,5 +1,6 @@
          <start> := (REWRITE <expression>+)
     
     <expression> := <start>
+                  | (FETCH <ATOMIC>)
                   | (RULE (VAR <ATOMIC>+)? (READ (EXP <ANY>)) (WRITE (EXP <ANY>)))
 

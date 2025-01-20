@@ -6,7 +6,9 @@ var Rewriter = (
     function (obj) {
         return {
             compile: obj.compile,
-            rewrite: obj.rewrite
+            compileFile: obj.compileFile,
+            rewrite: obj.rewrite,
+            stringify: obj.stringify
         };
     }
 ) (
@@ -25,12 +27,39 @@ var Rewriter = (
                     return {err: output.err, found: msg.found, pos: msg.pos};
                 }
                 else {
-                    return Sexpression.stringify (output);
+                    return output;
                 }
             }
         }
         
-        var compile = function (rules) {
+        var compileFile = async function (fileName, level, parents, Files) {
+            if (isNode ()) {
+                var fi = Files.open (fileName);
+                if (fi === false) {
+                    return {err: 'Error reading file: "' + fileName + '"'};
+                }
+                else {
+                    return compile (fi.toString (), fileName, level, parents, Files);
+                }
+            }
+            else {
+                let file;
+                try {
+                    file = await fetch(fileName);
+                } catch (error) {
+                    return {err: 'Error reading file: "' + fileName + '"'};
+                }
+
+                if (file?.ok) {
+                    var rules = await (file.text());
+                    return compile (rules, fileName, level, parents, Files);
+                } else {
+                    return {err: 'Error reading file "' + fileName + '"'};
+                }                    
+            }
+        }
+        
+        var compile = async function (rules, file, level, parents, Files) {
             var syntax = `
                 (
                     REWRITE
@@ -40,6 +69,9 @@ var Rewriter = (
                     (RULE (READ (EXP expressions)) (WRITE (EXP (expression ())         )))
                     
                     (RULE (READ (EXP expression)) (WRITE (EXP start                         )))
+                    
+                    (RULE (READ (EXP expression)) (WRITE (EXP (\\FETCH (ATOMIC ()))        )))
+
                     (RULE (READ (EXP expression)) (WRITE (EXP (\\RULE rd-wt)                )))
                     (RULE (READ (EXP expression)) (WRITE (EXP (\\RULE ((\\VAR atoms) rd-wt)))))
                     
@@ -53,8 +85,8 @@ var Rewriter = (
                 )
             `;
             
-            var syntaxRules = getRules (Sexpression.parse (syntax));
-            var pRules = Sexpression.parse (rules.replaceAll ("_", "&lowbar;"));
+            var syntaxRules = await getRules (Sexpression.parse (syntax));
+            var pRules = Sexpression.parse (rules/*.replaceAll ("_", "&lowbar;")*/);
             
             if (pRules.err) {
                 return pRules;
@@ -66,24 +98,37 @@ var Rewriter = (
                 var path = Sexpression.denormalizeIndexes (ret.path);
                 var msg = Sexpression.getNode (rules, path);
 
-                return {err: msg.err, found: msg.found, pos: msg.pos};
+                return {err: msg.err, file: file, found: msg.found, pos: msg.pos};
             }
             else {
-                var rls = getRules (pRules);
+                var rls = await getRules (pRules, file, level, parents, Files);
                 if (rls.err) {
-                    var msg = Sexpression.getNode (rules, rls.path);
-                    return {err: rls.err, found: msg.found, pos: msg.pos};
+                    if (rls.pos) {
+                        if (!rls.file) {
+                            rls.file = file;
+                        }
+                        
+                        return rls;
+                    }
+                    else {
+                        var msg = Sexpression.getNode (rules, rls.path);
+                        return {err: rls.err, file: rls.file, found: msg.found, pos: msg.pos};
+                    }
                 }
                 
                 return rls;
             }
         };
         
-        var getRules = function (arr) {
+        var getRules = async function (arr, file, level, parents, Files) {
             var rules = [];
             var stack = [];
             var p = [];
-            stack.push ({ast: arr, level: 0});
+            if (level === undefined) {
+                level = 0;
+            }
+            
+            stack.push ({ast: arr, level: level, parents});
             while (stack.length > 0){
                 var node = stack.pop ();
                 if (node.ast[0] === "REWRITE") {
@@ -96,6 +141,25 @@ var Rewriter = (
                         stack.push ({parents: [node.ast, node.parents], ast: node.ast[i], level: node.level + 1, index: i});
                     }
                 }
+                else if (node.ast[0] === "FETCH") {
+                    if (file) {
+                        var fn = file.substring (0, file.lastIndexOf ("/")) + "/" + node.ast[1];
+                        var arrRules = await compileFile (fn, node.level, node.parents, Files);
+                        if (arrRules.err) {
+                            if (arrRules.file) {
+                                return arrRules;
+                            }
+                            else {
+                                return {err: arrRules.err, file: arrRules.file, path: arrRules.path ? arrRules.path : p.concat([node.index])}
+                            }
+                        }
+                        
+                        rules = [...rules, ...arrRules];
+                    }
+                    else {
+                        return {err: "Fetching files is only allowed from command line or API", path: p.concat([node.index])};
+                    }
+                }
                 else if (node.ast[0] === "RULE") {
                     var rule = node.ast;
                     var v = [];
@@ -104,7 +168,7 @@ var Rewriter = (
                         varsOffset = 1;
                         for (var j = 1; j < rule[1].length; j++) {
                             if (-Ruler.getLvl (rule[1][j]) !== 0){
-                                return {err: "Can not escape variable definition error", path: p.concat ([node.index, 1, j])};
+                                return {err: "Can not escape variable definition error", file: file, path: p.concat ([node.index, 1, j])};
                             }
                             v.push (rule[1][j]);
                         }
@@ -358,9 +422,15 @@ var Rewriter = (
             throw "No common parent context";
         }
         
+        var stringify = function (arr) {
+            return Sexpression.stringify (arr);
+        }
+        
         return {
             compile: compile,
-            rewrite: rewrite
+            compileFile: compileFile,
+            rewrite: rewrite,
+            stringify: stringify
         }
     }) ()
 );

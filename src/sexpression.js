@@ -29,7 +29,7 @@ var Sexpression = (
         err[7] = "Unresolved block error";
         err[8] = "Expected whitespace error";
         err[9] = "Expected newline error";
-        err[10] = "incorrect escaping error";
+        err[10] = "Incorrect escaping error";
         
         var parse = function (text) {
             var m = createMatrix (text);
@@ -359,15 +359,15 @@ var Sexpression = (
                             path.shift ();
                         }
                         else {
-                            return {err: "syntax error", found: "missing list element(s)", pos: expr.pos};
+                            return {err: "Syntax error", found: "missing list element(s)", pos: expr.pos};
                         }
                     }
                     else {
-                        return {err: "syntax error", found: "atom", pos: expr.pos};
+                        return {err: "Syntax error", found: "atom", pos: expr.pos};
                     }
                 }
                 
-                return {err: "syntax error", found: Array.isArray (expr.val) ? (expr.val.length === 0 ? "empty " : "") + "list" : quoteIfNecessary (expr.val), pos: expr.pos};
+                return {err: "Syntax error", found: Array.isArray (expr.val) ? (expr.val.length === 0 ? "empty " : "") + "list" : quoteIfNecessary (expr.val), pos: expr.pos};
             }
         };
         

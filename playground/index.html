@@ -195,7 +195,7 @@
 
 <div class="droplbl">2. programming examples</div>
 
-<div class="droplbl">&nbsp;&nbsp;&nbsp;&nbsp; 2.1. booleans and numbers</div>
+<div class="droplbl">&nbsp;&nbsp;&nbsp;&nbsp; 2.1. Booleans and numbers</div>
 
         <a href="javascript:populate('example-branch');    ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - branching choice</a>
         <a href="javascript:populate('example-bool');      ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Boolean evaluator</a>
@@ -440,12 +440,12 @@
 <script src="../symbolverse.js"></script>
 
 <script>
-    function process () {
+    async function process () {
         output1.value = "";
         document.getElementById("tm").innerHTML = "(compiling rules...)";
-        setTimeout (function (){
+        setTimeout (async function (){
             var tm = Date.now ();
-            var rules = Rewriter.compile (rules1.getValue ());
+            var rules = await Rewriter.compile (rules1.getValue ());
             if (rules.err) {
                 output1.value = "rules:\n" + rules.err + " at " + "(" + (rules.pos.y + 1) + ", " + (rules.pos.x + 1) + ")" + (rules.found ? ", found: " + rules.found : "");
                 document.getElementById("tm").innerHTML = "";
@@ -461,14 +461,13 @@
                     } else {
                         var trewritten = (Date.now () - tm)
                         document.getElementById("tm").innerHTML = "(rules compiled in " + tcompiled + "ms)" + " (input rewritten in " + trewritten + "ms)";
-                        output1.value = output;
+                        output1.value = Rewriter.stringify (output);
                     }
                 }, 0);
             }
             output1.selectionStart = 0;
             output1.selectionEnd = 0;
         }, 0);
-        
     }
 </script>
 

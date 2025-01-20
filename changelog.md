@@ -26,4 +26,8 @@
 ## Jan, 2025.
 
 - v0.2.x
-    - variable escaping synchronized with values escaping
+    - variable escaping synchronized with constants escaping
+
+- v0.3.x
+    - fetching files
+
