@@ -1230,10 +1230,22 @@ remains foundational in logic due to its simplicity and role in formalizing the 
 mathematics. It serves as a cornerstone for understanding logical derivation and the
 relationships between axiomatic systems.
 
+Hilbert-style proof systems can be applied to type checking in programming by leveraging their
+formal structure to verify the correctness of type assignments in a program. In type theory,
+types can be seen as logical propositions, and well-typed programs correspond to proofs of these
+propositions. By encoding typing rules as axioms and inference rules within a Hilbert-style
+framework, the process of type checking becomes equivalent to constructing a formal proof that
+a given program adheres to its type specification. While this approach is conceptually elegant,
+it can be inefficient for practical programming languages due to the system’s minimalistic
+nature, requiring explicit proofs for even simple derivations. However, it provides a
+foundational theoretical basis for understanding type systems and their connection to logic,
+particularly in frameworks like the Curry-Howard correspondence, which bridges formal logic and
+type theory.
+
 Instructions for using the assistant:
 
 --------------------------------------------------------------
-To verify and compile a proof, assume or apply these rules
+To compose a proof, assume or apply these rules
 --------------------------------------------------------------
 (AxmI (impl A A))
 (AxmK (impl A (impl B A)))
@@ -1246,7 +1258,7 @@ To verify and compile a proof, assume or apply these rules
     REWRITE
     
     /workflow/
-    (RULE (VAR A) (READ (EXP (\\proofToSKI \\A))) (WRITE (EXP (proofCheck A))))
+    (RULE (VAR A) (READ (EXP (\\verify \\A))) (WRITE (EXP (proofCheck A))))
     (RULE (VAR A) (READ (EXP (proofChecked A))) (WRITE (EXP \\A)))
     
     /proof verifier/
@@ -1441,7 +1453,7 @@ To verify and compile a proof, assume or apply these rules
 "example-proof-input":
 `
 (
-    proofToSKI
+    verify
     (
         Apply
         (
