@@ -150,7 +150,7 @@ var Rewriter = (
                                 return arrRules;
                             }
                             else {
-                                return {err: arrRules.err, file: arrRules.file, path: arrRules.path ? arrRules.path : p.concat([node.index])}
+                                return {err: arrRules.err, file: file, path: arrRules.path ? arrRules.path : p.concat([node.index])}
                             }
                         }
                         

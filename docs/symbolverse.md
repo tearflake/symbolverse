@@ -52,6 +52,7 @@ In computer science, the syntax of a computer language is the set of rules that 
          <start> := (REWRITE <expression>+)
     
     <expression> := <start>
+                  | (FETCH <ATOMIC>)
                   | (RULE (VAR <ATOMIC>+)? (READ (EXP <ANY>)) (WRITE (EXP <ANY>)))
 ```
 
@@ -321,7 +322,7 @@ Summing it up, scopes represent a natural way to package and separate sets of ru
 
 ##### fetching external files
 
-*Symbolverse* code may import rules saved in external files. To do that, we use `(FETCH ...)` section wherever we may expect `(REWRITE ...)` section. `FETCH` section accepts one parameter, a file name. The file name is typed with or without directory, relative to path of the current code file. if we use special characters, such as spaces, we embrace the file name within double quotes. Thus, `FETCH` provides us a packaging system spanned through directories of our interest. Together with constants/variables escaping system, we may form structures of any depth reachable from the inclusion code files.
+*Symbolverse* code may import rules saved in external files. To do that, we use `(FETCH ...)` section wherever we may expect `(REWRITE ...)` section. `FETCH` section accepts one parameter, a file name. The file name is typed with or without directory, relative to path of the current code file. If we use special characters, such as spaces, we enclose the file name within double quotes. Thus, `FETCH` provides us a packaging system spanned through directories of our interest. Together with constants/variables escaping system, we may form structures of any depth reachable from the inclusion source code files.
 
 ---
 

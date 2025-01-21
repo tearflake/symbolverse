@@ -62,7 +62,7 @@ if (isNode ()) {
             if (arrRules.err) {
                 console.log ('Error compiling rules');
                 console.log (arrRules.err);
-                console.log ('In file: "' + path.resolve (arrRules.file ? arrRules.file : fRules) + '", pos: (' + (arrRules.pos.y + 1) + ', ' + (arrRules.pos.x + 1) + ')');
+                console.log ('In file: "' + path.resolve (arrRules.file) + '", pos: (' + (arrRules.pos.y + 1) + ', ' + (arrRules.pos.x + 1) + ')');
                 exitFail ();
             }
             else {
@@ -81,7 +81,7 @@ if (isNode ()) {
                     if (arrOutput.err) {
                         console.log ('Error rewriting input');
                         console.log (arrOutput.err);
-                        console.log ('In file: ' + fInput + ",pos: (" + (rules.pos.y + 1) + ", " + (rules.pos.x + 1) + ")");
+                        console.log ('In file: ' + fInput + ", pos: (" + (rules.pos.y + 1) + ", " + (rules.pos.x + 1) + ")");
                         exitFail ();
                     }
                     else {
