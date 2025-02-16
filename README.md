@@ -12,8 +12,6 @@ _**tags:** s-expression, rewriting, term-rewriting, term-rewriting-system_
 - `[x]` v0.1.x basic rewrite rules
 - `[x]` v0.2.x scoped rewrite rules
 - `[x]` v0.3.x fetching files
-- `[ ]` v0.4.x normalizing expressions
-- `[ ]` v0.5.x implementing stdlib
 - `[ ]` v1.0.x finalizing the package
 
 ## project specifics
