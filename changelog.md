@@ -27,6 +27,7 @@
 
 - v0.2.x
     - variable escaping synchronized with constants escaping
+    - lowercase variables match symbols, uppercase variables match any epression
 
 - v0.3.x
     - fetching files

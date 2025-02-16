@@ -32,6 +32,7 @@ var Sexpression = (
         err[10] = "Incorrect escaping error";
         
         var parse = function (text) {
+            //var m = createMatrix (text.replaceAll (/(?<=\s)\/\\(?=\s)/g, '&and;').replaceAll (/(?<=\s)\\\/(?=\s)/g, '&or;').replaceAll (/(?<=\s)\/(?=\s)/g, '&sl;'). replaceAll (/(?<=\s)\\(?=\s)/g, '&bs;'));
             var m = createMatrix (text);
             var p = parseMatrix (m);
             return p;
@@ -49,6 +50,44 @@ var Sexpression = (
             return m;
         }
         
+        var fixPos = function (pos, m) {
+            return pos;
+            /*
+            var y = 0;
+            var x = 1;
+            pos = [pos.y, pos.x];
+            var line = ""
+            for (var i = 0; i < m[pos[y]].length; i++) {
+                line += m[pos[y]][i];
+            }
+            
+            var dist = 0;
+            for (var i = 0; i < pos[x]; i++) {
+                if (line.substr (i, 5) === '&and;') {
+                    dist += 2;
+                    i += 4;
+                }
+                else if (line.substr (i, 4) === '&or;') {
+                    dist += 2;
+                    i += 3;
+                }
+                else if (line.substr (i, 4) === '&sl;') {
+                    dist += 1;
+                    i += 3;
+                }
+                else if (line.substr (i, 4) === '&bs;') {
+                    dist += 1;
+                    i += 3;
+                }
+                else {
+                    dist += 1;
+                }
+            }
+            
+            return {y: pos[y], x: dist};
+            */
+        }
+        
         var parseMatrix = function (m, verbose) {
             var x, y, pos, i, tmpPos, stack, currChar, currAtom, val;
             
@@ -61,7 +100,7 @@ var Sexpression = (
                 if (currChar === '/' || currChar === ' ' || currChar === undefined) {
                     tmpPos = skipWhitespace (m, pos[y], pos[x]);
                     if (tmpPos.err) {
-                        return tmpPos;
+                        return {err: tmpPos.err, pos: fixPos (tmpPos.pos, m)};
                     }
                     
                     if (m[tmpPos[y]] === undefined) {
@@ -71,7 +110,7 @@ var Sexpression = (
                             tmpPos[x]++;
                         }
                         
-                        return {err: err[3], pos: {y: tmpPos[y], x: tmpPos[x]}};
+                        return {err: err[3], pos: fixPos ({y: tmpPos[y], x: tmpPos[x]}, m)};
                     }
                     
                     pos = tmpPos;
@@ -119,7 +158,7 @@ var Sexpression = (
                     if (currChar === '"') {
                         currAtom = getBlock (m, pos, currChar);
                         if (currAtom.err) {
-                            return currAtom;
+                            return {err: currAtom.err, pos: fixPos (currAtom.pos, m)};
                         }
                         else {
                             pos[y] = currAtom.pos[y];
@@ -132,7 +171,7 @@ var Sexpression = (
                             
                             if (escaped.length > 0) {
                                 if (currChar === '\\') {
-                                    return {err: err[10], pos: start};
+                                    return {err: err[10], pos: fixPos (start, m)};
                                 }
                                 else {
                                     currAtom = escaped + currAtom.val;
@@ -158,7 +197,7 @@ var Sexpression = (
                         }
                         
                         if (currAtom.charAt (0) === "\\" && currAtom.charAt (currAtom.length - 1) === "\\") {
-                            return {err: err[10], pos: start};
+                            return {err: err[10], pos: fixPos (start, m)};
                         }
                     }
 
@@ -184,11 +223,11 @@ var Sexpression = (
             
             pos = skipWhitespace (m, pos[y], pos[x]);
             if (pos.err) {
-                return pos;
+                return {err: pos.err, pos: fixPos (pos.pos, m)};
             }
             
             if (pos[y] < m.length && m[pos[y]][pos[x]] !== undefined) {
-                return {err: err[2], pos: {y: pos[y], x: pos[x]}};
+                return {err: err[2], pos: fixPos ({y: pos[y], x: pos[x]}, m)};
             }
             else {
                 return val;
@@ -249,7 +288,7 @@ var Sexpression = (
                     while (m[pos1[y]][pos1[x]] !== undefined && (m[pos1[y]][pos1[x]] !== bound)) {
                         currAtom += m[pos1[y]][pos1[x]];
                         pos1[x]++;
-                        if (m[pos1[y]][pos1[x] - 1] === '\\') {
+                        if (m[pos1[y]][pos1[x] - 1] === '\\' && bound ==='"') {
                             currAtom += m[pos1[y]][pos1[x]];
                             pos1[x]++;
                         }
@@ -344,6 +383,7 @@ var Sexpression = (
         }
         
         var getNode = function (text, path) {
+            text = text.replaceAll ('&amp;', '&').replaceAll ('&and;', '/\\').replaceAll('&or;', '\\/').replaceAll ('&sl;', '/'). replaceAll ('&bs;', '\\');
             var x = 1, y = 0;
             if (path.length === 0) {
                 var m = createMatrix(text);
@@ -521,6 +561,7 @@ var Sexpression = (
                 }
             }
 
+            //return output.replaceAll ('&and;', '/\\').replaceAll('&or;', '\\/').replaceAll ('&sl;', '/'). replaceAll ('&bs;', '\\');
             return output;
         }
 

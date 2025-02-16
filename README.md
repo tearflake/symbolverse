@@ -3,15 +3,17 @@
 ```
 ---
 
-# symbolverse v0.3.2
+# symbolverse v0.3.3
 
-_**tags:** s-expression, rewriting, term-rewriting, term-graph-rewriting_
+_**tags:** s-expression, rewriting, term-rewriting, term-rewriting-system_
 
 **project roadmap:**
 
 - `[x]` v0.1.x basic rewrite rules
 - `[x]` v0.2.x scoped rewrite rules
 - `[x]` v0.3.x fetching files
+- `[ ]` v0.4.x normalizing expressions
+- `[ ]` v0.5.x implementing stdlib
 - `[ ]` v1.0.x finalizing the package
 
 ## project specifics

@@ -17,7 +17,7 @@ and expressiveness make it a cornerstone of theoretical computer science.
     (RULE (VAR A) (READ (EXP (\lcToSKI \A))) (WRITE (EXP (parseLc A))))
     (RULE (VAR A) (READ (EXP (parsedLc A))) (WRITE (EXP (compileToSKI A))))
     (RULE (VAR A) (READ (EXP (compiledToSKI A))) (WRITE (EXP \A)))
-
+    
     /parser/
     (
         REWRITE

@@ -1,5 +1,5 @@
 ///
-Hilbert style proof assistant
+Hilbert style proof verifier
 
 The Hilbert-style proof system is a formal deductive framework used in mathematical logic and
 proof theory. It is named after David Hilbert, who pioneered formal approaches to mathematics
@@ -31,7 +31,7 @@ foundational theoretical basis for understanding type systems and their connecti
 particularly in frameworks like the Curry-Howard correspondence, which bridges formal logic and
 type theory.
 
-Instructions for using the assistant:
+Instructions for using the proof verifier:
 
 --------------------------------------------------------------
 To compose a proof, assume or apply these rules
@@ -78,7 +78,7 @@ To compose a proof, assume or apply these rules
                 WRITE
                 (
                     EXP
-                    (typed\ x\ terminal\ bool\)
+                    (typed\ x\ (terminal\ bool\))
                 )
             )
         )
@@ -91,8 +91,8 @@ To compose a proof, assume or apply these rules
                     EXP
                     (
                         impl\
-                        (typed\ A\ terminal\ bool\)
-                        (typed\ B\ terminal\ bool\)
+                        (typed\ A\ (terminal\ bool\))
+                        (typed\ B\ (terminal\ bool\))
                     )
                 )
             )
@@ -100,7 +100,7 @@ To compose a proof, assume or apply these rules
                 WRITE
                 (
                     EXP
-                    (typed\ (impl\ A\ B\) terminal\ bool\)
+                    (typed\ (impl\ A\ B\) (terminal\ bool\))
                 )
             )
         )
@@ -118,8 +118,10 @@ To compose a proof, assume or apply these rules
                         (
                             typed\
                             (impl\ A\ A\)
-                            terminal\
-                            bool\
+                            (
+                                terminal\
+                                bool\
+                            )
                         )
                     )
                 )
@@ -131,8 +133,10 @@ To compose a proof, assume or apply these rules
                     (
                         typed\
                         (impl\ A\ A\)
-                        step\
-                        bool\
+                        (
+                            step\
+                            bool\
+                        )
                     )
                 )
             )
@@ -149,8 +153,10 @@ To compose a proof, assume or apply these rules
                         (
                             typed\
                             (impl\ A\ (impl\ B\ A\))
-                            terminal\
-                            bool\
+                            (
+                                terminal\
+                                bool\
+                            )
                         )
                     )
                 )
@@ -162,8 +168,10 @@ To compose a proof, assume or apply these rules
                     (
                         typed\
                         (impl\ A\ (impl\ B\ A\))
-                        step\
-                        bool\
+                        (
+                            step\
+                            bool\
+                        )
                     )
                 )
             )
@@ -180,8 +188,10 @@ To compose a proof, assume or apply these rules
                         (
                             typed\
                             (impl\ (impl\ A\ (impl\ B\ C\)) (impl\ (impl\ A\ B\) (impl\ A\ C\)))
-                            terminal\
-                            bool\
+                            (
+                                terminal\
+                                bool\
+                            )
                         )
                     )
                 )
@@ -193,8 +203,10 @@ To compose a proof, assume or apply these rules
                     (
                         typed\
                         (impl\ (impl\ A\ (impl\ B\ C\)) (impl\ (impl\ A\ B\) (impl\ A\ C\)))
-                        step\
-                        bool\
+                        (
+                            step\
+                            bool\
+                        )
                     )
                 )
             )
@@ -210,8 +222,8 @@ To compose a proof, assume or apply these rules
                     EXP
                     (
                         Apply\
-                        (typed\ (impl\ A\ B\) step\ bool\)
-                        (typed\ A\ step\ bool\)
+                        (typed\ (impl\ A\ B\) (step\ bool\))
+                        (typed\ A\ (step\ bool\))
                     )
                 )
             )
@@ -219,7 +231,7 @@ To compose a proof, assume or apply these rules
                 WRITE
                 (
                     EXP
-                    (typed\ B\ step\ bool\)
+                    (typed\ B\ (step\ bool\))
                 )
             )
         )
@@ -227,7 +239,7 @@ To compose a proof, assume or apply these rules
         (
             RULE
             (VAR Type Proof)
-            (READ (EXP (proofChecking\ (typed\ Type\ step\ bool\) Proof\)))
+            (READ (EXP (proofChecking\ (typed\ Type\ (step\ bool\)) Proof\)))
             (WRITE (EXP (\proofChecked \Type)))
         )
         (

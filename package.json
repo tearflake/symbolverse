@@ -1,6 +1,6 @@
 {
   "name": "@tearflake/symbolverse",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Symbolic term rewriting system",
   "main": "symbolverse.js",
   "directories": {
@@ -11,7 +11,7 @@
   },
   "bin": "symbolverse.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "bash ./tests.sh"
   },
   "repository": {
     "type": "git",
@@ -21,7 +21,7 @@
     "s-expression",
     "rewriting",
     "term-rewriting",
-    "term-graph-rewriting"
+    "term-rewriting-system"
   ],
   "author": "tearflake",
   "license": "MIT",

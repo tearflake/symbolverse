@@ -67,13 +67,13 @@ var Rewriter = (
                     
                     (RULE (READ (EXP expressions)) (WRITE (EXP (expression expressions))))
                     (RULE (READ (EXP expressions)) (WRITE (EXP (expression ())         )))
+
+                    (RULE (READ (EXP expression)) (WRITE (EXP (\\RULE rd-wt)                )))
+                    (RULE (READ (EXP expression)) (WRITE (EXP (\\RULE ((\\VAR atoms) rd-wt)))))
                     
                     (RULE (READ (EXP expression)) (WRITE (EXP start                         )))
                     
                     (RULE (READ (EXP expression)) (WRITE (EXP (\\FETCH (ATOMIC ()))        )))
-
-                    (RULE (READ (EXP expression)) (WRITE (EXP (\\RULE rd-wt)                )))
-                    (RULE (READ (EXP expression)) (WRITE (EXP (\\RULE ((\\VAR atoms) rd-wt)))))
                     
                     (RULE (READ (EXP rd-wt)) (WRITE (EXP (rd (wt ())))))
                     
@@ -86,7 +86,7 @@ var Rewriter = (
             `;
             
             var syntaxRules = await getRules (Sexpression.parse (syntax));
-            var pRules = Sexpression.parse (rules/*.replaceAll ("_", "&lowbar;")*/);
+            var pRules = Sexpression.parse (rules);
             
             if (pRules.err) {
                 return pRules;
@@ -295,7 +295,7 @@ var Rewriter = (
                             }
                             else {
                                 var cpd = getCommonParDist (item.curRule.parents, rules[item.ruleIndex].parents);
-                                if (cpd.d1 === 0 || (item.curRule.rule.maxLvlW <= item.curRule.level + cpd.d1 && rules[item.ruleIndex].rule.maxLvlR <= rules[item.ruleIndex].level + cpd.d2)) {
+                                if ((cpd.d1 === 0 && cpd.d1 === cpd.d2) || (item.curRule.rule.maxLvlW <= item.curRule.level + cpd.d1 && rules[item.ruleIndex].rule.maxLvlR <= rules[item.ruleIndex].level + cpd.d2)) {
                                     break;
                                 }
                             }

@@ -16,7 +16,7 @@ remove element from list
         RULE
         (VAR A B C D)
         (READ  (EXP (\remove \A (\B \C))))
-        (WRITE (EXP (B (\remove \A \C))))
+        (WRITE (EXP (\B (\remove \A \C))))
     )
     
     (

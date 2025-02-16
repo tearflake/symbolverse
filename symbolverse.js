@@ -61,7 +61,7 @@ if (isNode ()) {
             var arrRules = await Rewriter.compile (strRules, path.resolve (fRules), undefined, undefined, Files);
             if (arrRules.err) {
                 console.log ('Error compiling rules');
-                console.log (arrRules.err);
+                console.log (arrRules.err + (arrRules.err === 'Syntax error' ? ', found: ' + arrRules.found : ''));
                 console.log ('In file: "' + path.resolve (arrRules.file) + '", pos: (' + (arrRules.pos.y + 1) + ', ' + (arrRules.pos.x + 1) + ')');
                 exitFail ();
             }
@@ -149,6 +149,8 @@ if (isNode ()) {
     // end of Node.js support
 }
 else {
+    // begin of browser support
+
     (() => {
         var fullfn = document.currentScript.src;
         var path = fullfn.substring(0, fullfn.lastIndexOf('/')) + "/src/";
@@ -169,5 +171,7 @@ else {
         script.src = path + "ruler.js"
         document.body.appendChild(script);
     })()        
+
+    // end of browser support
 }
 

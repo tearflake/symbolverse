@@ -1,4 +1,4 @@
 (
-    process ((lmbd x x) a)
+    process (((lmbd x (lmbd y (y x))) a) b)
 )
 

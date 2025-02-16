@@ -401,45 +401,45 @@ output: \`(Who and Whom hadPartyAt Where)\`
 "example1-10":
 `
 ///
-animal voices
+normalizing example
 
- input: \`(goes X voice)\`
-output: \`(isA X dog / cat)\`
+normalizing is used to create or alter lists and atoms 
 ///
 
 (
-    RULE
-    (
-        READ
-        
-        (RULE (READ Milo) (WRITE name ))
-        (RULE (READ Nora) (WRITE name ))
-        (RULE (READ bark) (WRITE voice))
-        (RULE (READ meow) (WRITE voice))
-
-        (EXP (goes name voice))
-    )
-    (
-        REWRITE
-        
-        (RULE (VAR X) (READ (goes X meow)) (WRITE (isA X cat)))
-        (RULE (VAR X) (READ (goes X bark)) (WRITE (isA X dog)))
-    )
-    (
-        WRITE
-        
-        (EXP (isA name living))
-
-        (RULE (READ name  ) (WRITE Milo))
-        (RULE (READ name  ) (WRITE Nora))
-        (RULE (READ living) (WRITE dog ))
-        (RULE (READ living) (WRITE cat ))
-    )
+    REWRITE
+    
+    /lists/
+    (RULE (VAR L) (READ (LST (\\normLst (\\L ())))) (WRITE (EXP \\L)))
+    (RULE (VAR L) (READ (EXP (\\denormLst \\L))) (WRITE (LST \\L)))
+    
+    /test/
+    (RULE (VAR p L) (READ (EXP (\\prependLst \\p \\L)) (WRITE (LST (\\p (\\normLst \\L))))))
+    
+    /atoms/
+    (RULE (VAR A) (READ (ATM ((\\atm (\\n (\\o (\\r (\\m (\\A (\\t (\\m ())))))))) ((\\atm \\A) ())))) (WRITE (EXP \\A)))
+    (RULE (VAR A) (READ (EXP (\\denormAtm \\A))) (WRITE (ATM (\\atm \\A))))
+    
+    /test/
+    (RULE (VAR p A) (READ (EXP (\\prependAtm \\p \\A)) (WRITE (ATM (\\atm (\\p (\\normAtm \\A)))))))
 )
 `,
 "example1-10-input":
 `
-(goes Nora meow)
+(
+    (
+        lists
+        (normLst (1 2 3 4))
+        (denormLst (1 (2 (3 (4 ())))))
+        (prependLst 0 (1 2 3 4))
+    )
+    (
+        atoms
+        (normAtm 1234)
+        (denormAtm (1 (2 (3 (4 ())))))
+        (prependAtm 0 1234)
+    )
+)
 `,
 
 "example-branch":
@@ -527,16 +527,16 @@ infinite bit binary number addition
     REWRITE
 
     /both numbers single digits/
-    (RULE           (READ (EXP (\\binAdd       \\0     \\0))) (WRITE (EXP                                \\0)))
-    (RULE           (READ (EXP (\\binAdd       \\0     \\1))) (WRITE (EXP                                \\1)))
-    (RULE           (READ (EXP (\\binAdd       \\1     \\0))) (WRITE (EXP                                \\1)))
-    (RULE           (READ (EXP (\\binAdd       \\1     \\1))) (WRITE (EXP (                          \\1 \\0))))
+    (RULE           (READ (EXP (\\binAdd      \\0      \\0))) (WRITE (EXP                                \\0)))
+    (RULE           (READ (EXP (\\binAdd      \\0      \\1))) (WRITE (EXP                                \\1)))
+    (RULE           (READ (EXP (\\binAdd      \\1      \\0))) (WRITE (EXP                                \\1)))
+    (RULE           (READ (EXP (\\binAdd      \\1      \\1))) (WRITE (EXP (                          \\1 \\0))))
     
     /first number multiple digits, second number single digit/
-    (RULE (VAR A  ) (READ (EXP (\\binAdd  (\\A \\0)     \\0))) (WRITE (EXP (                          \\A \\0))))
-    (RULE (VAR A  ) (READ (EXP (\\binAdd  (\\A \\0)     \\1))) (WRITE (EXP (                          \\A \\1))))
-    (RULE (VAR A  ) (READ (EXP (\\binAdd  (\\A \\1)     \\0))) (WRITE (EXP (                          \\A \\1))))
-    (RULE (VAR A  ) (READ (EXP (\\binAdd  (\\A \\1)     \\1))) (WRITE (EXP (             (\\binAdd \\1 \\A) \\0))))
+    (RULE (VAR A  ) (READ (EXP (\\binAdd (\\A \\0)      \\0))) (WRITE (EXP (                          \\A \\0))))
+    (RULE (VAR A  ) (READ (EXP (\\binAdd (\\A \\0)      \\1))) (WRITE (EXP (                          \\A \\1))))
+    (RULE (VAR A  ) (READ (EXP (\\binAdd (\\A \\1)      \\0))) (WRITE (EXP (                          \\A \\1))))
+    (RULE (VAR A  ) (READ (EXP (\\binAdd (\\A \\1)      \\1))) (WRITE (EXP (             (\\binAdd \\1 \\A) \\0))))
     
     /first number single digit, second number multiple digits/
     (RULE (VAR B  ) (READ (EXP (\\binAdd      \\0 (\\B \\0)))) (WRITE (EXP (                          \\B \\0))))
@@ -667,16 +667,16 @@ infinite bit binary number comparison
         REWRITE
         
         /both numbers single digits/
-        (RULE           (READ (EXP (\\binCmp       \\0     \\0))) (WRITE (EXP                   \\eq)))
-        (RULE           (READ (EXP (\\binCmp       \\0     \\1))) (WRITE (EXP                   \\lt)))
-        (RULE           (READ (EXP (\\binCmp       \\1     \\0))) (WRITE (EXP                   \\gt)))
-        (RULE           (READ (EXP (\\binCmp       \\1     \\1))) (WRITE (EXP                   \\eq)))
+        (RULE           (READ (EXP (\\binCmp      \\0      \\0))) (WRITE (EXP                   \\eq)))
+        (RULE           (READ (EXP (\\binCmp      \\0      \\1))) (WRITE (EXP                   \\lt)))
+        (RULE           (READ (EXP (\\binCmp      \\1      \\0))) (WRITE (EXP                   \\gt)))
+        (RULE           (READ (EXP (\\binCmp      \\1      \\1))) (WRITE (EXP                   \\eq)))
         
         /first number multiple digits, second number single digit/
-        (RULE (VAR A  ) (READ (EXP (\\binCmp  (\\A \\0)     \\0))) (WRITE (EXP ((\\binCmp \\A \\0) \\eq))))
-        (RULE (VAR A  ) (READ (EXP (\\binCmp  (\\A \\0)     \\1))) (WRITE (EXP ((\\binCmp \\A \\0) \\lt))))
-        (RULE (VAR A  ) (READ (EXP (\\binCmp  (\\A \\1)     \\0))) (WRITE (EXP ((\\binCmp \\A \\0) \\gt))))
-        (RULE (VAR A  ) (READ (EXP (\\binCmp  (\\A \\1)     \\1))) (WRITE (EXP ((\\binCmp \\A \\0) \\eq))))
+        (RULE (VAR A  ) (READ (EXP (\\binCmp (\\A \\0)      \\0))) (WRITE (EXP ((\\binCmp \\A \\0) \\eq))))
+        (RULE (VAR A  ) (READ (EXP (\\binCmp (\\A \\0)      \\1))) (WRITE (EXP ((\\binCmp \\A \\0) \\lt))))
+        (RULE (VAR A  ) (READ (EXP (\\binCmp (\\A \\1)      \\0))) (WRITE (EXP ((\\binCmp \\A \\0) \\gt))))
+        (RULE (VAR A  ) (READ (EXP (\\binCmp (\\A \\1)      \\1))) (WRITE (EXP ((\\binCmp \\A \\0) \\eq))))
         
         /first number single digit, second number multiple digits/
         (RULE (VAR B  ) (READ (EXP (\\binCmp      \\0 (\\B \\0)))) (WRITE (EXP ((\\binCmp \\0 \\B) \\eq))))
@@ -781,7 +781,7 @@ infinite bit binary number comparison
 "example-append":
 `
 ///
-append two lists
+append element to list
 ///
 
 (
@@ -798,7 +798,7 @@ append two lists
         RULE
         (VAR A)
         (READ  (EXP (\\append () \\A)))
-        (WRITE (EXP \\A             ))
+        (WRITE (EXP (\\A ()        )))
     )
 )
 `,
@@ -806,8 +806,8 @@ append two lists
 `
 (
     append
-    (one (two (three (four (five ())))))
-    (six (seven ()))
+    (one (two (three (four (five (six ()))))))
+    seven
 )
 `,
 
@@ -1131,7 +1131,7 @@ and expressiveness make it a cornerstone of theoretical computer science.
 `,
 "example-lamb-input":
 `
-(lcToSKI (lmbd x x))
+(lcToSKI (((lmbd x (lmbd y (y x))) a) b))
 `,
 
 "example-jot":
@@ -1210,7 +1210,7 @@ functional programming.
 "example-proof":
 `
 ///
-Hilbert style proof assistant
+Hilbert style proof verifier
 
 The Hilbert-style proof system is a formal deductive framework used in mathematical logic and
 proof theory. It is named after David Hilbert, who pioneered formal approaches to mathematics
@@ -1242,7 +1242,7 @@ foundational theoretical basis for understanding type systems and their connecti
 particularly in frameworks like the Curry-Howard correspondence, which bridges formal logic and
 type theory.
 
-Instructions for using the assistant:
+Instructions for using the proof verifier:
 
 --------------------------------------------------------------
 To compose a proof, assume or apply these rules
@@ -1289,7 +1289,7 @@ To compose a proof, assume or apply these rules
                 WRITE
                 (
                     EXP
-                    (typed\\ x\\ terminal\\ bool\\)
+                    (typed\\ x\\ (terminal\\ bool\\))
                 )
             )
         )
@@ -1302,8 +1302,8 @@ To compose a proof, assume or apply these rules
                     EXP
                     (
                         impl\\
-                        (typed\\ A\\ terminal\\ bool\\)
-                        (typed\\ B\\ terminal\\ bool\\)
+                        (typed\\ A\\ (terminal\\ bool\\))
+                        (typed\\ B\\ (terminal\\ bool\\))
                     )
                 )
             )
@@ -1311,7 +1311,7 @@ To compose a proof, assume or apply these rules
                 WRITE
                 (
                     EXP
-                    (typed\\ (impl\\ A\\ B\\) terminal\\ bool\\)
+                    (typed\\ (impl\\ A\\ B\\) (terminal\\ bool\\))
                 )
             )
         )
@@ -1329,8 +1329,10 @@ To compose a proof, assume or apply these rules
                         (
                             typed\\
                             (impl\\ A\\ A\\)
-                            terminal\\
-                            bool\\
+                            (
+                                terminal\\
+                                bool\\
+                            )
                         )
                     )
                 )
@@ -1342,8 +1344,10 @@ To compose a proof, assume or apply these rules
                     (
                         typed\\
                         (impl\\ A\\ A\\)
-                        step\\
-                        bool\\
+                        (
+                            step\\
+                            bool\\
+                        )
                     )
                 )
             )
@@ -1360,8 +1364,10 @@ To compose a proof, assume or apply these rules
                         (
                             typed\\
                             (impl\\ A\\ (impl\\ B\\ A\\))
-                            terminal\\
-                            bool\\
+                            (
+                                terminal\\
+                                bool\\
+                            )
                         )
                     )
                 )
@@ -1373,8 +1379,10 @@ To compose a proof, assume or apply these rules
                     (
                         typed\\
                         (impl\\ A\\ (impl\\ B\\ A\\))
-                        step\\
-                        bool\\
+                        (
+                            step\\
+                            bool\\
+                        )
                     )
                 )
             )
@@ -1391,8 +1399,10 @@ To compose a proof, assume or apply these rules
                         (
                             typed\\
                             (impl\\ (impl\\ A\\ (impl\\ B\\ C\\)) (impl\\ (impl\\ A\\ B\\) (impl\\ A\\ C\\)))
-                            terminal\\
-                            bool\\
+                            (
+                                terminal\\
+                                bool\\
+                            )
                         )
                     )
                 )
@@ -1404,8 +1414,10 @@ To compose a proof, assume or apply these rules
                     (
                         typed\\
                         (impl\\ (impl\\ A\\ (impl\\ B\\ C\\)) (impl\\ (impl\\ A\\ B\\) (impl\\ A\\ C\\)))
-                        step\\
-                        bool\\
+                        (
+                            step\\
+                            bool\\
+                        )
                     )
                 )
             )
@@ -1421,8 +1433,8 @@ To compose a proof, assume or apply these rules
                     EXP
                     (
                         Apply\\
-                        (typed\\ (impl\\ A\\ B\\) step\\ bool\\)
-                        (typed\\ A\\ step\\ bool\\)
+                        (typed\\ (impl\\ A\\ B\\) (step\\ bool\\))
+                        (typed\\ A\\ (step\\ bool\\))
                     )
                 )
             )
@@ -1430,7 +1442,7 @@ To compose a proof, assume or apply these rules
                 WRITE
                 (
                     EXP
-                    (typed\\ B\\ step\\ bool\\)
+                    (typed\\ B\\ (step\\ bool\\))
                 )
             )
         )
@@ -1438,7 +1450,7 @@ To compose a proof, assume or apply these rules
         (
             RULE
             (VAR Type Proof)
-            (READ (EXP (proofChecking\\ (typed\\ Type\\ step\\ bool\\) Proof\\)))
+            (READ (EXP (proofChecking\\ (typed\\ Type\\ (step\\ bool\\)) Proof\\)))
             (WRITE (EXP (\\proofChecked \\Type)))
         )
         (

@@ -51,9 +51,9 @@ In computer science, the syntax of a computer language is the set of rules that 
 ```
          <start> := (REWRITE <expression>+)
     
-    <expression> := <start>
+    <expression> := (RULE (VAR <ATOMIC>+)? (READ (EXP <ANY>)) (WRITE (EXP <ANY>)))
                   | (FETCH <ATOMIC>)
-                  | (RULE (VAR <ATOMIC>+)? (READ (EXP <ANY>)) (WRITE (EXP <ANY>)))
+                  | <start>
 ```
 
 The above grammar defines the syntax of *Symbolverse*. To interpret these grammar rules, we use special symbols: `<...>` for noting identifiers, `... := ...` for expressing assignment, `...+` for one or more occurrences, `...*` for zero or more occurrences, `...?` for optional appearance, and `... | ...` for alternation between expressions. All other symbols are considered as parts of the *Symbolverse* language.
@@ -168,7 +168,7 @@ output: `(hello Name)`
 )
 ```
 
-In our case, variable name is `Name`, as stated in the `VAR` section. The first character of every variable name is meaningful to *Symbolverse*. It stands for atomic value if it is lower case, and it stands for atomic or compound value if it is upper case. The variable will match its contents only if all the content atoms match the same amount of escape characters noted by the variable appearance. To return to our example, when we pass `(greet human)` as an input, we get `(hello human)` as an output.
+In our case, variable name is `Name`, as stated in the `VAR` section. The first character of every variable name is meaningful to *Symbolverse*. It stands for atomic value if it is lower case, and for atomic or compound value if it is upper case. Also important to point out, the variable will match its contents only if all the content atoms match the same amount of escape characters noted by the variable appearance. To return to our example, when we pass `(greet human)` as an input, we get `(hello human)` as an output.
 
 ##### set of rules
 
