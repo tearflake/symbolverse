@@ -56,25 +56,11 @@ var Ruler = (
             }
         }
 
-        var isEqual = function (tokW, fromW, toW, tokR, fromR, toR, vars, uvars) {
+        var isEqual = function (tokW, fromW, toW, tokR, fromR, toR, uvars, fromBack) {
             for (var i = fromW, j = fromR; i < tokW.length && j < tokR.length; i++, j++) {
-                var idxW = i;
-                var idxR = j;
-                if (tokW[idxW] === "(" && levelSplit (tokW[idxW + 1]).atom === "UNBOUND" && tokW[idxW + 2] !== "(" && tokW[idxW + 2] !== ")" && tokW[idxW + 3] === ")") {
-                    if (!uunify (tokW, fromW, toW, tokR, fromR, toR, vars, uvars)) {
-                        return false;
-                    }
-
+                if (!fromBack && backVar (tokW, i, tokR, j, uvars)) {
                     j = getNextWhole (tokR, j) - 1;
-                    i = getNextWhole (tokW, i) - 1;
-                }
-                else if (tokR[idxR] === "(" && levelSplit (tokR[idxR + 1]).atom === "UNBOUND" && tokR[idxR + 2] !== "(" && tokR[idxR + 2] !== ")" && tokR[idxR + 3] === ")") {
-                    if (!uunify (tokR, fromR, toR, tokW, fromW, toW, vars, uvars)) {
-                        return false;
-                    }
-
-                    j = getNextWhole (tokR, j) - 1;
-                    i = getNextWhole (tokW, i) - 1;
+                    i = i + 4 - 1;
                 }
                 else if (tokW[i] !== tokR[j]) {
                     break;
@@ -84,45 +70,43 @@ var Ruler = (
             return (i === toW && j === toR);
         }
         
-        var uunify = function (tokW, idxW, idxWend, tokR, idxR, idxRend, vars, uvars) {
-            var lsW = levelSplit (tokW[idxW + 2])
-            var tokWEsc = lsW.esc;
-            var tokWName = lsW.atom;
-            
-            var idxRStart = idxR;
-            idxR = getNextWhole (tokR, idxR);
-            idxW = idxW + 4;
-            
-            if (uvars[tokWName] === undefined && !uvars.hasOwnProperty(tokWName)) {
-                if (tokWName.charAt (0) === tokWName.charAt(0).toLowerCase () && tokR[idxRStart] === '(') {
-                    return false;
-                }
+        var backVar = function (tokW, idxW, tokR, idxR, uvars) {
+            if (idxW > 0 && tokW[idxW] === "(" && levelSplit (tokW[idxW + 1]).atom === "UNBOUND" && tokW[idxW + 2] !== "(" && tokW[idxW + 2] !== ")" && tokW[idxW + 3] === ")") {
+                var lsW = levelSplit (tokW[idxW + 2])
+                var tokWEsc = lsW.esc;
+                var tokWName = lsW.atom;
                 
-                var range = tokR.slice (idxRStart, idxR);
-                var max = getMaxLvl (range, 0, range.length, []);
-                var min = getMinLvl (range, 0, range.length, []);
-                if (max !== -Infinity && (max !== tokWEsc || min !== tokWEsc)) {
-                    return false;
-                }
+                var idxRStart = idxR;
+                idxR = getNextWhole (tokR, idxR);
+                idxW = idxW + 4;
+                
+                if (uvars[tokWName] === undefined && !uvars.hasOwnProperty(tokWName)) {
+                    if (tokWName.charAt (0) === tokWName.charAt(0).toLowerCase () && tokR[idxRStart] === '(') {
+                        return false;
+                    }
+                    
+                    var range = tokR.slice (idxRStart, idxR);
+                    var max = getMaxLvl (range, 0, range.length, []);
+                    var min = getMinLvl (range, 0, range.length, []);
+                    if (max !== -Infinity && (max !== tokWEsc || min !== tokWEsc)) {
+                        return false;
+                    }
 
-                uvars[tokWName] = levelShift (range, -tokWEsc);
-                
-                for (var i in vars) {
-                    if (vars[i] !== null && vars[i] !== undefined) {
-                        vars[i] = usubst (vars[i], uvars);
+                    uvars[tokWName] = levelShift (range, -tokWEsc);
+                }
+                else if (uvars[tokWName] !== undefined && uvars.hasOwnProperty(tokWName)) {
+                    var shifted = levelShift (uvars[tokWName], tokWEsc)
+                    if (!isEqual (shifted, 0, shifted.length, tokR, idxRStart, idxR, uvars, true)) {
+                        return false;
                     }
                 }
-            }
-            else if (uvars[tokWName] !== undefined && uvars.hasOwnProperty(tokWName)) {
-                var shifted = levelShift (uvars[tokWName], tokWEsc)
-                if (!isEqual (shifted, 0, shifted.length, tokR, idxRStart, idxR, vars, uvars)) {
-                    return false;
-                }
+                
+                return true;
             }
             
-            return true;
+            return false;
         }
-        
+
         var unify = function (tokW, fromW, toW, tokR, fromR, toR, level, vars) {
             var idxW = fromW, idxR = fromR, idxWStart, idxRStart, uvars = [];
             
@@ -137,7 +121,16 @@ var Ruler = (
                     var tokRName = "";
                 }
                 
-                if (vars[tokRName] === null && vars.hasOwnProperty(tokRName)) {
+                if (idxW > 0 && tokW[idxW] === "(" && levelSplit (tokW[idxW + 1]).atom === "UNBOUND" && tokW[idxW + 2] !== "(" && tokW[idxW + 2] !== ")" && tokW[idxW + 3] === ")") {
+                    if (!backVar (tokW, idxW, tokR, idxR, uvars)) {
+                        return false;
+                    }
+                    else {
+                        idxR = getNextWhole (tokR, idxR);
+                        idxW = idxW + 4;
+                    }
+                }
+                else if (vars[tokRName] === null && vars.hasOwnProperty(tokRName)) {
                     idxWStart = idxW;
                     idxW = getNextWhole (tokW, idxW);
                     if (tokRName.charAt (0) === tokRName.charAt(0).toLowerCase () && tokW[idxWStart] === '(') {
@@ -151,26 +144,18 @@ var Ruler = (
                         return false;
                     }
                     
-                    vars[tokRName] = usubst (levelShift (range, -tokREsc), uvars);
+                    vars[tokRName] = levelShift (range, -tokREsc);;
                     idxR++;
                 }
                 else if (vars[tokRName] !== undefined && vars.hasOwnProperty(tokRName)) {
                     idxWStart = idxW;
                     idxW = getNextWhole (tokW, idxW);
                     var shifted = levelShift (vars[tokRName], tokREsc)
-                    if (!isEqual (tokW, idxWStart, idxW, shifted, 0, shifted.length, vars, uvars)) {
+                    if (!isEqual (tokW, idxWStart, idxW, shifted, 0, shifted.length, uvars)) {
                         return false;
                     }
 
                     idxR++;
-                }
-                else if (idxW > 0 && tokW[idxW] === "(" && levelSplit (tokW[idxW + 1]).atom === "UNBOUND" && tokW[idxW + 2] !== "(" && tokW[idxW + 2] !== ")" && tokW[idxW + 3] === ")") {
-                    if (!uunify (tokW, idxW, null, tokR, idxR, null, vars, uvars)) {
-                        return false;
-                    }
-                    
-                    idxR = getNextWhole (tokR, idxR);
-                    idxW = idxW + 4;
                 }
                 else if (tokW[idxW] !== tokR[idxR]) {
                     return false;
@@ -180,7 +165,13 @@ var Ruler = (
                     idxR++;
                 }
             }
-
+            
+            for (var i in vars) {
+                if (vars[i] !== null && vars[i] !== undefined) {
+                    subst (vars[i], uvars);
+                }
+            }
+            
             if (idxW === toW && idxR === toR) {
                 return {vars: vars, uvars: uvars};
             }
@@ -238,13 +229,13 @@ var Ruler = (
                         idx1++;
                         if (item) {
                             if (Number.isInteger (item.idxW) && item.idxW >= idx1) {
-                                item.idxW += -4 + vars[spl.atom].length;
+                                item.idxW -= 3;
                             }
                             if (Number.isInteger (item.fromW) && item.fromW >= idx1) {
-                                item.fromW += -4 + vars[spl.atom].length;
+                                item.fromW -= 3;
                             }
                             if (Number.isInteger (item.toW) && item.toW >= idx1) {
-                                item.toW += -4 + vars[spl.atom].length;
+                                item.toW -= 3;
                             }
                         }
                     }
