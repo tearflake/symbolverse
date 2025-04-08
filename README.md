@@ -51,7 +51,7 @@ Providing the input `(div (add x x) 2)`, the example outputs `x`.
 There are a couple resources about *Symbolverse* to check out:
 
 - Explore examples at [online playground](https://tearflake.github.io/symbolverse/playground/).
-- Read the [Symbolverse specification](https://github.com/tearflake/symbolverse/blob/main/docs/symbolverse.md).
+- Read the [Symbolverse specification](https://tearflake.github.io/symbolverse/docs/symbolverse).
 
 ## building executables from source code
 
