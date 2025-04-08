@@ -1,4 +1,0 @@
-(
-    process (((lmbd x (lmbd y (y x))) a) b)
-)
-
