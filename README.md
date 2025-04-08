@@ -20,7 +20,7 @@ A **term rewriting system** is a tool for automating the transformation of expre
 
 An **S-expression** (Symbolic Expression) is a simple and uniform way of representing nested data or code using parentheses to denote lists and atoms, commonly used in Lisp programming and symbolic computation.
 
-_**Symbolverse**_ is an S-expression based term rewriting system. *Symbolverse* code functions like a set of mathematical formulas, but with a broader scope. It can transform not just mathematical expressions but any type of S-expressions, depending on rules we provide. *Symbolverse* is a Turing complete system, which means it has the capability to perform any computation that can be done by any other known computational system.
+_**Symbolverse**_ is a symbolic, rule-based programming language built around pattern matching and term rewriting. It uses a Lisp-like syntax with S-expressions and transforms input expressions through a series of rewrite rules. Variables, scoping, and escaping mechanisms allow control over pattern matching and abstraction. With support for chaining, nested rule scopes, structural operations, and modular imports, Symbolverse is well-suited for declarative data transformation and symbolic reasoning tasks.
 
 To get a glimpse on how a *Symbolverse* program looks like, here's a simple example:
 
