@@ -320,17 +320,85 @@ It is also possible to reach more distant parent scopes by repeating a number of
 
 Summing it up, scopes represent a natural way to package and separate sets of rules where unescaped atoms and variables are considered private members. Such private members do not interact with adjacent scopes unless they are escaped from the left side. However, they may interact with parent or children scopes if their escaping amount matches referring rules.
 
+##### sub-structural term operations
+
+Sometimes we have to construct variable length lists, or concatenate symbols. In these cases, we can use use built-in functions `CONSL` for lists, and `CONSA` for atoms. In other cases, we want to extract elements of variable length lists, or characters from symbols. In these cases, we use `HEADL` and `TAILL` for lists, and `HEADA` and `TAILA` for atoms. These functions are escape insensitive, and their uses are depicted in the following example:
+
+```
+(
+    REWRITE
+    
+    /sub-atom/
+    (RULE (VAR a) (READ (EXP (\headA \a))) (WRITE (EXP (HEADA \a))))
+    (RULE (VAR a) (READ (EXP (\tailA \a))) (WRITE (EXP (TAILA \a))))
+    (RULE (VAR h t) (READ (EXP (\consA \h \t))) (WRITE (EXP (CONSA \h \t))))
+    
+    /sub-list/
+    (RULE (VAR A) (READ (EXP (\headL \A))) (WRITE (EXP (HEADL \A))))
+    (RULE (VAR A) (READ (EXP (\tailL \A))) (WRITE (EXP (TAILL \A))))
+    (RULE (VAR H T) (READ (EXP (\consL \H \T))) (WRITE (EXP (CONSL \H \T))))
+)
+```
+
+Thus, we can pass an input to the previous example:
+
+```
+(
+    (
+        atoms
+        (headA 123)
+        (tailA 123)
+        (consA 1 23)
+    )
+    (
+        lists
+        (headL (1 2 3))
+        (tailL (1 2 3))
+        (consL 1 (2 3))
+    )
+)
+```
+
+The output of this operation would be:
+
+```
+(
+    (
+        atoms
+        1
+        23
+        123
+    )
+    (
+        lists
+        1
+        (2 3)
+        (1 2 3)
+    )
+)
+```
+
+Sub-structural operations may be used when we want to format input or output according to our requests.
+
 ##### fetching external files
 
 *Symbolverse* code may import rules saved in external files. To do that, we use `(FETCH ...)` section wherever we may expect `(REWRITE ...)` section. `FETCH` section accepts one parameter, a file name. The file name is typed with or without directory, relative to path of the current code file. If we use special characters, such as spaces, we enclose the file name within double quotes. Thus, `FETCH` provides us a packaging system spanned through directories of our interest. Together with constants/variables escaping system, we may form structures of any depth reachable from the inclusion source code files.
 
----
+##### summary
 
-In this section, we learned how to write syntactically correct rules, how to use variables, how to apply a set of rules, and how to chain rules one onto another. We also skimmed over rule scoping using atom and variable escaping system to keep certain rules out of unwanted interfering with other rules. Lastly, we introduced a source code file fetching system.
+In this section, we learned that everything is a symbol, or a symbolic list. Rules match input patterns and rewrite them. Variables allow flexible matches, with control over their depth and scope via escaping. Scopes keep logic modular and encapsulated. Built-in functions manipulate atoms and lists. Lastly, fetching allows code reuse and structuring across files.
+
+in summary, Symbolverse is a symbolic, rule-based programming language designed around the concept of term rewriting. Its syntax is similar to Lisp's S-expressions, where code is composed of nested lists, and the first element of each list determines its type. The core construct in Symbolverse is the `(REWRITE ...)` block, which defines a set of transformation rules. Each rule matches specific patterns in the input and rewrites them according to defined outputs using `(RULE (READ ...) (WRITE ...))`. Rules may also involve variables, declared using `(VAR ...)`, allowing for dynamic pattern matching and substitution.
+
+A distinctive feature of Symbolverse is its variable system, where variable names starting with uppercase letters can match entire structures, while lowercase ones match only atomic elements. The use of the escape character `\` helps distinguish between terminal and non-terminal symbols - terminal ones being part of the actual input/output, and non-terminals being used for intermediate computation. This allows Symbolverse to separate internal logic from external data flow.
+
+Symbolverse supports rule chaining, where the output of one rule can feed into the input of another automatically, enabling complex transformations to occur in steps without explicitly specifying sequencing. Additionally, it offers scoping via nested `REWRITE` blocks. Each scope can isolate its variables and atoms, creating modular and abstract layers. Escaping with varying numbers of backslashes lets rules refer to different hierarchical levels, enabling structured encapsulation and reuse.
+
+The language also includes sub-structural operations for list and atom manipulation, like extracting heads/tails or constructing sequences (`HEADL`, `TAILL`, `CONSL`, `HEADA`, `TAILA`, `CONSA`). These operations enable more granular and dynamic transformations. Finally, Symbolverse allows importing rules from external files using the `FETCH` directive, promoting modular code organization and reuse. Altogether, Symbolverse provides a symbolic, pattern-driven approach to computation, where expressions evolve through defined transformation logic.
 
 ## 3. practical examples
 
-We assembled a number of practical examples covering programming examples (boolean operations, binary number arithmetic and comparison, operations on lists) and more abstract examples (SKI calculus with some frameworks that compile to SKI calculus). These examples are covered in source code files in `path-to-sybolverse/examples/` directory. All the examples are paired with their example input, and can also be examined from command line using *Symbolverse* executable.
+We assembled a number of practical examples covering programming examples (boolean operations, number arithmetic) and more abstract examples (SKI calculus, Lambda calculus, Hilbert style logic). These examples are covered in source code files in `path-to-sybolverse/examples/` directory. All the examples are paired with their example input, and can also be examined from command line using *Symbolverse* executable.
 
 ## 4. conclusion
 

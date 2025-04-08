@@ -3,15 +3,15 @@
 ```
 ---
 
-# symbolverse v0.3.4
+# symbolverse v0.3.7
 
-_**tags:** s-expression, rewriting, term-rewriting, term-rewriting-system_
+_**tags:** s-expression, rewriting, term-rewriting, term-rewriting-systems_
 
 **project roadmap:**
 
 - `[x]` v0.1.x basic rewrite rules
 - `[x]` v0.2.x scoped rewrite rules
-- `[x]` v0.3.x fetching files
+- `[x]` v0.3.x sub-structural operations
 - `[ ]` v1.0.x finalizing the package
 
 ## project specifics
@@ -32,8 +32,8 @@ To get a glimpse on how a *Symbolverse* program looks like, here's a simple exam
     (
         RULE
         (VAR A)
-        (READ  (EXP (\add                \A \A)))
-        (WRITE (EXP (\mul (((\0 \0) \1) \0) \A)))
+        (READ  (EXP (\add \A \A)))
+        (WRITE (EXP (\mul \2 \A)))
     )
     
     /reducible fraction/
@@ -46,7 +46,7 @@ To get a glimpse on how a *Symbolverse* program looks like, here's a simple exam
 )
 ```
 
-Providing the input `(div (add x x) (((0 0) 1) 0))`, the example outputs `x`.
+Providing the input `(div (add x x) 2)`, the example outputs `x`.
 
 There are a couple resources about *Symbolverse* to check out:
 
@@ -113,7 +113,7 @@ if (!arrRules.err) {
 }
 ```
 
-Along with `Rewriter.compile (...)` function, we also have `Rewriter.compileFile (...)` function available. The only difference is that it can read files from a server, and it enables possible use of file fetching system within rules code files.
+Along with `Rewriter.compile (...)` function, we also have `Rewriter.compileFile (...)` function available. The only difference is that `compileFile` read a file from a server, and it enables possible use of file fetching system within the code files.
 
 ## further work
 

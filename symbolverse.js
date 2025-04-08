@@ -156,7 +156,7 @@ else {
         var path = fullfn.substring(0, fullfn.lastIndexOf('/')) + "/src/";
         
         var script = document.createElement('script')
-        script.src = path + "sexpression.js"
+        script.src = path + "s-expr.js"
         document.body.appendChild(script);
         
         var script = document.createElement('script')

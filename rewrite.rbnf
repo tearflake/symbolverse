@@ -1,6 +1,11 @@
+```
          <start> := (REWRITE <expression>+)
+                  | (FETCH <ATOMIC>)
     
     <expression> := (RULE (VAR <ATOMIC>+)? (READ (EXP <ANY>)) (WRITE (EXP <ANY>)))
-                  | (FETCH <ATOMIC>)
                   | <start>
-
+```
+```
+(CONSL <ANY>) -> <RESULT>
+(CONSA <ANY>) -> <RESULT>
+```

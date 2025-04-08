@@ -1,0 +1,14 @@
+
+(
+    check
+    (
+        Apply
+        (
+            Apply
+            AxmS
+            AxmK
+        )
+        AxmK
+    )
+)
+

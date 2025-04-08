@@ -27,8 +27,13 @@
 
 - v0.2.x
     - variable escaping synchronized with constants escaping
-    - lowercase variables match symbols, uppercase variables match any epression
+    - lowercase variables match symbols, uppercase variables match any expression
 
 - v0.3.x
     - fetching files
+
+## Apr, 2025.
+
+- v0.3.x
+    - sub-structural operations
 

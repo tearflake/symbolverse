@@ -17,8 +17,8 @@ var Parser = (
             
             memoCFG = [];
             farthestPath = [];
-            top = Sexpression.flatten(top);
-            bot = Sexpression.flatten(bot);
+            top = Sexpr.flatten(top);
+            bot = Sexpr.flatten(bot);
             stack = [{phase: "top"}];
             stack.push ({
                 phase: "test-whole",
@@ -166,7 +166,7 @@ var Parser = (
             }
             
             if (stack[0].result === true) {
-                return Sexpression.parse (stack[0].resultData.join(" "));
+                return Sexpr.parse (stack[0].resultData.join(" "));
             }
             else {
                 return {err: true, path: farthestPath};
@@ -261,7 +261,7 @@ var isNode = new Function ("try {return this===global;}catch(e){return false;}")
 if (isNode ()) {
     // begin of Node.js support
     
-    var Sexpression = require ("./sexpression.js");
+    var Sexpr = require ("./s-expr.js");
     var Ruler = require ("./ruler.js");
     module.exports = Parser;
     

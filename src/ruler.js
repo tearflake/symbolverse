@@ -55,26 +55,31 @@ var Ruler = (
                 return idx + 1;
             }
         }
-
+        
         var isEqual = function (tokW, fromW, toW, tokR, fromR, toR, vars, uvars) {
             for (var i = fromW, j = fromR; i < tokW.length && j < tokR.length; i++, j++) {
                 var idxW = i;
                 var idxR = j;
-                if (tokW[idxW] === "(" && levelSplit (tokW[idxW + 1]).atom === "UNBOUND" && tokW[idxW + 2] !== "(" && tokW[idxW + 2] !== ")" && tokW[idxW + 3] === ")") {
-                    if (!uunify (tokW, fromW, toW, tokR, fromR, toR, vars, uvars)) {
+                
+                if (tokR[idxR] === "(" && levelSplit (tokR[idxR + 1]).atom === "FREEVAR" && tokR[idxR + 2] !== "(" && tokR[idxR + 2] !== ")" && tokR[idxR + 3] === ")") {
+                    var idxToW = getNextWhole (tokW, i);
+                    var idxToR = getNextWhole (tokR, j);  
+                    if (!uunify (tokR, idxR, idxToR, tokW, idxW, idxToW, vars, uvars)) {
                         return false;
                     }
 
-                    j = getNextWhole (tokR, j) - 1;
-                    i = getNextWhole (tokW, i) - 1;
+                    i = idxToW - 1;
+                    j = idxToR - 1;
                 }
-                else if (tokR[idxR] === "(" && levelSplit (tokR[idxR + 1]).atom === "UNBOUND" && tokR[idxR + 2] !== "(" && tokR[idxR + 2] !== ")" && tokR[idxR + 3] === ")") {
-                    if (!uunify (tokR, fromR, toR, tokW, fromW, toW, vars, uvars)) {
+                else if (tokW[idxW] === "(" && levelSplit (tokW[idxW + 1]).atom === "FREEVAR" && tokW[idxW + 2] !== "(" && tokW[idxW + 2] !== ")" && tokW[idxW + 3] === ")") {
+                    var idxToW = getNextWhole (tokW, i);
+                    var idxToR = getNextWhole (tokR, j);  
+                    if (!uunify (tokW, idxW, idxToW, tokR, idxR, idxToR, vars, uvars)) {
                         return false;
                     }
 
-                    j = getNextWhole (tokR, j) - 1;
-                    i = getNextWhole (tokW, i) - 1;
+                    i = idxToW - 1;
+                    j = idxToR - 1;
                 }
                 else if (tokW[i] !== tokR[j]) {
                     break;
@@ -84,7 +89,7 @@ var Ruler = (
             return (i === toW && j === toR);
         }
         
-        var uunify = function (tokW, idxW, idxWend, tokR, idxR, idxRend, vars, uvars) {
+        var uunify = function (tokW, idxW, idxWEnd, tokR, idxR, idxREnd, vars, uvars) {
             var lsW = levelSplit (tokW[idxW + 2])
             var tokWEsc = lsW.esc;
             var tokWName = lsW.atom;
@@ -124,9 +129,10 @@ var Ruler = (
         }
         
         var unify = function (tokW, fromW, toW, tokR, fromR, toR, level, vars) {
-            var idxW = fromW, idxR = fromR, idxWStart, idxRStart, uvars = [];
+            var idxW = fromW, idxR = fromR, idxWStart, idxRStart, uvars;
             
             vars = prepareVars (vars);
+            uvars = [];
             while (idxW < toW && idxR < toR) {
                 if (typeof tokR[idxR] === 'string' && tokR[idxR] !== "(" && tokR[idxR] !== ")") {
                     var lsR = levelSplit (tokR[idxR]);
@@ -164,7 +170,7 @@ var Ruler = (
 
                     idxR++;
                 }
-                else if (idxW > 0 && tokW[idxW] === "(" && levelSplit (tokW[idxW + 1]).atom === "UNBOUND" && tokW[idxW + 2] !== "(" && tokW[idxW + 2] !== ")" && tokW[idxW + 3] === ")") {
+                else if (idxW > 0 && tokW[idxW] === "(" && levelSplit (tokW[idxW + 1]).atom === "FREEVAR" && tokW[idxW + 2] !== "(" && tokW[idxW + 2] !== ")" && tokW[idxW + 3] === ")") {
                     if (!uunify (tokW, idxW, null, tokR, idxR, null, vars, uvars)) {
                         return false;
                     }
@@ -199,14 +205,14 @@ var Ruler = (
                 }
                 else if (vars.hasOwnProperty(spl.atom) && vars[spl.atom] === null) {
                     var spl = levelSplit (tok[idx]);
-                    var indexed = spl.atom + "-" + varIdx
+                    var indexed = spl.atom + "[" + varIdx + "]" //+ "-" + varIdx
                     if (spl.esc > 0) {
                         indexed = indexed + "\\".repeat (spl.esc);
-                        var ub = "UNBOUND" + "\\".repeat (spl.esc);
+                        var ub = "FREEVAR" + "\\".repeat (spl.esc);
                     }
                     else {
                         indexed = "\\".repeat (-spl.esc) + indexed;
-                        var ub = "\\".repeat (-spl.esc) + "UNBOUND";
+                        var ub = "\\".repeat (-spl.esc) + "FREEVAR";
                     }
 
                     result = [...result, "(", ub, indexed, ")"];
@@ -232,7 +238,7 @@ var Ruler = (
                 if (idx < tok.length - 2) {
                     var spl = levelSplit (tok[idx + 2]);
                     
-                    if (vars.hasOwnProperty(spl.atom) && vars[spl.atom] && tok[idx] === "(" && levelSplit (tok[idx + 1]).atom === "UNBOUND" && levelSplit (tok[idx + 2]).atom === spl.atom && tok[idx + 3] === ")") {
+                    if (vars.hasOwnProperty(spl.atom) && vars[spl.atom] && tok[idx] === "(" && levelSplit (tok[idx + 1]).atom === "FREEVAR" && levelSplit (tok[idx + 2]).atom === spl.atom && tok[idx + 3] === ")") {
                         result = [...result, ...levelShift (vars[spl.atom], spl.esc)];
                         idx += 4;
                         idx1++;
@@ -410,5 +416,4 @@ if (isNode ()) {
 
     // end of Node.js support
 }
-
 

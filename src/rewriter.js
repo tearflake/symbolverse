@@ -15,15 +15,17 @@ var Rewriter = (
     (function () {
         "use strict";
         
+        var internalRulesCount = 0;
+                
         var rewrite = function (rules, strInput) {
-            var input = Sexpression.parse (strInput);
+            var input = Sexpr.parse (strInput);
             if (input.err) {
                 return input;
             }
             else {
                 var output = produce (rules, input)
                 if (output.err) {
-                    var msg = Sexpression.getNode (strInput, output.path);
+                    var msg = Sexpr.getNode (strInput, output.path);
                     return {err: output.err, found: msg.found, pos: msg.pos};
                 }
                 else {
@@ -32,14 +34,14 @@ var Rewriter = (
             }
         }
         
-        var compileFile = async function (fileName, level, parents, Files) {
+        var compileFile = async function (fileName, level, parents, Files, rec) {
             if (isNode ()) {
                 var fi = Files.open (fileName);
                 if (fi === false) {
                     return {err: 'Error reading file: "' + fileName + '"'};
                 }
                 else {
-                    return compile (fi.toString (), fileName, level, parents, Files);
+                    return compile (fi.toString (), fileName, level, parents, Files, rec);
                 }
             }
             else {
@@ -52,18 +54,19 @@ var Rewriter = (
 
                 if (file?.ok) {
                     var rules = await (file.text());
-                    return compile (rules, fileName, level, parents, Files);
+                    return compile (rules, fileName, level, parents, Files, rec);
                 } else {
                     return {err: 'Error reading file "' + fileName + '"'};
                 }                    
             }
         }
         
-        var compile = async function (rules, file, level, parents, Files) {
+        var compile = async function (rules, file, level, parents, Files, rec) {
             var syntax = `
                 (
                     REWRITE
                     (RULE (READ (EXP start)) (WRITE (EXP (\\REWRITE expressions))))
+                    (RULE (READ (EXP start)) (WRITE (EXP (\\FETCH (ATOMIC ()))  )))
                     
                     (RULE (READ (EXP expressions)) (WRITE (EXP (expression expressions))))
                     (RULE (READ (EXP expressions)) (WRITE (EXP (expression ())         )))
@@ -72,8 +75,6 @@ var Rewriter = (
                     (RULE (READ (EXP expression)) (WRITE (EXP (\\RULE ((\\VAR atoms) rd-wt)))))
                     
                     (RULE (READ (EXP expression)) (WRITE (EXP start                         )))
-                    
-                    (RULE (READ (EXP expression)) (WRITE (EXP (\\FETCH (ATOMIC ()))        )))
                     
                     (RULE (READ (EXP rd-wt)) (WRITE (EXP (rd (wt ())))))
                     
@@ -85,23 +86,23 @@ var Rewriter = (
                 )
             `;
             
-            var syntaxRules = await getRules (Sexpression.parse (syntax));
-            var pRules = Sexpression.parse (rules);
+            var syntaxRules = await getRules (Sexpr.parse (syntax));
+            var pRules = Sexpr.parse (rules);
             
             if (pRules.err) {
                 return pRules;
             }
             
-            var expression = Sexpression.normalizeSexpr (pRules);
+            var expression = Sexpr.normalizeSexpr (pRules);
             var ret = Parser.consumeCFG (syntaxRules, "start\\", expression);
             if (ret.err) {
-                var path = Sexpression.denormalizeIndexes (ret.path);
-                var msg = Sexpression.getNode (rules, path);
+                var path = Sexpr.denormalizeIndexes (ret.path);
+                var msg = Sexpr.getNode (rules, path);
 
                 return {err: msg.err, file: file, found: msg.found, pos: msg.pos};
             }
             else {
-                var rls = await getRules (pRules, file, level, parents, Files);
+                var rls = await getRules (pRules, file, level, parents, Files, rec);
                 if (rls.err) {
                     if (rls.pos) {
                         if (!rls.file) {
@@ -111,7 +112,7 @@ var Rewriter = (
                         return rls;
                     }
                     else {
-                        var msg = Sexpression.getNode (rules, rls.path);
+                        var msg = Sexpr.getNode (rules, rls.path);
                         return {err: rls.err, file: rls.file, found: msg.found, pos: msg.pos};
                     }
                 }
@@ -120,7 +121,7 @@ var Rewriter = (
             }
         };
         
-        var getRules = async function (arr, file, level, parents, Files) {
+        var getRules = async function (arr, file, level, parents, Files, rec) {
             var rules = [];
             var stack = [];
             var p = [];
@@ -144,7 +145,7 @@ var Rewriter = (
                 else if (node.ast[0] === "FETCH") {
                     if (file) {
                         var fn = file.substring (0, file.lastIndexOf ("/")) + "/" + node.ast[1];
-                        var arrRules = await compileFile (fn, node.level, node.parents, Files);
+                        var arrRules = await compileFile (fn, node.level, node.parents, Files, true);
                         if (arrRules.err) {
                             if (arrRules.file) {
                                 return arrRules;
@@ -183,8 +184,8 @@ var Rewriter = (
                         r.write.push (rule[2 + varsOffset][1][j]);
                     }
                     
-                    r.read = Sexpression.flatten (r.read[0]);
-                    r.write = Sexpression.flatten (r.write[0]);
+                    r.read = Sexpr.flatten (r.read[0]);
+                    r.write = Sexpr.flatten (r.write[0]);
                     
                     r.read = Ruler.levelShift (r.read, node.level);
                     r.write = Ruler.levelShift (r.write, node.level);
@@ -195,6 +196,16 @@ var Rewriter = (
                     rules.push ({vars: v, rule: r, level: node.level, parents: node.parents});
                 }
             }
+
+            if (!rec) {
+                rules.push ({vars: ["h", "t"], rule: {read: ["(", "CONSA", "h", "t", ")"], write: ["INTERNAL"]}, level: 1, parents: [arr]});
+                rules.push ({vars: ["a"], rule: {read: ["(", "HEADA", "a", ")"], write: ["INTERNAL"]}, level: 1, parents: [arr]});
+                rules.push ({vars: ["a"], rule: {read: ["(", "TAILA", "a", ")"], write: ["INTERNAL"]}, level: 1, parents: [arr]});
+                rules.push ({vars: ["H", "T"], rule: {read: ["(", "CONSL", "H", "T", ")"], write: ["INTERNAL"]}, level: 1, parents: [arr]});
+                rules.push ({vars: ["L"], rule: {read: ["(", "HEADL", "L", ")"], write: ["INTERNAL"]}, level: 1, parents: [arr]});
+                rules.push ({vars: ["L"], rule: {read: ["(", "TAILL", "L", ")"], write: ["INTERNAL"]}, level: 1, parents: [arr]});
+                internalRulesCount = 6;
+            }
             
             return rules;
         };
@@ -203,7 +214,7 @@ var Rewriter = (
             var stack, item, uvars = [];
             
             Ruler.resetVarIdx ();
-            top = Sexpression.flatten(top);
+            top = Sexpr.flatten(top);
             stack = [{phase: "top"}];
             stack.push ({
                 phase: "test-whole",
@@ -280,89 +291,212 @@ var Rewriter = (
                     if (item.result === true) {
                         item.processData.push (item.resultData);
                     }
-                    
-                    while (true) {
+                    //else {
                         while (true) {
-                            item.ruleIndex++;
-                            if (item.ruleIndex === rules.length) {
+                            while (true) {
+                                item.ruleIndex++;
+                                if (item.ruleIndex >= rules.length - internalRulesCount) {
+                                    break;
+                                }
+                                
+                                if (item.curRule === undefined) {
+                                    //if (rules[item.ruleIndex].rule.maxLvlR === 0) {
+                                        break;
+                                    //}
+                                }
+                                else if (item.curRule.level > 0) {
+                                    var cpd = getCommonParDist (item.curRule.parents, rules[item.ruleIndex].parents);
+                                    if ((cpd.d1 === 0 && cpd.d2 === 0) || (item.curRule.rule.maxLvlW <= item.curRule.level + cpd.d1 && rules[item.ruleIndex].rule.maxLvlR <= rules[item.ruleIndex].level + cpd.d2)) {
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (item.ruleIndex === rules.length || item.result === true) { // `item.result === true` for deterministic version
+                                if (item.processData.length > 1) {
+                                    var con = [];
+                                    for (var i = 0; i < item.processData.length; i++) {
+                                        con = [...con, ...item.processData[i]];
+                                    }
+                                    //stackPop (stack, true, ["(", "CON", ...con, ")"]); // for nondeterministic version
+                                    stackPop (stack, true, item.processData[0]); // for deterministic version
+                                }
+                                else if (item.processData.length === 1) {
+                                    stackPop (stack, true, item.processData[0]);
+                                }
+                                else {
+                                    stackPop (stack, false, item.write);
+                                }
+                                
                                 break;
                             }
-                            
-                            if (item.curRule === undefined) {
-                                if (rules[item.ruleIndex].rule.maxLvlR === 0) {
-                                    break;
-                                }
-                            }
-                            else {
-                                var cpd = getCommonParDist (item.curRule.parents, rules[item.ruleIndex].parents);
-                                if ((cpd.d1 === 0 && cpd.d1 === cpd.d2) || (item.curRule.rule.maxLvlW <= item.curRule.level + cpd.d1 && rules[item.ruleIndex].rule.maxLvlR <= rules[item.ruleIndex].level + cpd.d2)) {
-                                    break;
-                                }
-                            }
-                        }
+                            else if (item.ruleIndex >= rules.length - internalRulesCount) {
+                                if (item.curRule !==  undefined) {
+                                    if (rules[item.ruleIndex].rule.read[1] === "CONSA" && item.write.length === 5 && Ruler.levelSplit (item.write[1]).atom === "CONSA") {
+                                        if (Ruler.levelSplit (item.write[2]).esc === Ruler.levelSplit (item.write[3]).esc) {
+                                            var res1 = Ruler.levelSplit (item.write[2]).atom;
+                                            if (res1 === "NIL") {
+                                                res1 = ""
+                                            }
+                                            
+                                            var res2 = Ruler.levelSplit (item.write[3]).atom;
+                                            if (res2 === "NIL") {
+                                                res2 = ""
+                                            }
 
-                        //item.ruleIndex++;
-                        if (item.ruleIndex === rules.length || item.result === true) { // `item.result === true` for deterministic version
-                            if (item.processData.length > 1) {
-                                var con = [];
-                                for (var i = 0; i < item.processData.length; i++) {
-                                    con = [...con, ...item.processData[i]];
-                                }
-                                //stackPop (stack, true, ["(", "CON", ...con, ")"]); // for nondeterministic version
-                                stackPop (stack, true, item.processData[0]); // for deterministic version
-                            }
-                            else if (item.processData.length === 1) {
-                                stackPop (stack, true, item.processData[0]);
-                            }
-                            else {
-                                stackPop (stack, false, item.write);
-                            }
-                            
-                            break;
-                        }
-                        else {
-                            var v = Ruler.unify (item.write, item.fromW, item.toW, rules[item.ruleIndex].rule.read, 0, rules[item.ruleIndex].rule.read.length, rules[item.ruleIndex].level, rules[item.ruleIndex].vars);
-                            if (v) {
-                                var substed = Ruler.subst (rules[item.ruleIndex].rule.write, v.vars);
-                                //substed = Ruler.subst (rules[item.ruleIndex].rule.write, v.vars);
-                                stack.push ({
-                                    phase: "test-whole",
-                                    write: substed,
-                                    fromW: 0,
-                                    toW: substed.length,
-                                    curRule: rules[item.ruleIndex],
-                                    path: item.path
-                                });
-                                
-                                for (var key in v.uvars) {
-                                    uvars[key] = v.uvars[key];
-                                }
-                                
-                                if (Object.keys(uvars).length > 0) {
-                                    for (var si = 0; si < stack.length; si++) {
-                                        if (stack[si].processData) {
-                                            stack[si].processData = Ruler.usubst (stack[si].processData, uvars);
+                                            if (res1 + res2 === "") {
+                                                var res = Ruler.levelShift (["NIL"], Ruler.levelSplit (item.write[2]).esc);
+                                            }
+                                            else {
+                                                var res = Ruler.levelShift ([res1 + res2 === ""? NIL : res1 + res2], Ruler.levelSplit (item.write[2]).esc);
+                                            }
+
+                                            stack.push ({
+                                                phase: "test-whole",
+                                                write: res,
+                                                fromW: 0,
+                                                toW: 1,
+                                                curRule: rules[item.ruleIndex],
+                                                path: item.path
+                                            });
+                                            break;
                                         }
-                                        
-                                        if (stack[si].resultData) {
-                                            stack[si].resultData = Ruler.usubst (stack[si].resultData, uvars);
+                                    }
+                                    else if (rules[item.ruleIndex].rule.read[1] === "HEADA" && item.write.length === 4 && Ruler.levelSplit (item.write[1]).atom === "HEADA") {
+                                        if (Ruler.levelSplit (item.write[2]).atom !== "NIL") {
+                                            var res = Ruler.levelShift ([Ruler.levelSplit (item.write[2]).atom.charAt(0)], Ruler.levelSplit (item.write[2]).esc);
+                                            stack.push ({
+                                                phase: "test-whole",
+                                                write: res,
+                                                fromW: 0,
+                                                toW: 1,
+                                                curRule: rules[item.ruleIndex],
+                                                path: item.path
+                                            });
+                                            break;
                                         }
-                                        
-                                        if (stack[si].write) {
-                                            stack[si].write = Ruler.usubst (stack[si].write, uvars, stack[si]);
+                                    }
+                                    else if (rules[item.ruleIndex].rule.read[1] === "TAILA" && item.write.length === 4 && Ruler.levelSplit (item.write[1]).atom === "TAILA") {
+                                        if (Ruler.levelSplit (item.write[2]).atom !== "NIL") {
+                                            var res = Ruler.levelShift ([Ruler.levelSplit (item.write[2]).atom.slice(1, Ruler.levelSplit (item.write[2]).atom.length)], Ruler.levelSplit (item.write[2]).esc);
+                                            var str = Ruler.levelSplit (res[0]).atom;
+                                            if (res[0] === "" || "\\".repeat (str.length) === str) {
+                                                res[0] = Ruler.levelShift (["NIL"], Ruler.levelSplit (item.write[2]).esc)[0];
+                                            }
+                                            
+                                            stack.push ({
+                                                phase: "test-whole",
+                                                write: res,
+                                                fromW: 0,
+                                                toW: 1,
+                                                curRule: rules[item.ruleIndex],
+                                                path: item.path
+                                            });
+                                            break;
+                                        }
+                                    }
+                                    else if (rules[item.ruleIndex].rule.read[1] === "CONSL" && Ruler.levelSplit (item.write[1]).atom === "CONSL") {
+                                        var resP1From = 2;
+                                        var resP2From = getNextWhole (item.write, resP1From);
+                                        var resTo = getNextWhole (item.write, resP2From);
+                                        if (resP2From + 1 < resTo && resTo === item.write.length - 1) {
+                                            var res = ["(", ...item.write.slice (resP1From, resP2From), ...item.write.slice (resP2From + 1, resTo - 1), ")"];
+                                            stack.push ({
+                                                phase: "test-whole",
+                                                write: res,
+                                                fromW: 0,
+                                                toW: res.length,
+                                                curRule: rules[item.ruleIndex],
+                                                path: item.path
+                                            });
+                                            break;
+                                        }
+                                    }
+                                    else if (rules[item.ruleIndex].rule.read[1] === "HEADL" && Ruler.levelSplit (item.write[1]).atom === "HEADL") {
+                                        var resP1From = 2;
+                                        var resP1To = getNextWhole (item.write, resP1From);
+                                        if (resP1From + 2 < resP1To && resP1To === item.write.length - 1) {
+                                            var resP2From = 3;
+                                            var resP2To = getNextWhole (item.write, resP2From);
+                                            var res = [...item.write.slice (resP2From, resP2To)];
+                                            stack.push ({
+                                                phase: "test-whole",
+                                                write: res,
+                                                fromW: 0,
+                                                toW: res.length,
+                                                curRule: rules[item.ruleIndex],
+                                                path: item.path
+                                            });
+                                            break;
+                                        }
+                                    }
+                                    else if (rules[item.ruleIndex].rule.read[1] === "TAILL" && Ruler.levelSplit (item.write[1]).atom === "TAILL") {
+                                        var resP1From = 2;
+                                        var resP1To = getNextWhole (item.write, resP1From);
+                                        if (resP1From + 2 < resP1To && resP1To === item.write.length - 1) {
+                                            var resP2From = getNextWhole (item.write, 3);
+                                            var resP2To = item.write.length - 2;
+                                            if (resP2From === resP2To) {
+                                                var res  = ["(",")"];
+                                            }
+                                            else {
+                                                var res = ["(", ...item.write.slice (resP2From, resP2To), ")"];
+                                            }
+                                            stack.push ({
+                                                phase: "test-whole",
+                                                write: res,
+                                                fromW: 0,
+                                                toW: res.length,
+                                                curRule: rules[item.ruleIndex],
+                                                path: item.path
+                                            });
+                                            break;
                                         }
                                     }
                                 }
-                                
-                                break;
+                            } else {
+                                var v = Ruler.unify (item.write, item.fromW, item.toW, rules[item.ruleIndex].rule.read, 0, rules[item.ruleIndex].rule.read.length, rules[item.ruleIndex].level, rules[item.ruleIndex].vars);
+                                if (v) {
+                                    var substed = Ruler.subst (rules[item.ruleIndex].rule.write, v.vars);
+                                    stack.push ({
+                                        phase: "test-whole",
+                                        write: substed,
+                                        fromW: 0,
+                                        toW: substed.length,
+                                        curRule: rules[item.ruleIndex],
+                                        path: item.path
+                                    });
+                                    
+                                    for (var key in v.uvars) {
+                                        uvars[key] = v.uvars[key];
+                                    }
+                                    
+                                    if (Object.keys(uvars).length > 0) {
+                                        for (var si = 0; si < stack.length; si++) {
+                                            if (stack[si].processData) {
+                                                stack[si].processData = Ruler.usubst (stack[si].processData, uvars);
+                                            }
+                                            
+                                            if (stack[si].resultData) {
+                                                stack[si].resultData = Ruler.usubst (stack[si].resultData, uvars);
+                                            }
+                                            
+                                            if (stack[si].write) {
+                                                stack[si].write = Ruler.usubst (stack[si].write, uvars, stack[si]);
+                                            }
+                                        }
+                                    }
+                                    
+                                    break;
+                                }
                             }
                         }
-                    }
+                    //}
                 }
             }
             
             var result = stack[0].resultData.join(" ");
-            return Sexpression.parse (result);
+            return Sexpr.parse (result);
         }
         
         var stackPop = function (stack, result, resultData) {
@@ -423,7 +557,7 @@ var Rewriter = (
         }
         
         var stringify = function (arr) {
-            return Sexpression.stringify (arr);
+            return Sexpr.stringify (arr);
         }
         
         return {
@@ -440,7 +574,7 @@ var isNode = new Function ("try {return this===global;}catch(e){return false;}")
 if (isNode ()) {
     // begin of Node.js support
     
-    var Sexpression = require ("./sexpression.js");
+    var Sexpr = require ("./s-expr.js");
     var Parser = require ("./parser.js");
     var Ruler = require ("./ruler.js");
     module.exports = Rewriter;
