@@ -113,7 +113,7 @@ if (!arrRules.err) {
 }
 ```
 
-Along with `Rewriter.compile (...)` function, we also have `Rewriter.compileFile (...)` function available. The only difference is that `compileFile` read a file from a server, and it enables possible use of file fetching system within the code files.
+Along with `Rewriter.compile (...)` function, we also have `Rewriter.compileFile (...)` function available. The only difference is that `compileFile` reads a file from a server, and it enables possible use of file fetching system within the code files.
 
 ## further work
 
