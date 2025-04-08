@@ -95,7 +95,7 @@ The next example consists of only one atom:
 (EXP "hello world")
 ```
 
-The atom `hello world` is enclosed within quotes. Quoted atoms are interpreted as standard unicode strings, and we use them if we want to include special characters that have meaning in *Symbolverse* grammar syntax. The special characters are: `(`, `)`, ` `, `"`, `\`, and `/`.
+The atom `hello world` is enclosed within quotes. Quoted atoms are interpreted as standard unicode strings, and we use them if we want to include special characters that have meaning in *Symbolverse* grammar syntax. The special characters are: `(`, `)`, `\n`, `"`, `\\`, and `/`. The special characters are: `(`, `)`, ` `, `"`, `\`, and `/`.
 
 Explore more about S-expression version used in *Symbolverse* at [dedicated GitHub pages](https://github.com/tearflake/sexpression).
 
