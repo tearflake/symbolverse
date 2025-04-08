@@ -44,7 +44,7 @@ and expressiveness make it a cornerstone of theoretical computer science.
         )
         
         (RULE (VAR A ANY) (READ (EXP (parsingLc\ (typed\ A\ ANY\)))) (WRITE (EXP (\parsedLc \A))))
-        /(RULE (VAR A) (READ (EXP (parsingLc\ A\))) (WRITE (EXP \\"lambda calculus syntax error")))/
+        (RULE (VAR A) (READ (EXP (parsingLc\ A\))) (WRITE (EXP \\"lambda calculus syntax error")))
     )
     
     /compiler/
