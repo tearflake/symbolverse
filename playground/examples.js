@@ -996,20 +996,6 @@ AxmS = (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))
         /entry point/
         (RULE (VAR A) (READ (EXP (\\proofCheck \\A))) (WRITE (EXP (proofChecking A))))
         
-        /constants/
-        (
-            RULE
-            (VAR A)
-            (
-                READ
-                (EXP (Const A))
-            )
-            (
-                WRITE
-                (EXP (typed A))
-            )
-        )
-        
         /axioms/
         (
             RULE
@@ -1045,6 +1031,20 @@ AxmS = (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))
             (
                 WRITE
                 (EXP (typed (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))))
+            )
+        )
+        
+        /constants/
+        (
+            RULE
+            (VAR A)
+            (
+                READ
+                (EXP (Const A))
+            )
+            (
+                WRITE
+                (EXP (typed A))
             )
         )
         
