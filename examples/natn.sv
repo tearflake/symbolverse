@@ -15,9 +15,9 @@ operations on natural numbers: `add`, `sub`, `mul`, `div`
     /trim leading zeroes/
     (RULE (VAR A) (READ (EXP (0 A))) (WRITE (EXP A)))
     
-    /////////////////
+    ////////////////
     / split number /
-    /////////////////
+    ////////////////
     
     (RULE (VAR X Y) (READ (EXP (splitNum (add X Y)))) (WRITE (EXP (add (splitNum X) (splitNum Y)))))
     (RULE (VAR X Y) (READ (EXP (splitNum (sub X Y)))) (WRITE (EXP (sub (splitNum X) (splitNum Y)))))

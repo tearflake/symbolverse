@@ -38,6 +38,7 @@ type theory.
 --------------------------------------------------------------
 To compose a proof, use these rules
 --------------------------------------------------------------
+(Const A) = A
 AxmI = (impl A A)
 AxmK = (impl A (impl B A))
 AxmS = (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))
@@ -59,6 +60,20 @@ AxmS = (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))
         
         /entry point/
         (RULE (VAR A) (READ (EXP (\proofCheck \A))) (WRITE (EXP (proofChecking A))))
+        
+        /constants/
+        (
+            RULE
+            (VAR A)
+            (
+                READ
+                (EXP (Const A))
+            )
+            (
+                WRITE
+                (EXP (typed A))
+            )
+        )
         
         /axioms/
         (
