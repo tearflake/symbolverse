@@ -38,7 +38,7 @@ type theory.
 --------------------------------------------------------------
 To compose a proof, use these rules
 --------------------------------------------------------------
-(CONST A) = A
+(CONST A) = (const A)
 (IMPL A B) = (impl A B)
 AxmI = (impl A A)
 AxmK = (impl A (impl B A))
