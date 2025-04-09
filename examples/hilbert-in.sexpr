@@ -5,10 +5,26 @@
         Apply
         (
             Apply
-            AxmS
-            AxmK
+            (
+                Apply
+                (
+                    Apply
+                    AxmS
+                    (
+                        Apply
+                        AxmK
+                        (
+                            Apply
+                            AxmS
+                            AxmI
+                        )
+                    )
+                )
+                AxmK
+            )
+            (CONST A)
         )
-        AxmK
+        (IMPL (CONST A) (CONST B))
     )
 )
 
