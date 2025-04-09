@@ -38,10 +38,10 @@ type theory.
 --------------------------------------------------------------
 To compose a proof, use these rules
 --------------------------------------------------------------
-(Const A) = A
 AxmI = (impl A A)
 AxmK = (impl A (impl B A))
 AxmS = (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))
+(Const A) = A
 (Apply (impl A B) A) = B
 --------------------------------------------------------------
 ```
@@ -109,7 +109,7 @@ AxmS = (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))
             )
             (
                 WRITE
-                (EXP (typed A))
+                (EXP (typed (CONST A)))
             )
         )
         
