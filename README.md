@@ -12,7 +12,7 @@ _**Symbolverse**_ is a symbolic, rule-based programming language built around pa
 
 ## minimalistic approach
 
-The entire grammar of *Symbolverse* code files fits into only five lines of code:
+The entire grammar of *Symbolverse* code files fits into only five lines of relaxed BNF code:
 
 ```
       <start> := (REWRITE <expression>+)
@@ -22,20 +22,20 @@ The entire grammar of *Symbolverse* code files fits into only five lines of code
                | <start>
 ```
 
-and only six builtin sunctions:
+and there is only six builtin functions:
 
 ```
-(CONSL <ANY>) -> <RESULT>
-(HEADL <ANY>) -> <RESULT>
-(TAILL <ANY>) -> <RESULT>
-(CONSA <ANY>) -> <RESULT>
-(HEADA <ANY>) -> <RESULT>
-(TAILA <ANY>) -> <RESULT>
+(CONSL <ANY> <ANY>)       -> <RESULT>
+(HEADL <ANY>)             -> <RESULT>
+(TAILL <ANY>)             -> <RESULT>
+(CONSA <ATOMIC> <ATOMIC>) -> <RESULT>
+(HEADA <ATOMIC>)          -> <RESULT>
+(TAILA <ATOMIC>)          -> <RESULT>
 ```
 
-Despite of being very minimalistic framework, *Symbolverse* represents a Turing complete system. However, while it is possible to use *Symbolverse* for any abstract programming task, it is best suited for expression transformation and symbolic reasoning.
+Given only these elements, in spite of being very minimalistic framework, *Symbolverse* is computationally complete, witnessing the Turing completeness. However, while it is possible to use *Symbolverse* for any abstract programming task, it is best suited for expression transformation and symbolic reasoning.
 
-## example program
+## example program code
 
 To get a glimpse on how a *Symbolverse* program looks like, we bring a simple example:
 
@@ -67,7 +67,7 @@ To get a glimpse on how a *Symbolverse* program looks like, we bring a simple ex
 )
 ```
 
-Passing the input `(div (add x x) 2)` to this program, the example outputs `x`. Also, passing the input `(div (add x x) x)`, the example outputs `2`.
+Passing the input `(div (add x x) 2)` to this program code, the example outputs `x`. Also, passing the input `(div (add x x) x)`, the example outputs `2`.
 
 ## resources
 
