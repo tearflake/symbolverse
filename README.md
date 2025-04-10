@@ -73,7 +73,7 @@ Passing the input `(div (add x x) 2)` to this program code, the example outputs 
 
 There are a few resources about *Symbolverse* to check out:
 
-- Explore examples at [online playground](https://tearflake.github.io/symbolverse/playground/).
+- Explore code examples at [online playground](https://tearflake.github.io/symbolverse/playground/).
 - Read the [Symbolverse specification](https://tearflake.github.io/symbolverse/docs/symbolverse).
 - Follow the [installation instructions](https://tearflake.github.io/symbolverse/docs/installation).
 
