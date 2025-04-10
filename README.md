@@ -15,11 +15,11 @@ _**Symbolverse**_ is a symbolic, rule-based programming language built around pa
 The entire grammar of *Symbolverse* code files fits into only five lines of relaxed BNF code:
 
 ```
-      <start> := (REWRITE <expression>+)
-               | (FILE <ATOMIC>)
- 
- <expression> := (RULE (VAR <ATOMIC>+)? (READ <ANY>) (WRITE <ANY>))
-               | <start>
+     <start> := (REWRITE <expression>+)
+              | (FILE <ATOMIC>)
+
+<expression> := (RULE (VAR <ATOMIC>+)? (READ <ANY>) (WRITE <ANY>))
+              | <start>
 ```
 
 and there is only six builtin functions used only for sub-structural transformations:
