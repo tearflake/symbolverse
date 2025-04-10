@@ -37,7 +37,7 @@ Given only these elements, in spite of being very minimalistic framework, *Symbo
 
 ## example program code
 
-To get a glimpse on how a *Symbolverse* program looks like, we bring a simple example:
+To get a glimpse on how a *Symbolverse* program code looks like, we bring a simple example:
 
 ```
 (
