@@ -1,14 +1,10 @@
-```
-// work in progress //
-```
-
 # Symbolverse specification
 
 > **[about document]**  
 > Introduction to *Symbolverse* term rewriting system
 >
 > **[intended audience]**  
-> Advanced programmers and beginners in term rewriting
+> Beginners in term rewriting
 > 
 > **[Short description]**  
 > Symbolverse is a term rewriting system operating on S-expressions. It defines transformations on symbolic expressions by applying a set of rewriting rules to terms represented as S-expressions, which are tree-like structures of atoms or nested lists. These rules match patterns within the S-expressions and systematically replace them with new expressions, enabling recursive transformations. Such formal systems are widely used in symbolic computation, program transformation, and automated reasoning, offering a flexible method for expressing and analyzing transformations in structured symbolic data.
@@ -26,7 +22,7 @@
 
 ## 1. introduction
 
-Term rewriting is a formal method used to systematically transform expressions or terms based on a set of rules. A term consists of symbols and variables arranged in a structured way, often represented as trees. Rewriting rules define how certain patterns in these terms can be replaced with other terms. The process typically involves pattern matching, where parts of a term are identified and replaced according to predefined rules, allowing terms to evolve into new forms. This transformation continues until a term reaches its final form, known as the normal form, where no further rules can be applied. Term rewriting is widely used in areas such as symbolic computation, automated theorem proving, algebraic data manipulation, and program optimization, providing a powerful tool for reasoning about and transforming structured data.
+Term rewriting is a formal method used to systematically transform expressions or terms based on a set of rules. A term consists of symbols and variables arranged in a structured way, often represented as trees. Rewriting rules define how certain patterns in these terms can be replaced with other terms. The process typically involves pattern matching, where parts of a term are identified and replaced according to predefined rules, allowing terms to evolve into new forms. This transformation continues until a term reaches its final form, known as the normal form, where no further rules can be applied. Term rewriting is widely used in areas such as symbolic computation, automated theorem proving, algebraic data manipulation, and program optimization, providing a tool for reasoning about and transforming structured data.
 
 Using S-expressions as terms in a term rewriting system provides a simple and effective way to represent and manipulate symbolic expressions. S-expressions, with their uniform, tree-like structure of nested lists and atoms, naturally align with the hierarchical nature of terms in rewriting systems. This structure makes it easy to parse and apply rewriting rules, where patterns within the S-expressions can be matched and transformed according to specified rules.
 
@@ -50,15 +46,15 @@ In computer science, the syntax of a computer language is the set of rules that 
 
 ```
          <start> := (REWRITE <expression>+)
+                  | (FILE <ATOMIC>)
     
-    <expression> := (RULE (VAR <ATOMIC>+)? (READ (EXP <ANY>)) (WRITE (EXP <ANY>)))
-                  | (FETCH <ATOMIC>)
+    <expression> := (RULE (VAR <ATOMIC>+)? (READ <ANY>) (WRITE <ANY>))
                   | <start>
 ```
 
 The above grammar defines the syntax of *Symbolverse*. To interpret these grammar rules, we use special symbols: `<...>` for noting identifiers, `... := ...` for expressing assignment, `...+` for one or more occurrences, `...*` for zero or more occurrences, `...?` for optional appearance, and `... | ...` for alternation between expressions. All other symbols are considered as parts of the *Symbolverse* language.
 
-In addition to the above grammar, user comments have no meaning to the system, but may be descriptive to readers, and may be placed wherever a whitespace is expected. Single line comments are embraced within a pair of `/` symbols. Multiline comments are embraced within an odd number of `/` symbols placed at the same distance from the beginning of line, so that everything in between is considered as a comment.
+In addition to the above grammar, user comments have no meaning to the system, but may be descriptive to readers, and may be placed wherever a whitespace is expected. Single line comments are embraced within a pair of `/` symbols. Multiline comments are embraced within an odd number of `/` symbols placed at the same whitespace distance from the beginning of line, so that everything in between is considered as a comment.
 
 ### 2.2. semantics
 
@@ -71,7 +67,7 @@ S-expressions (Symbolic Expressions) are a fundamental concept in computer scien
 The general form of an S-expression is either:
 
 - An atom (e.g., `atom`), or
-- A list of S-expressions (e.g., `(expr1 expr2 expr3)`).
+- A list of S-expressions (e.g., `(expr1 expr2 expr3 ...)`).
 
 Lists can be nested, allowing for the representation of complex hierarchical structures. For example:
 
@@ -79,12 +75,12 @@ Lists can be nested, allowing for the representation of complex hierarchical str
 
 This S-expression represents equality between square and multiplication.
 
-One of the most distinctive features of S-expressions is their uniform representation of code and data. In *Symbolverse*, code itself is written as S-expression, which means that programs can easily manipulate other programs as data, enabling powerful metaprogramming capabilities. S-expressions are a versatile and uniform notation for representing both code and data in a nested, list-based structure. Their simplicity and power make them a core feature of *Symbolverse*, facilitating symbolic computation, metaprogramming, and easy manipulation of hierarchical data structures.
+One of the most distinctive features of S-expressions is their uniform representation of code and data. In *Symbolverse*, code itself is written as S-expression, which means that programs can easily manipulate other programs as data, enabling metaprogramming capabilities. S-expressions are a versatile and uniform notation for representing both code and data in a nested, list-based structure. Their simplicity and power make them a core feature of *Symbolverse*, facilitating symbolic computation, metaprogramming, and easy manipulation of hierarchical data structures.
 
-Terms in *Symbolverse* are represented by S-expressions, and are written in `(EXP ...)` pattern. Let's take a look at couple of examples stating terms:
+Terms in *Symbolverse* are represented by S-expressions. Let's take a look at couple of examples stating terms:
 
 ```
-(EXP (hello world))
+(hello world)
 ```
 
 This example describes the term `(hello world)`.
@@ -92,12 +88,12 @@ This example describes the term `(hello world)`.
 The next example consists of only one atom:
 
 ```
-(EXP "hello world")
+"hello world"
 ```
 
 The atom `hello world` is enclosed within quotes. Quoted atoms are interpreted as standard unicode strings, and we use them if we want to include special characters that have meaning in *Symbolverse* grammar syntax. The special characters are: `(`, `)`, `"`, `\`, `/`, and characters of whitespace.
 
-Explore more about S-expression version used in *Symbolverse* at [dedicated GitHub pages](https://github.com/tearflake/sexpression).
+Explore more about S-expression version used in *Symbolverse* at [dedicated GitHub pages](https://github.com/tearflake/s-expr).
 
 #### 2.2.2. rewrite rules
 
@@ -145,7 +141,7 @@ output: `(hello world)`
 (
     REWRITE
 
-    (RULE (READ (EXP (\hello \machine))) (WRITE (EXP (\hello \world))))
+    (RULE (READ (\hello \machine)) (WRITE (\hello \world)))
 )
 ```
 
@@ -164,11 +160,11 @@ output: `(hello Name)`
 (
     REWRITE
 
-    (RULE (VAR Name) (READ (EXP (\greet \Name))) (WRITE (EXP (\hello \Name))))
+    (RULE (VAR Name) (READ (\greet \Name)) (WRITE (\hello \Name)))
 )
 ```
 
-In our case, variable name is `Name`, as stated in the `VAR` section. The first character of every variable name is meaningful to *Symbolverse*. It stands for atomic value if it is lower case, and for atomic or compound value if it is upper case. Also important to point out, the variable will match its contents only if all the content atoms match the same amount of escape characters noted by the variable appearance. To return to our example, when we pass `(greet human)` as an input, we get `(hello human)` as an output.
+In our case, a variable name is `Name`, as stated in the `VAR` section. The first character of every variable name is meaningful to *Symbolverse*. It stands for atomic value if it is lower case, and for atomic or compound value if it is upper case. Also important to point out, the variable will match its contents only if all the content atoms match the same amount of escape characters noted by the variable appearance in the left hand and the right hand sides. To return to our example, when we pass `(greet human)` as an input, we get `(hello human)` as an output.
 
 ##### set of rules
 
@@ -185,8 +181,8 @@ output: `(makeToy doll/car)`
 (
     REWRITE
 
-    (RULE (READ (EXP (\isGood \girl))) (WRITE (EXP (\makeToy \doll))))
-    (RULE (READ (EXP (\isGood \boy) )) (WRITE (EXP (\makeToy \car) )))
+    (RULE (READ (\isGood \girl)) (WRITE (\makeToy \doll)))
+    (RULE (READ (\isGood \boy) ) (WRITE (\makeToy \car) ))
 )
 ```
 
@@ -208,14 +204,14 @@ output: `(isTitled Name astronaut/doctor)`
     (
         RULE
         (VAR Name)
-        (READ (EXP (\isDoing \Name \drivingRocket)))
-        (WRITE (EXP (\isTitled \Name \astronaut)))
+        (READ  (\isDoing \Name \drivingRocket))
+        (WRITE (\isTitled \Name \astronaut)   )
     )
     (
         RULE
         (VAR Name)
-        (READ (EXP (\isDoing \Name \healingPeople)))
-        (WRITE (EXP (\isTitled \Name \doctor)))
+        (READ  (\isDoing \Name \healingPeople))
+        (WRITE (\isTitled \Name \doctor)      )
     )
 )
 ```
@@ -237,20 +233,20 @@ output: `(shadowsDo expand/shrink)`
 (
     REWRITE
 
-    (RULE (READ (EXP (\sunIs \rising) )) (WRITE (EXP (itIs morning)  )))
-    (RULE (READ (EXP (\sunIs \falling))) (WRITE (EXP (itIs afternoon))))
+    (RULE (READ (\sunIs \rising) ) (WRITE (itIs morning)  ))
+    (RULE (READ (\sunIs \falling)) (WRITE (itIs afternoon)))
 
-    (RULE (READ (EXP (itIs morning)  )) (WRITE (EXP (shadowsLean west))))
-    (RULE (READ (EXP (itIs afternoon))) (WRITE (EXP (shadowsLean east))))
+    (RULE (READ (itIs morning)  ) (WRITE (shadowsLean west)))
+    (RULE (READ (itIs afternoon)) (WRITE (shadowsLean east)))
 
-    (RULE (READ (EXP (shadowsLean west))) (WRITE (EXP (\shadowsDo \shrink))))
-    (RULE (READ (EXP (shadowsLean east))) (WRITE (EXP (\shadowsDo \expand))))
+    (RULE (READ (shadowsLean west)) (WRITE (\shadowsDo \shrink)))
+    (RULE (READ (shadowsLean east)) (WRITE (\shadowsDo \expand)))
 )
 ```
 
 Thus, passing an input `(sunIs rising)` finally gets us an output `(shadowsDo shrink)` while passing an input `(sun is falling)` finally gets us an output `(shadowsDo expand)`. Rules automatically chain one onto another where their terms match.
 
-Note the use of atoms without the escape `\` character. These atoms are used for internal computations, and do not refer to the outer world. These are called non-terminals. Since all terminals are required to be escaped with `\`, when we pass an input like `(itIs morning)`, it gets ignored by this ruleset. This grounds a basis for hiding internal code implementation from the input scope reach.
+Note the use of atoms without the escape `\` character. These atoms are used for internal computations, and do not interfere with the outer world. These are called non-terminals. Since all terminals are required to be escaped with `\`, when we pass an input like `(itIs morning)`, it gets ignored by this ruleset. This grounds a basis for hiding internal code implementation from the input scope reach.
 
 The similar chaining example, but with variables would be:
 
@@ -268,14 +264,14 @@ output: `(weigthtsMoreThan object2 object1)`
     (
         RULE
         (VAR P1 P2)
-        (READ (EXP (\orbitsAround \P1 \P2)))
-        (WRITE (EXP (attractsMoreThan P2 P1)))
+        (READ  (\orbitsAround \P1 \P2) )
+        (WRITE (attractsMoreThan P2 P1))
     )
     (
         RULE
         (VAR P1 P2)
-        (READ (EXP (attractsMoreThan P1 P2)))
-        (WRITE (EXP (\weightsMoreThan \P1 \P2)))
+        (READ  (attractsMoreThan P1 P2))
+        (WRITE (\weightsMoreThan \P1 \P2))
     )
 )
 ```
@@ -298,45 +294,45 @@ output: `(fruitGrows Fruit)`
     REWRITE
     
     /entry point/
-    (RULE (VAR Fruit) (READ (EXP (\plantSeed \Fruit))) (WRITE (EXP (plantSeed Fruit))))
+    (RULE (VAR Fruit) (READ (\plantSeed \Fruit)) (WRITE (plantingSeed Fruit)))
     
     /exit point/
-    (RULE (VAR Fruit) (READ (EXP (fruitGrows Fruit))) (WRITE (EXP (\fruitGrows \Fruit))))
+    (RULE (VAR Fruit) (READ (fruitGrowing Fruit)) (WRITE (\fruitGrows \Fruit)))
     
     (
         REWRITE
         
-        (RULE (VAR Fruit) (READ (EXP (\plantSeed \Fruit)   )) (WRITE (EXP (treeForms Fruit)     )))
-        (RULE (VAR Fruit) (READ (EXP (treeForms Fruit)     )) (WRITE (EXP (blooms Fruit)        )))
-        (RULE (VAR Fruit) (READ (EXP (blooms Fruit)        )) (WRITE (EXP (getsPollinated Fruit))))
-        (RULE (VAR Fruit) (READ (EXP (getsPollinated Fruit))) (WRITE (EXP (\fruitGrows \Fruit)  )))
+        (RULE (VAR Fruit) (READ (\plantingSeed \Fruit)) (WRITE (treeForms Fruit)     ))
+        (RULE (VAR Fruit) (READ (treeForms Fruit)     ) (WRITE (blooms Fruit)        ))
+        (RULE (VAR Fruit) (READ (blooms Fruit)        ) (WRITE (getsPollinated Fruit)))
+        (RULE (VAR Fruit) (READ (getsPollinated Fruit)) (WRITE (\fruitGrowing \Fruit)))
     )
 )
 ```
 
-Here, in the first level, we used two rules only to pass the information up from and down to program input/output scope. Next, in the nested `(REWRITE ...)` section, we created a separate scope which represents a chained actions between seeding a plant and growing a fruit. To reach atoms and variables from the outer layers, we have to escape them with `\` character, like in `(READ (EXP (\plantSeed \Fruit)))` section. Similarly, atoms and variables created within that scope are not visible outside of that scope unless they are escaped with `\` character, like in `(WRITE (EXP (\fruitGrows \Fruit)))` section.
+Here, in the first level, we used two rules only to pass the information up from and down to program input/output scope. Next, in the nested `(REWRITE ...)` section, we created a separate scope which represents a chained actions between seeding a plant and growing a fruit. To reach atoms and variables from the outer layers, we have to escape them with `\` character, like in `(READ (\plantSeed \Fruit))` section. Similarly, atoms and variables created within that scope are not visible outside of that scope unless they are escaped with `\` character, like in `(WRITE (\fruitGrows \Fruit))` section.
 
 It is also possible to reach more distant parent scopes by repeating a number of `\` characters where the number of repetitions denotes the depth difference to the parent scope we are referring to. This way, it is possible to refer to adjacent scopes or their children escaped atoms and variables if their escaping amount matches the referrer. There is also a possibility to escape atoms and variables at the right sides, which we may use to push down the processed values, only to pull them up after the processing is done.
 
-Summing it up, scopes represent a natural way to package and separate sets of rules where unescaped atoms and variables are considered private members. Such private members do not interact with adjacent scopes unless they are escaped from the left side. However, they may interact with parent or children scopes if their escaping amount matches referring rules.
+Scopes represent a natural way to package and separate sets of rules where unescaped atoms and variables are considered private members. Such private members do not interact with adjacent scopes unless they are escaped from the left side. However, they may interact with adjacent, parent or children scopes if their relative escaping amount matches referring rules.
 
 ##### sub-structural term operations
 
-Sometimes we have to construct variable length lists, or concatenate symbols. In these cases, we can use use built-in functions `CONSL` for lists, and `CONSA` for atoms. In other cases, we want to extract elements of variable length lists, or characters from symbols. In these cases, we use `HEADL` and `TAILL` for lists, and `HEADA` and `TAILA` for atoms. These functions are escape insensitive, and their uses are depicted in the following example:
+Sometimes we have to construct variable length lists, or concatenate atoms. In these cases, we can use use built-in functions `CONSL` for lists, and `CONSA` for atoms. In other cases, we want to extract elements of variable length lists, or characters from symbols. In these cases, we use `HEADL` and `TAILL` for lists, and `HEADA` and `TAILA` for atoms. These functions are escape insensitive, and their uses are depicted in the following example:
 
 ```
 (
     REWRITE
     
     /sub-atom/
-    (RULE (VAR a) (READ (EXP (\headA \a))) (WRITE (EXP (HEADA \a))))
-    (RULE (VAR a) (READ (EXP (\tailA \a))) (WRITE (EXP (TAILA \a))))
-    (RULE (VAR h t) (READ (EXP (\consA \h \t))) (WRITE (EXP (CONSA \h \t))))
+    (RULE (VAR a) (READ (\headA \a)) (WRITE (HEADA \a)))
+    (RULE (VAR a) (READ (\tailA \a)) (WRITE (TAILA \a)))
+    (RULE (VAR h t) (READ (\consA \h \t)) (WRITE (CONSA \h \t)))
     
     /sub-list/
-    (RULE (VAR A) (READ (EXP (\headL \A))) (WRITE (EXP (HEADL \A))))
-    (RULE (VAR A) (READ (EXP (\tailL \A))) (WRITE (EXP (TAILL \A))))
-    (RULE (VAR H T) (READ (EXP (\consL \H \T))) (WRITE (EXP (CONSL \H \T))))
+    (RULE (VAR A) (READ (\headL \A)) (WRITE (HEADL \A)))
+    (RULE (VAR A) (READ (\tailL \A)) (WRITE (TAILL \A)))
+    (RULE (VAR H T) (READ (\consL \H \T)) (WRITE (CONSL \H \T)))
 )
 ```
 
@@ -378,33 +374,47 @@ The output of this operation would be:
 )
 ```
 
-Sub-structural operations may be used when we want to format input or output according to our requests.
+Sub-structural operations may be used when we want to specifically format input or output according to our requests.
+
+##### free variables
+
+Variables we exposed by previous examples are all being used at the left hand rules sides. Such variables are called *bound variables*. However, we may place variables at the right hand rule side without being referenced at the left hand rule side. Such variables are called *free variables*, and they may be described in the following example:
+
+```
+(RULE (VAR f x y) (READ (function f)) (WRITE (f x y y)))
+```
+
+Here, variable `f` represent bound variable, while variables `x` and `y` are free variables. Free variables are indicated by the `FREEVAR` keyword in the final output. Each rule that produces a free variable attaches an unique index to a variable name, relative to applied rule. Free variables may be important in pattern matching, e.g. during computing proofs of theorems. They are given a special care in this framework, being calculated using a standard unification algorithm. Thus, in the previous example, the output may be matched with the further chaining rules only if the first parameter equals the value of `f`, the second parameter matches any atomic value, while the third and the fourth elements match atomic values having the same appearance. Of course, it is possible to have compound free variables denoted by first uppercase letter, and their behavior correctly follows the mentioned unification algorithm.
 
 ##### fetching external files
 
-*Symbolverse* code may import rules saved in external files. To do that, we use `(FETCH ...)` section wherever we may expect `(REWRITE ...)` section. `FETCH` section accepts one parameter, a file name. The file name is typed with or without directory, relative to path of the current code file. If we use special characters, such as spaces, we enclose the file name within double quotes. Thus, `FETCH` provides us a packaging system spanned through directories of our interest. Together with constants/variables escaping system, we may form structures of any depth reachable from the inclusion source code files.
+*Symbolverse* code may import rules saved in external files. To do that, we use a `(FILE ...)` section wherever we may expect a `(REWRITE ...)` section. `FILE` section accepts one parameter: a file name. The file name is entered with or without directory, relative to path of the current code file. If we use special characters, such as spaces, we enclose the file name within double quotes. Thus, `FILE` sections may provide us a packaging system spanned through directories of our interest. Together with `REWRITE` sections, we may form structures of any depth reachable from the points of source code files inclusion.
 
 ##### summary
 
-In this section, we learned that everything is a symbol, or a symbolic list. Rules match input patterns and rewrite them. Variables allow flexible matches, with control over their depth and scope via escaping. Scopes keep logic modular and encapsulated. Built-in functions manipulate atoms and lists. Lastly, fetching allows code reuse and structuring across files.
-
 In summary, Symbolverse is a symbolic, rule-based programming language designed around the concept of term rewriting. Its syntax is similar to Lisp's S-expressions, where code is composed of nested lists, and the first element of each list determines its type. The core construct in Symbolverse is the `(REWRITE ...)` block, which defines a set of transformation rules. Each rule matches specific patterns in the input and rewrites them according to defined outputs using `(RULE (READ ...) (WRITE ...))`. Rules may also involve variables, declared using `(VAR ...)`, allowing for dynamic pattern matching and substitution.
 
-A distinctive feature of Symbolverse is its variable system, where variable names starting with uppercase letters can match entire structures, while lowercase ones match only atomic elements. The use of the escape character `\` helps distinguish between terminal and non-terminal symbols - terminal ones being part of the actual input/output, and non-terminals being used for intermediate computation. This allows Symbolverse to separate internal logic from external data flow.
+An important feature of Symbolverse is its variable system, where variable names starting with uppercase letters can match entire structures, while lowercase ones match only atomic elements. The use of the escape character `\` helps distinguish between terminal and non-terminal symbols - terminal ones being part of the actual input/output, and non-terminals being used for intermediate computation. This allows Symbolverse to separate internal logic from external data flow.
 
 Symbolverse supports rule chaining, where the output of one rule can feed into the input of another automatically, enabling complex transformations to occur in steps without explicitly specifying sequencing. Additionally, it offers scoping via nested `REWRITE` blocks. Each scope can isolate its variables and atoms, creating modular and abstract layers. Escaping with varying numbers of backslashes lets rules refer to different hierarchical levels, enabling structured encapsulation and reuse.
 
-The language also includes sub-structural operations for list and atom manipulation, like extracting heads/tails or constructing sequences (`HEADL`, `TAILL`, `CONSL`, `HEADA`, `TAILA`, `CONSA`). These operations enable more granular transformations. Finally, Symbolverse allows importing rules from external files using the `FETCH` directive, promoting modular code organization and reuse. Altogether, Symbolverse provides a symbolic, pattern-driven approach to computation, where expressions evolve through defined transformation logic.
+The language also includes sub-structural operations for list and atom manipulation, like extracting heads/tails or constructing sequences (`HEADL`, `TAILL`, `CONSL`, `HEADA`, `TAILA`, `CONSA`). These operations enable more granular transformations.
+
+Free variables are also supported, and they are indicated in an output using `FREEVAR` blocks. The algorithm performs pattern matching of free variables which behave as placeholders for yet unspecified values where multiple variables with the same name are required to match the same forms of values. Unification of complex compound symbolic trees is properly handled using the standard unification algorithm.
+
+Finally, Symbolverse allows importing rules from external files using the `FILE` directive, promoting modular code organization and reuse. We may freely organize external files in directories of our choice.
+
+Altogether, Symbolverse provides a symbolic, pattern-driven approach to computation, where expressions evolve through defined transformation logic.
+
+With this section we conclude the definition of the Symbolverse term rewriting framework. The exposure is followed by a few words about examples included in the Symbolverse package, and a few words about possible use cases in conclusion section.
 
 ## 3. practical examples
 
-We assembled a number of practical examples covering programming examples (boolean operations, number arithmetic) and more abstract examples (SKI calculus, Lambda calculus, Hilbert style logic). These examples are covered in source code files in `path-to-sybolverse/examples/` directory. All the examples are paired with their example input, and can also be examined from command line using *Symbolverse* executable.
+We assembled a number of practical examples covering programming examples (boolean operations, number arithmetic) and more abstract examples (SKI calculus, Lambda calculus, Hilbert style logic). These examples are covered in source code files in `path-to-sybolverse/examples/` directory. All the example files are paired with their example input files, and can also be examined from command line using *Symbolverse* executable.
+
+While some of the programming examples may seem a bit cumbersome, abstract examples involving expression transformation may seem like a perfect fit for Symbolverse. This situation naturally arises from the fact that Symbolverse is primarily made as a helper for S-expression transformation. While it is also possible to perform other kinds of programming, S-expression transformations like program compiling and symbolic reasoning are exactly kinds of uses suited well for term rewriting frameworks.
 
 ## 4. conclusion
 
 If properly performed, there could be numerous kinds of uses of the *Symbolverse* system. One use may be in editing input in sessions that produce some mathematical, logical, or other kinds of computations, while looping back to editing sessions until we are satisfied with the output. Some other, maybe industrial use may involve compiling a program source code to some assembly target code. In other situations, it is also included that we could form a personal, classical business, or even scientific knowledge base with relational algebra rules, so we can navigate, search, and extract wanted information. Ultimately, data from the knowledge base could mutually interact using on-demand learned inference rules, thus developing the entire logical reasoning system ready to draw complex decisions on general system behavior. And this partial sketch of possible uses is just a tip of the iceberg because with a kind of system like *Symbolverse*, we are entering a nonexhaustive area of general knowledge computing where only our imagination could be a limit.
-
-```
-// work in progress //
-```
 

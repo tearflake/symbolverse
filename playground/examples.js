@@ -11,7 +11,7 @@ output: \`(hello world)\`
 (
     REWRITE
 
-    (RULE (READ (EXP (\\hello \\machine))) (WRITE (EXP (\\hello \\world))))
+    (RULE (READ (\\hello \\machine)) (WRITE (\\hello \\world)))
 )
 `,
 
@@ -32,7 +32,7 @@ output: \`(hello Name)\`
 (
     REWRITE
 
-    (RULE (VAR Name) (READ (EXP (\\greet \\Name))) (WRITE (EXP (\\hello \\Name))))
+    (RULE (VAR Name) (READ (\\greet \\Name)) (WRITE (\\hello \\Name)))
 )
 `,
 "example1-2-input":
@@ -52,8 +52,8 @@ output: \`(makeToy doll/car)\`
 (
     REWRITE
 
-    (RULE (READ (EXP (\\isGood \\girl))) (WRITE (EXP (\\makeToy \\doll))))
-    (RULE (READ (EXP (\\isGood \\boy) )) (WRITE (EXP (\\makeToy \\car) )))
+    (RULE (READ (\\isGood \\girl)) (WRITE (\\makeToy \\doll)))
+    (RULE (READ (\\isGood \\boy) ) (WRITE (\\makeToy \\car) ))
 )
 `,
 "example1-3-input":
@@ -76,14 +76,14 @@ output: \`(isTitled Name astronaut/doctor)\`
     (
         RULE
         (VAR Name)
-        (READ  (EXP (\\isDoing \\Name \\drivingRocket)))
-        (WRITE (EXP (\\isTitled \\Name \\astronaut)   ))
+        (READ  (\\isDoing \\Name \\drivingRocket))
+        (WRITE (\\isTitled \\Name \\astronaut)   )
     )
     (
         RULE
         (VAR Name)
-        (READ  (EXP (\\isDoing \\Name \\healingPeople)))
-        (WRITE (EXP (\\isTitled \\Name \\doctor)      ))
+        (READ  (\\isDoing \\Name \\healingPeople))
+        (WRITE (\\isTitled \\Name \\doctor)      )
     )
 )
 `,
@@ -104,14 +104,14 @@ output: \`(shadowsDo expand/shrink)\`
 (
     REWRITE
 
-    (RULE (READ (EXP (\\sunIs \\rising) )) (WRITE (EXP (itIs morning)  )))
-    (RULE (READ (EXP (\\sunIs \\falling))) (WRITE (EXP (itIs afternoon))))
+    (RULE (READ (\\sunIs \\rising) ) (WRITE (itIs morning)  ))
+    (RULE (READ (\\sunIs \\falling)) (WRITE (itIs afternoon)))
 
-    (RULE (READ (EXP (itIs morning)  )) (WRITE (EXP (shadowsLean west))))
-    (RULE (READ (EXP (itIs afternoon))) (WRITE (EXP (shadowsLean east))))
+    (RULE (READ (itIs morning)  ) (WRITE (shadowsLean west)))
+    (RULE (READ (itIs afternoon)) (WRITE (shadowsLean east)))
 
-    (RULE (READ (EXP (shadowsLean west))) (WRITE (EXP (\\shadowsDo \\shrink))))
-    (RULE (READ (EXP (shadowsLean east))) (WRITE (EXP (\\shadowsDo \\expand))))
+    (RULE (READ (shadowsLean west)) (WRITE (\\shadowsDo \\shrink)))
+    (RULE (READ (shadowsLean east)) (WRITE (\\shadowsDo \\expand)))
 )
 `,
 "example1-5-input":
@@ -134,14 +134,14 @@ output: \`(weigthtsMoreThan object2 object1)\`
     (
         RULE
         (VAR P1 P2)
-        (READ  (EXP (\\orbitsAround \\P1 \\P2)   ))
-        (WRITE (EXP (attractsMoreThan P2 P1)))
+        (READ  (\\orbitsAround \\P1 \\P2) )
+        (WRITE (attractsMoreThan P2 P1))
     )
     (
         RULE
         (VAR P1 P2)
-        (READ  (EXP (attractsMoreThan P1 P2)))
-        (WRITE (EXP (\\weightsMoreThan \\P1 \\P2)))
+        (READ  (attractsMoreThan P1 P2))
+        (WRITE (\\weightsMoreThan \\P1 \\P2))
     )
 )
 `,
@@ -163,18 +163,18 @@ output: \`(fruitGrows Fruit)\`
     REWRITE
     
     /entry point/
-    (RULE (VAR Fruit) (READ (EXP (\\plantSeed \\Fruit))) (WRITE (EXP (plantingSeed Fruit))))
+    (RULE (VAR Fruit) (READ (\\plantSeed \\Fruit)) (WRITE (plantingSeed Fruit)))
     
     /exit point/
-    (RULE (VAR Fruit) (READ (EXP (fruitGrowing Fruit))) (WRITE (EXP (\\fruitGrows \\Fruit))))
+    (RULE (VAR Fruit) (READ (fruitGrowing Fruit)) (WRITE (\\fruitGrows \\Fruit)))
     
     (
         REWRITE
         
-        (RULE (VAR Fruit) (READ (EXP (\\plantingSeed \\Fruit))) (WRITE (EXP (treeForms Fruit)     )))
-        (RULE (VAR Fruit) (READ (EXP (treeForms Fruit)     )) (WRITE (EXP (blooms Fruit)        )))
-        (RULE (VAR Fruit) (READ (EXP (blooms Fruit)        )) (WRITE (EXP (getsPollinated Fruit))))
-        (RULE (VAR Fruit) (READ (EXP (getsPollinated Fruit))) (WRITE (EXP (\\fruitGrowing \\Fruit))))
+        (RULE (VAR Fruit) (READ (\\plantingSeed \\Fruit)) (WRITE (treeForms Fruit)     ))
+        (RULE (VAR Fruit) (READ (treeForms Fruit)     ) (WRITE (blooms Fruit)        ))
+        (RULE (VAR Fruit) (READ (blooms Fruit)        ) (WRITE (getsPollinated Fruit)))
+        (RULE (VAR Fruit) (READ (getsPollinated Fruit)) (WRITE (\\fruitGrowing \\Fruit)))
     )
 )
 `,
@@ -199,29 +199,29 @@ output: \`(Who and Whom hadPartyAt Where)\`
     (
         RULE
         (VAR Who Whom Where)
-        (READ  (EXP (\\Who \\met \\Whom \\at \\Where)))
-        (WRITE (EXP (funMeeting Who Whom Where) ))
+        (READ  (\\Who \\met \\Whom \\at \\Where))
+        (WRITE (funMeeting Who Whom Where) )
     )
     
     /exit point/
     (
         RULE
         (VAR Char1 Char2 Site)
-        (READ  (EXP (funMeeting Char1 Char2 Site)         ))
-        (WRITE (EXP (\\Char1 \\and \\Char2 \\hadPartyAt \\Site)))
+        (READ  (funMeeting Char1 Char2 Site)         )
+        (WRITE (\\Char1 \\and \\Char2 \\hadPartyAt \\Site))
     )
     
     (
         REWRITE
-        (RULE (READ (EXP \\bug1)) (WRITE (EXP \\ladybug  )))
-        (RULE (READ (EXP \\bug2)) (WRITE (EXP \\butterfly)))
-        (RULE (READ (EXP \\bug3)) (WRITE (EXP \\bee      )))
+        (RULE (READ \\bug1) (WRITE \\ladybug  ))
+        (RULE (READ \\bug2) (WRITE \\butterfly))
+        (RULE (READ \\bug3) (WRITE \\bee      ))
     )
 
     (
         REWRITE
-        (RULE (READ (EXP \\place1)) (WRITE (EXP \\orchard)))
-        (RULE (READ (EXP \\place2)) (WRITE (EXP \\meadow )))
+        (RULE (READ \\place1) (WRITE \\orchard))
+        (RULE (READ \\place2) (WRITE \\meadow ))
     )
 )
 `,
@@ -245,14 +245,14 @@ use for substructural operations:
     REWRITE
     
     /sub-atom/
-    (RULE (VAR a) (READ (EXP (\\headA \\a))) (WRITE (EXP (HEADA \\a))))
-    (RULE (VAR a) (READ (EXP (\\tailA \\a))) (WRITE (EXP (TAILA \\a))))
-    (RULE (VAR h t) (READ (EXP (\\consA \\h \\t))) (WRITE (EXP (CONSA \\h \\t))))
+    (RULE (VAR a) (READ (\\headA \\a)) (WRITE (HEADA \\a)))
+    (RULE (VAR a) (READ (\\tailA \\a)) (WRITE (TAILA \\a)))
+    (RULE (VAR h t) (READ (\\consA \\h \\t)) (WRITE (CONSA \\h \\t)))
     
     /sub-list/
-    (RULE (VAR A) (READ (EXP (\\headL \\A))) (WRITE (EXP (HEADL \\A))))
-    (RULE (VAR A) (READ (EXP (\\tailL \\A))) (WRITE (EXP (TAILL \\A))))
-    (RULE (VAR H T) (READ (EXP (\\consL \\H \\T))) (WRITE (EXP (CONSL \\H \\T))))
+    (RULE (VAR A) (READ (\\headL \\A)) (WRITE (HEADL \\A)))
+    (RULE (VAR A) (READ (\\tailL \\A)) (WRITE (TAILL \\A)))
+    (RULE (VAR H T) (READ (\\consL \\H \\T)) (WRITE (CONSL \\H \\T)))
 )
 `,
 "example1-10-input":
@@ -286,28 +286,28 @@ branching choice
     (
         RULE
         (VAR A B)
-        (READ (EXP (\\iff \\true \\A \\B)))
-        (WRITE (EXP \\A))
+        (READ (\\iff \\true \\A \\B))
+        (WRITE \\A)
     )
     (
         RULE
         (VAR A B)
-        (READ (EXP (\\iff \\false \\A \\B)))
-        (WRITE (EXP \\B))
+        (READ (\\iff \\false \\A \\B))
+        (WRITE \\B)
     )
     
     /equality predicate/
     (
         RULE
         (VAR A)
-        (READ (EXP (\\eq \\A \\A)))
-        (WRITE (EXP \\true))
+        (READ (\\eq \\A \\A))
+        (WRITE \\true)
     )
     (
         RULE
         (VAR A B)
-        (READ (EXP (\\eq \\A \\B)))
-        (WRITE (EXP \\false))
+        (READ (\\eq \\A \\B))
+        (WRITE \\false)
     )
     
     ///
@@ -315,20 +315,20 @@ branching choice
     ///
     
     /truth table for \`not\` operator/
-    (RULE (READ (EXP (\\not \\true ))) (WRITE (EXP \\false)))
-    (RULE (READ (EXP (\\not \\false))) (WRITE (EXP \\true )))
+    (RULE (READ (\\not \\true )) (WRITE \\false))
+    (RULE (READ (\\not \\false)) (WRITE \\true ))
     
     /truth table for \`and\` operator/
-    (RULE (READ (EXP (\\and \\true  \\true ))) (WRITE (EXP \\true )))
-    (RULE (READ (EXP (\\and \\true  \\false))) (WRITE (EXP \\false)))
-    (RULE (READ (EXP (\\and \\false \\true ))) (WRITE (EXP \\false)))
-    (RULE (READ (EXP (\\and \\false \\false))) (WRITE (EXP \\false)))
+    (RULE (READ (\\and \\true  \\true )) (WRITE \\true ))
+    (RULE (READ (\\and \\true  \\false)) (WRITE \\false))
+    (RULE (READ (\\and \\false \\true )) (WRITE \\false))
+    (RULE (READ (\\and \\false \\false)) (WRITE \\false))
     
     /truth table for \`or\` operator/
-    (RULE (READ (EXP (\\or \\true  \\true ))) (WRITE (EXP \\true )))
-    (RULE (READ (EXP (\\or \\true  \\false))) (WRITE (EXP \\true )))
-    (RULE (READ (EXP (\\or \\false \\true ))) (WRITE (EXP \\true )))
-    (RULE (READ (EXP (\\or \\false \\false))) (WRITE (EXP \\false)))
+    (RULE (READ (\\or \\true  \\true )) (WRITE \\true ))
+    (RULE (READ (\\or \\true  \\false)) (WRITE \\true ))
+    (RULE (READ (\\or \\false \\true )) (WRITE \\true ))
+    (RULE (READ (\\or \\false \\false)) (WRITE \\false))
 )
 `,
 "example-branch-input":
@@ -355,76 +355,76 @@ operations on natural numbers: \`add\`, \`sub\`, \`mul\`, \`div\`
     REWRITE
     
     /workflow/
-    (RULE (VAR A) (READ (EXP (\\natNum \\A))) (WRITE (EXP (computedBin (decToBin (splitNum A))))))
-    (RULE (VAR A) (READ (EXP (computedBin A))) (WRITE (EXP (computedDec (joinNum (binToDec A))))))
-    (RULE         (READ (EXP (computedDec neg))) (WRITE (EXP \\"Natural number error")))
-    (RULE (VAR A) (READ (EXP (computedDec A))) (WRITE (EXP \\A)))
+    (RULE (VAR A) (READ (\\natNum \\A)) (WRITE (computedBin (decToBin (splitNum A)))))
+    (RULE (VAR A) (READ (computedBin A)) (WRITE (computedDec (joinNum (binToDec A)))))
+    (RULE         (READ (computedDec neg)) (WRITE \\"Natural number error"))
+    (RULE (VAR A) (READ (computedDec A)) (WRITE \\A))
 
     /trim leading zeroes/
-    (RULE (VAR A) (READ (EXP (0 A))) (WRITE (EXP A)))
-    
+    (RULE (VAR A) (READ (0 A)) (WRITE A))
+        
     ////////////////
     / split number /
     ////////////////
     
-    (RULE (VAR X Y) (READ (EXP (splitNum (add X Y)))) (WRITE (EXP (add (splitNum X) (splitNum Y)))))
-    (RULE (VAR X Y) (READ (EXP (splitNum (sub X Y)))) (WRITE (EXP (sub (splitNum X) (splitNum Y)))))
-    (RULE (VAR X Y) (READ (EXP (splitNum (mul X Y)))) (WRITE (EXP (mul (splitNum X) (splitNum Y)))))
-    (RULE (VAR X Y) (READ (EXP (splitNum (div X Y)))) (WRITE (EXP (div (splitNum X) (splitNum Y)))))
+    (RULE (VAR X Y) (READ (splitNum (add X Y))) (WRITE (add (splitNum X) (splitNum Y))))
+    (RULE (VAR X Y) (READ (splitNum (sub X Y))) (WRITE (sub (splitNum X) (splitNum Y))))
+    (RULE (VAR X Y) (READ (splitNum (mul X Y))) (WRITE (mul (splitNum X) (splitNum Y))))
+    (RULE (VAR X Y) (READ (splitNum (div X Y))) (WRITE (div (splitNum X) (splitNum Y))))
     
-    (RULE (VAR a) (READ (EXP (splitNum a))) (WRITE (EXP (splitNum (HEADA a) (TAILA a)))))
-    (RULE (VAR A b) (READ (EXP (splitNum A NIL))) (WRITE (EXP A)))
-    (RULE (VAR A b) (READ (EXP (splitNum A b))) (WRITE (EXP (splitNum (A (HEADA b)) (TAILA b)))))
+    (RULE (VAR a) (READ (splitNum a)) (WRITE (splitNum (HEADA a) (TAILA a))))
+    (RULE (VAR A b) (READ (splitNum A NIL)) (WRITE A))
+    (RULE (VAR A b) (READ (splitNum A b)) (WRITE (splitNum (A (HEADA b)) (TAILA b))))
     
     ///////////////
     / join number /
     ///////////////
     
-    (RULE (VAR a) (READ (EXP (joinNum a))) (WRITE (EXP a)))
-    (RULE (VAR a b) (READ (EXP (joinNum a b))) (WRITE (EXP (CONSA a b))))
-    (RULE (VAR A b) (READ (EXP (joinNum (A b)))) (WRITE (EXP (CONSA (joinNum A) b))))
+    (RULE (VAR a) (READ (joinNum a)) (WRITE a))
+    (RULE (VAR a b) (READ (joinNum a b)) (WRITE (CONSA a b)))
+    (RULE (VAR A b) (READ (joinNum (A b))) (WRITE (CONSA (joinNum A) b)))
 
     /////////////////////////
     / expression conversion /
     /////////////////////////
     
-    (RULE (VAR X Y) (READ (EXP (decToBin (add X Y)))) (WRITE (EXP (binAdd (decToBin X) (decToBin Y)))))
-    (RULE (VAR X Y) (READ (EXP (decToBin (sub X Y)))) (WRITE (EXP (binSub (decToBin X) (decToBin Y)))))
-    (RULE (VAR X Y) (READ (EXP (decToBin (mul X Y)))) (WRITE (EXP (binMul (decToBin X) (decToBin Y)))))
-    (RULE (VAR X Y) (READ (EXP (decToBin (div X Y)))) (WRITE (EXP (binDiv (decToBin X) (decToBin Y)))))
+    (RULE (VAR X Y) (READ (decToBin (add X Y))) (WRITE (binAdd (decToBin X) (decToBin Y))))
+    (RULE (VAR X Y) (READ (decToBin (sub X Y))) (WRITE (binSub (decToBin X) (decToBin Y))))
+    (RULE (VAR X Y) (READ (decToBin (mul X Y))) (WRITE (binMul (decToBin X) (decToBin Y))))
+    (RULE (VAR X Y) (READ (decToBin (div X Y))) (WRITE (binDiv (decToBin X) (decToBin Y))))
 
     /////////////////////
     / number conversion /
     /////////////////////
     
     /constant/
-    (RULE (READ (EXP ten)) (WRITE (EXP (((1 0) 1) 0))))
+    (RULE (READ ten) (WRITE (((1 0) 1) 0)))
     
     ///
     decimal to binary
     ///
     
     /negative numbers/
-    (RULE (VAR a) (READ (EXP (decToBin neg))) (WRITE (EXP neg)))
+    (RULE (VAR a) (READ (decToBin neg)) (WRITE neg))
 
     /single-digit/
-    (RULE (READ (EXP (decToBin 0))) (WRITE (EXP             0)))
-    (RULE (READ (EXP (decToBin 1))) (WRITE (EXP             1)))
-    (RULE (READ (EXP (decToBin 2))) (WRITE (EXP         (1 0))))
-    (RULE (READ (EXP (decToBin 3))) (WRITE (EXP         (1 1))))
-    (RULE (READ (EXP (decToBin 4))) (WRITE (EXP     ((1 0) 0))))
-    (RULE (READ (EXP (decToBin 5))) (WRITE (EXP     ((1 0) 1))))
-    (RULE (READ (EXP (decToBin 6))) (WRITE (EXP     ((1 1) 0))))
-    (RULE (READ (EXP (decToBin 7))) (WRITE (EXP     ((1 1) 1))))
-    (RULE (READ (EXP (decToBin 8))) (WRITE (EXP (((1 0) 0) 0))))
-    (RULE (READ (EXP (decToBin 9))) (WRITE (EXP (((1 0) 0) 1))))
+    (RULE (READ (decToBin 0)) (WRITE             0))
+    (RULE (READ (decToBin 1)) (WRITE             1))
+    (RULE (READ (decToBin 2)) (WRITE         (1 0)))
+    (RULE (READ (decToBin 3)) (WRITE         (1 1)))
+    (RULE (READ (decToBin 4)) (WRITE     ((1 0) 0)))
+    (RULE (READ (decToBin 5)) (WRITE     ((1 0) 1)))
+    (RULE (READ (decToBin 6)) (WRITE     ((1 1) 0)))
+    (RULE (READ (decToBin 7)) (WRITE     ((1 1) 1)))
+    (RULE (READ (decToBin 8)) (WRITE (((1 0) 0) 0)))
+    (RULE (READ (decToBin 9)) (WRITE (((1 0) 0) 1)))
     
     /multi-digit/
     (
         RULE
         (VAR A b)
-        (READ (EXP (decToBin (A b))))
-        (WRITE (EXP (binAdd (binMul (decToBin A) ten) (decToBin b))))
+        (READ (decToBin (A b)))
+        (WRITE (binAdd (binMul (decToBin A) ten) (decToBin b)))
     )
     
     ///
@@ -432,32 +432,32 @@ operations on natural numbers: \`add\`, \`sub\`, \`mul\`, \`div\`
     ///
     
     /negative numbers/
-    (RULE (VAR A) (READ (EXP (binToDec neg))) (WRITE (EXP neg)))
+    (RULE (VAR A) (READ (binToDec neg)) (WRITE neg))
 
     /single-digit/
-    (RULE (READ (EXP (binToDec             0))) (WRITE (EXP 0)))
-    (RULE (READ (EXP (binToDec             1))) (WRITE (EXP 1)))
-    (RULE (READ (EXP (binToDec         (1 0)))) (WRITE (EXP 2)))
-    (RULE (READ (EXP (binToDec         (1 1)))) (WRITE (EXP 3)))
-    (RULE (READ (EXP (binToDec     ((1 0) 0)))) (WRITE (EXP 4)))
-    (RULE (READ (EXP (binToDec     ((1 0) 1)))) (WRITE (EXP 5)))
-    (RULE (READ (EXP (binToDec     ((1 1) 0)))) (WRITE (EXP 6)))
-    (RULE (READ (EXP (binToDec     ((1 1) 1)))) (WRITE (EXP 7)))
-    (RULE (READ (EXP (binToDec (((1 0) 0) 0)))) (WRITE (EXP 8)))
-    (RULE (READ (EXP (binToDec (((1 0) 0) 1)))) (WRITE (EXP 9)))
+    (RULE (READ (binToDec             0)) (WRITE 0))
+    (RULE (READ (binToDec             1)) (WRITE 1))
+    (RULE (READ (binToDec         (1 0))) (WRITE 2))
+    (RULE (READ (binToDec         (1 1))) (WRITE 3))
+    (RULE (READ (binToDec     ((1 0) 0))) (WRITE 4))
+    (RULE (READ (binToDec     ((1 0) 1))) (WRITE 5))
+    (RULE (READ (binToDec     ((1 1) 0))) (WRITE 6))
+    (RULE (READ (binToDec     ((1 1) 1))) (WRITE 7))
+    (RULE (READ (binToDec (((1 0) 0) 0))) (WRITE 8))
+    (RULE (READ (binToDec (((1 0) 0) 1))) (WRITE 9))
     
     /multi-digit/
     (
         RULE
         (VAR A)
-        (READ (EXP (binToDec A)))
-        (WRITE (EXP (binToDecHelper A (binDiv A ten))))
+        (READ (binToDec A))
+        (WRITE (binToDecHelper A (binDiv A ten)))
     )
     (
         RULE
         (VAR A B)
-        (READ (EXP (binToDecHelper A B)))
-        (WRITE (EXP ((binToDec B) (binToDec (binSub A (binMul B ten))))))
+        (READ (binToDecHelper A B))
+        (WRITE ((binToDec B) (binToDec (binSub A (binMul B ten)))))
     )
     
     /////////////////////////////
@@ -469,157 +469,157 @@ operations on natural numbers: \`add\`, \`sub\`, \`mul\`, \`div\`
     ///
     
     /negative values/
-    (RULE (VAR A) (READ (EXP (binAdd neg A))) (WRITE (EXP neg)))
-    (RULE (VAR A) (READ (EXP (binAdd A neg))) (WRITE (EXP neg)))
+    (RULE (VAR A) (READ (binAdd neg A)) (WRITE neg))
+    (RULE (VAR A) (READ (binAdd A neg)) (WRITE neg))
     
     /both numbers single digits/
-    (RULE           (READ (EXP (binAdd     0     0))) (WRITE (EXP                           0)))
-    (RULE           (READ (EXP (binAdd     0     1))) (WRITE (EXP                           1)))
-    (RULE           (READ (EXP (binAdd     1     0))) (WRITE (EXP                           1)))
-    (RULE           (READ (EXP (binAdd     1     1))) (WRITE (EXP (                      1 0))))
+    (RULE           (READ (binAdd     0     0)) (WRITE                           0))
+    (RULE           (READ (binAdd     0     1)) (WRITE                           1))
+    (RULE           (READ (binAdd     1     0)) (WRITE                           1))
+    (RULE           (READ (binAdd     1     1)) (WRITE (                      1 0)))
     
     /first number multiple digits, second number single digit/
-    (RULE (VAR A  ) (READ (EXP (binAdd (A 0)     0))) (WRITE (EXP (                      A 0))))
-    (RULE (VAR A  ) (READ (EXP (binAdd (A 0)     1))) (WRITE (EXP (                      A 1))))
-    (RULE (VAR A  ) (READ (EXP (binAdd (A 1)     0))) (WRITE (EXP (                      A 1))))
-    (RULE (VAR A  ) (READ (EXP (binAdd (A 1)     1))) (WRITE (EXP (           (binAdd 1 A) 0))))
+    (RULE (VAR A  ) (READ (binAdd (A 0)     0)) (WRITE (                      A 0)))
+    (RULE (VAR A  ) (READ (binAdd (A 0)     1)) (WRITE (                      A 1)))
+    (RULE (VAR A  ) (READ (binAdd (A 1)     0)) (WRITE (                      A 1)))
+    (RULE (VAR A  ) (READ (binAdd (A 1)     1)) (WRITE (           (binAdd 1 A) 0)))
     
     /first number single digit, second number multiple digits/
-    (RULE (VAR B  ) (READ (EXP (binAdd     0 (B 0)))) (WRITE (EXP (                      B 0))))
-    (RULE (VAR B  ) (READ (EXP (binAdd     0 (B 1)))) (WRITE (EXP (                      B 1))))
-    (RULE (VAR B  ) (READ (EXP (binAdd     1 (B 0)))) (WRITE (EXP (                      B 1))))
-    (RULE (VAR B  ) (READ (EXP (binAdd     1 (B 1)))) (WRITE (EXP (           (binAdd 1 B) 0))))
+    (RULE (VAR B  ) (READ (binAdd     0 (B 0))) (WRITE (                      B 0)))
+    (RULE (VAR B  ) (READ (binAdd     0 (B 1))) (WRITE (                      B 1)))
+    (RULE (VAR B  ) (READ (binAdd     1 (B 0))) (WRITE (                      B 1)))
+    (RULE (VAR B  ) (READ (binAdd     1 (B 1))) (WRITE (           (binAdd 1 B) 0)))
     
     /both numbers multiple digits/
-    (RULE (VAR A B) (READ (EXP (binAdd (A 0) (B 0)))) (WRITE (EXP (           (binAdd A B) 0))))
-    (RULE (VAR A B) (READ (EXP (binAdd (A 0) (B 1)))) (WRITE (EXP (           (binAdd A B) 1))))
-    (RULE (VAR A B) (READ (EXP (binAdd (A 1) (B 0)))) (WRITE (EXP (           (binAdd A B) 1))))
-    (RULE (VAR A B) (READ (EXP (binAdd (A 1) (B 1)))) (WRITE (EXP ((binAdd 1 (binAdd A B)) 0))))
+    (RULE (VAR A B) (READ (binAdd (A 0) (B 0))) (WRITE (           (binAdd A B) 0)))
+    (RULE (VAR A B) (READ (binAdd (A 0) (B 1))) (WRITE (           (binAdd A B) 1)))
+    (RULE (VAR A B) (READ (binAdd (A 1) (B 0))) (WRITE (           (binAdd A B) 1)))
+    (RULE (VAR A B) (READ (binAdd (A 1) (B 1))) (WRITE ((binAdd 1 (binAdd A B)) 0)))
     
     ///
     binary number subtraction
     ///
     
     /negative values/
-    (RULE (VAR A) (READ (EXP (binSub neg A))) (WRITE (EXP neg)))
-    (RULE (VAR A) (READ (EXP (binSub A neg))) (WRITE (EXP neg)))
+    (RULE (VAR A) (READ (binSub neg A)) (WRITE neg))
+    (RULE (VAR A) (READ (binSub A neg)) (WRITE neg))
     
     /both numbers single digits/
-    (RULE           (READ (EXP (binSub     0     0))) (WRITE (EXP                           0)))
-    (RULE           (READ (EXP (binSub     0     1))) (WRITE (EXP                         neg)))
-    (RULE           (READ (EXP (binSub     1     0))) (WRITE (EXP                           1)))
-    (RULE           (READ (EXP (binSub     1     1))) (WRITE (EXP                           0)))
+    (RULE           (READ (binSub     0     0)) (WRITE                           0))
+    (RULE           (READ (binSub     0     1)) (WRITE                         neg))
+    (RULE           (READ (binSub     1     0)) (WRITE                           1))
+    (RULE           (READ (binSub     1     1)) (WRITE                           0))
     
     /first number multiple digits, second number single digit/
-    (RULE (VAR A  ) (READ (EXP (binSub (A 0)     0))) (WRITE (EXP (                      A 0))))
-    (RULE (VAR A  ) (READ (EXP (binSub (A 0)     1))) (WRITE (EXP (           (binSub A 1) 1))))
-    (RULE (VAR A  ) (READ (EXP (binSub (A 1)     0))) (WRITE (EXP (                      A 1))))
-    (RULE (VAR A  ) (READ (EXP (binSub (A 1)     1))) (WRITE (EXP (                      A 0))))
+    (RULE (VAR A  ) (READ (binSub (A 0)     0)) (WRITE (                      A 0)))
+    (RULE (VAR A  ) (READ (binSub (A 0)     1)) (WRITE (           (binSub A 1) 1)))
+    (RULE (VAR A  ) (READ (binSub (A 1)     0)) (WRITE (                      A 1)))
+    (RULE (VAR A  ) (READ (binSub (A 1)     1)) (WRITE (                      A 0)))
     
     /first number single digit, second number multiple digits/
-    (RULE (VAR B  ) (READ (EXP (binSub     0 (B 0)))) (WRITE (EXP (           (binSub 0 B) 0))))
-    (RULE (VAR B  ) (READ (EXP (binSub     0 (B 1)))) (WRITE (EXP                         neg)))
-    (RULE (VAR B  ) (READ (EXP (binSub     1 (B 0)))) (WRITE (EXP (           (binSub 0 B) 1))))
-    (RULE (VAR B  ) (READ (EXP (binSub     1 (B 1)))) (WRITE (EXP (           (binSub 0 B) 0))))
+    (RULE (VAR B  ) (READ (binSub     0 (B 0))) (WRITE (           (binSub 0 B) 0)))
+    (RULE (VAR B  ) (READ (binSub     0 (B 1))) (WRITE                         neg))
+    (RULE (VAR B  ) (READ (binSub     1 (B 0))) (WRITE (           (binSub 0 B) 1)))
+    (RULE (VAR B  ) (READ (binSub     1 (B 1))) (WRITE (           (binSub 0 B) 0)))
     
     /both numbers multiple digits/
-    (RULE (VAR A B) (READ (EXP (binSub (A 0) (B 0)))) (WRITE (EXP (           (binSub A B) 0))))
-    (RULE (VAR A B) (READ (EXP (binSub (A 0) (B 1)))) (WRITE (EXP ((binSub (binSub A 1) B) 1))))
-    (RULE (VAR A B) (READ (EXP (binSub (A 1) (B 0)))) (WRITE (EXP (           (binSub A B) 1))))
-    (RULE (VAR A B) (READ (EXP (binSub (A 1) (B 1)))) (WRITE (EXP (           (binSub A B) 0))))
+    (RULE (VAR A B) (READ (binSub (A 0) (B 0))) (WRITE (           (binSub A B) 0)))
+    (RULE (VAR A B) (READ (binSub (A 0) (B 1))) (WRITE ((binSub (binSub A 1) B) 1)))
+    (RULE (VAR A B) (READ (binSub (A 1) (B 0))) (WRITE (           (binSub A B) 1)))
+    (RULE (VAR A B) (READ (binSub (A 1) (B 1))) (WRITE (           (binSub A B) 0)))
     
     /reducing negative number/
-    (RULE (VAR A) (READ (EXP (       neg A))) (WRITE (EXP neg)))
-    (RULE (VAR A) (READ (EXP (binSub neg A))) (WRITE (EXP neg)))
+    (RULE (VAR A) (READ (       neg A)) (WRITE neg))
+    (RULE (VAR A) (READ (binSub neg A)) (WRITE neg))
     
     ///
     binary number multiplication
     ///
     
     /negative values/
-    (RULE (VAR A) (READ (EXP (binMul neg A))) (WRITE (EXP neg)))
-    (RULE (VAR A) (READ (EXP (binMul A neg))) (WRITE (EXP neg)))
+    (RULE (VAR A) (READ (binMul neg A)) (WRITE neg))
+    (RULE (VAR A) (READ (binMul A neg)) (WRITE neg))
 
     /multiplication/
-    (RULE (VAR A B) (READ (EXP (binMul A     0))) (WRITE (EXP                           0)))
-    (RULE (VAR A B) (READ (EXP (binMul A     1))) (WRITE (EXP                           A)))
-    (RULE (VAR A B) (READ (EXP (binMul A (B 0)))) (WRITE (EXP            (binMul (A 0) B))))
-    (RULE (VAR A B) (READ (EXP (binMul A (B 1)))) (WRITE (EXP (binAdd A (binMul (A 0) B)))))
+    (RULE (VAR A B) (READ (binMul A     0)) (WRITE                           0))
+    (RULE (VAR A B) (READ (binMul A     1)) (WRITE                           A))
+    (RULE (VAR A B) (READ (binMul A (B 0))) (WRITE            (binMul (A 0) B)))
+    (RULE (VAR A B) (READ (binMul A (B 1))) (WRITE (binAdd A (binMul (A 0) B))))
     
     ///
     binary number division
     ///
     
     /negative values/
-    (RULE (VAR A) (READ (EXP (binDiv neg A))) (WRITE (EXP neg)))
-    (RULE (VAR A) (READ (EXP (binDiv A neg))) (WRITE (EXP neg)))
+    (RULE (VAR A) (READ (binDiv neg A)) (WRITE neg))
+    (RULE (VAR A) (READ (binDiv A neg)) (WRITE neg))
     
     /division/
-    (RULE (VAR X) (READ (EXP (binDiv X 0))) (WRITE (EXP neg)))
+    (RULE (VAR X) (READ (binDiv X 0)) (WRITE neg))
     
-    (RULE (VAR N D) (READ (EXP (binDiv N D))) (WRITE (EXP (binDivHelper1 0 0 (0 (insideOut N)) D))))
+    (RULE (VAR N D) (READ (binDiv N D)) (WRITE (binDivHelper1 0 0 (0 (insideOut N)) D)))
     
     (
         RULE
         (VAR Q R x N D)
-        (READ (EXP (binDivHelper1 Q R (endian x) D)))
-        (WRITE (EXP (binDivHelperEnd (binCmp (R x) D) Q)))
+        (READ (binDivHelper1 Q R (endian x) D))
+        (WRITE (binDivHelperEnd (binCmp (R x) D) Q))
     )
     (
         RULE
         (VAR Q R x N D)
-        (READ (EXP (binDivHelper1 Q R (endian x N) D)))
-        (WRITE (EXP (binDivHelper2 (binCmp (R x) D) Q (R x) N D)))
+        (READ (binDivHelper1 Q R (endian x N) D))
+        (WRITE (binDivHelper2 (binCmp (R x) D) Q (R x) N D))
     )
     (
         RULE
         (VAR Q R N D)
-        (READ (EXP (binDivHelper2 lt Q R N D)))
-        (WRITE (EXP (binDivHelper1 (Q 0) R N D)))
+        (READ (binDivHelper2 lt Q R N D))
+        (WRITE (binDivHelper1 (Q 0) R N D))
     )
     (
         RULE
         (VAR ANY Q R N D)
-        (READ (EXP (binDivHelper2 ANY Q R N D)))
-        (WRITE (EXP (binDivHelper1 (Q 1) (binSub R D) N D)))
+        (READ (binDivHelper2 ANY Q R N D))
+        (WRITE (binDivHelper1 (Q 1) (binSub R D) N D))
     )
 
     (
         RULE
         (VAR Q)
-        (READ (EXP (binDivHelperEnd lt Q)))
-        (WRITE (EXP (Q 0)))
+        (READ (binDivHelperEnd lt Q))
+        (WRITE (Q 0))
     )
     (
         RULE
         (VAR ANY Q)
-        (READ (EXP (binDivHelperEnd ANY Q)))
-        (WRITE (EXP (Q 1)))
+        (READ (binDivHelperEnd ANY Q))
+        (WRITE (Q 1))
     )
     
     (
         RULE
         (VAR A B C)
-        (READ (EXP (insideOut ((A B) C))))
-        (WRITE (EXP (insideOut (A (endian B C)))))
+        (READ (insideOut ((A B) C)))
+        (WRITE (insideOut (A (endian B C))))
     )
     (
         RULE
         (VAR a)
-        (READ (EXP (insideOut a)))
-        (WRITE (EXP (endian a)))
+        (READ (insideOut a))
+        (WRITE (endian a))
     )
     (
         RULE
         (VAR a B)
-        (READ (EXP (insideOut (a B))))
-        (WRITE (EXP (endian a B)))
+        (READ (insideOut (a B)))
+        (WRITE (endian a B))
     )
     (
         RULE
         (VAR a b)
-        (READ (EXP (endian a b)))
-        (WRITE (EXP (endian a (endian b))))
+        (READ (endian a b))
+        (WRITE (endian a (endian b)))
     )
     
     ///
@@ -627,33 +627,33 @@ operations on natural numbers: \`add\`, \`sub\`, \`mul\`, \`div\`
     ///
     
     /both numbers single digits/
-    (RULE           (READ (EXP (binCmp     0     0))) (WRITE (EXP                eq)))
-    (RULE           (READ (EXP (binCmp     0     1))) (WRITE (EXP                lt)))
-    (RULE           (READ (EXP (binCmp     1     0))) (WRITE (EXP                gt)))
-    (RULE           (READ (EXP (binCmp     1     1))) (WRITE (EXP                eq)))
+    (RULE           (READ (binCmp     0     0)) (WRITE                eq))
+    (RULE           (READ (binCmp     0     1)) (WRITE                lt))
+    (RULE           (READ (binCmp     1     0)) (WRITE                gt))
+    (RULE           (READ (binCmp     1     1)) (WRITE                eq))
     
     /first number multiple digits, second number single digit/
-    (RULE (VAR A  ) (READ (EXP (binCmp (A 0)     0))) (WRITE (EXP ((binCmp A 0) eq))))
-    (RULE (VAR A  ) (READ (EXP (binCmp (A 0)     1))) (WRITE (EXP ((binCmp A 0) lt))))
-    (RULE (VAR A  ) (READ (EXP (binCmp (A 1)     0))) (WRITE (EXP ((binCmp A 0) gt))))
-    (RULE (VAR A  ) (READ (EXP (binCmp (A 1)     1))) (WRITE (EXP ((binCmp A 0) eq))))
+    (RULE (VAR A  ) (READ (binCmp (A 0)     0)) (WRITE ((binCmp A 0) eq)))
+    (RULE (VAR A  ) (READ (binCmp (A 0)     1)) (WRITE ((binCmp A 0) lt)))
+    (RULE (VAR A  ) (READ (binCmp (A 1)     0)) (WRITE ((binCmp A 0) gt)))
+    (RULE (VAR A  ) (READ (binCmp (A 1)     1)) (WRITE ((binCmp A 0) eq)))
     
     /first number single digit, second number multiple digits/
-    (RULE (VAR B  ) (READ (EXP (binCmp     0 (B 0)))) (WRITE (EXP ((binCmp 0 B) eq))))
-    (RULE (VAR B  ) (READ (EXP (binCmp     0 (B 1)))) (WRITE (EXP ((binCmp 0 B) lt))))
-    (RULE (VAR B  ) (READ (EXP (binCmp     1 (B 0)))) (WRITE (EXP ((binCmp 0 B) gt))))
-    (RULE (VAR B  ) (READ (EXP (binCmp     1 (B 1)))) (WRITE (EXP ((binCmp 0 B) eq))))
+    (RULE (VAR B  ) (READ (binCmp     0 (B 0))) (WRITE ((binCmp 0 B) eq)))
+    (RULE (VAR B  ) (READ (binCmp     0 (B 1))) (WRITE ((binCmp 0 B) lt)))
+    (RULE (VAR B  ) (READ (binCmp     1 (B 0))) (WRITE ((binCmp 0 B) gt)))
+    (RULE (VAR B  ) (READ (binCmp     1 (B 1))) (WRITE ((binCmp 0 B) eq)))
     
     /both numbers multiple digits/
-    (RULE (VAR A B) (READ (EXP (binCmp (A 0) (B 0)))) (WRITE (EXP ((binCmp A B) eq))))
-    (RULE (VAR A B) (READ (EXP (binCmp (A 0) (B 1)))) (WRITE (EXP ((binCmp A B) lt))))
-    (RULE (VAR A B) (READ (EXP (binCmp (A 1) (B 0)))) (WRITE (EXP ((binCmp A B) gt))))
-    (RULE (VAR A B) (READ (EXP (binCmp (A 1) (B 1)))) (WRITE (EXP ((binCmp A B) eq))))
+    (RULE (VAR A B) (READ (binCmp (A 0) (B 0))) (WRITE ((binCmp A B) eq)))
+    (RULE (VAR A B) (READ (binCmp (A 0) (B 1))) (WRITE ((binCmp A B) lt)))
+    (RULE (VAR A B) (READ (binCmp (A 1) (B 0))) (WRITE ((binCmp A B) gt)))
+    (RULE (VAR A B) (READ (binCmp (A 1) (B 1))) (WRITE ((binCmp A B) eq)))
     
     /reduce to final value/
-    (RULE (VAR N) (READ (EXP (gt N))) (WRITE (EXP gt)))
-    (RULE (VAR N) (READ (EXP (lt N))) (WRITE (EXP lt)))
-    (RULE (VAR N) (READ (EXP (eq N))) (WRITE (EXP N)))
+    (RULE (VAR N) (READ (gt N)) (WRITE gt))
+    (RULE (VAR N) (READ (lt N)) (WRITE lt))
+    (RULE (VAR N) (READ (eq N)) (WRITE N))
 )
 `,
 "example-binarith-input":
@@ -844,15 +844,15 @@ theory.
     REWRITE
     
     /entry point/
-    (RULE (VAR A) (READ (EXP (\\interpretSki \\A))) (WRITE (EXP (interpretingSki A))))
+    (RULE (VAR A) (READ (\\interpretSki \\A)) (WRITE (interpretingSki A)))
     
     /combinators/
-    (RULE (VAR X) (READ (EXP (I X))) (WRITE (EXP X)))
-    (RULE (VAR X Y) (READ (EXP ((K X) Y))) (WRITE (EXP X)))
-    (RULE (VAR X Y Z) (READ (EXP (((S X) Y) Z))) (WRITE (EXP ((X Z) (Y Z)))))
+    (RULE (VAR X) (READ (I X)) (WRITE X))
+    (RULE (VAR X Y) (READ ((K X) Y)) (WRITE X))
+    (RULE (VAR X Y Z) (READ (((S X) Y) Z)) (WRITE ((X Z) (Y Z))))
     
     /exit point/
-    (RULE (VAR A) (READ (EXP (interpretingSki A))) (WRITE (EXP \\A)))
+    (RULE (VAR A) (READ (interpretingSki A)) (WRITE \\A))
 )
 `,
 "example-ski-input":
@@ -881,15 +881,15 @@ and expressiveness make it a cornerstone of theoretical computer science.
     REWRITE
     
     /entry point/
-    (RULE (VAR A) (READ (EXP (\\lcToSki \\A))) (WRITE (EXP (compilingToSki A))))
+    (RULE (VAR A) (READ (\\lcToSki \\A)) (WRITE (compilingToSki A)))
     
     /LC to SKI compiler/
-    (RULE (VAR x) (READ (EXP (lmbd x x))) (WRITE (EXP I)))
-    (RULE (VAR x E1 E2) (READ (EXP (lmbd x (E1 E2)))) (WRITE (EXP ((S (lmbd x E1)) (lmbd x E2)))))
-    (RULE (VAR x y) (READ (EXP (lmbd x y))) (WRITE (EXP (K y))))
+    (RULE (VAR x) (READ (lmbd x x)) (WRITE I))
+    (RULE (VAR x E1 E2) (READ (lmbd x (E1 E2))) (WRITE ((S (lmbd x E1)) (lmbd x E2))))
+    (RULE (VAR x y) (READ (lmbd x y)) (WRITE (K y)))
     
     /exit point/
-    (RULE (VAR A) (READ (EXP (compilingToSki A))) (WRITE (EXP \\A)))
+    (RULE (VAR A) (READ (compilingToSki A)) (WRITE \\A))
 )
 `,
 "example-lamb-input":
@@ -951,109 +951,64 @@ AxmS = (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))
 (
     REWRITE
     
-    /workflow/
-    (RULE (VAR A) (READ (EXP (\\check \\A))) (WRITE (EXP (proofCheck A))))
-    (RULE (VAR A) (READ (EXP (proofChecked A))) (WRITE (EXP \\A)))
+    /entry point/
+    (RULE (VAR A) (READ (\\check \\A)) (WRITE (proofChecking A)))
     
-    /proof checker/
+    /constant types/
     (
-        REWRITE
-        
-        /entry point/
-        (RULE (VAR A) (READ (EXP (\\proofCheck \\A))) (WRITE (EXP (proofChecking A))))
-        
-        /constant types/
-        (
-            RULE
-            (VAR A)
-            (
-                READ
-                (EXP (CONST A))
-            )
-            (
-                WRITE
-                (EXP (typed (const A)))
-            )
-        )
-        (
-            RULE
-            (VAR A B)
-            (
-                READ
-                (EXP (IMPL (typed A) (typed B)))
-            )
-            (
-                WRITE
-                (EXP (typed (impl A B)))
-            )
-        )
-        
-        /axioms/
-        (
-            RULE
-            (VAR A B)
-            (
-                READ
-                (EXP AxmI)
-            )
-            (
-                WRITE
-                (EXP (typed (impl A A)))
-            )
-        )
-        (
-            RULE
-            (VAR A B)
-            (
-                READ
-                (EXP AxmK)
-            )
-            (
-                WRITE
-                (EXP (typed (impl A (impl B A))))
-            )
-        )
-        (
-            RULE
-            (VAR A B C)
-            (
-                READ
-                (EXP AxmS)
-            )
-            (
-                WRITE
-                (EXP (typed (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))))
-            )
-        )
-        
-        /modus ponens/
-        (
-            RULE
-            (VAR A B)
-            (
-                READ
-                (
-                    EXP
-                    (
-                        Apply
-                        (typed (impl A B))
-                        (typed A)
-                    )
-                )
-            )
-            (
-                WRITE
-                (
-                    EXP
-                    (typed B)
-                )
-            )
-        )
-        
-        /exit point/
-        (RULE (VAR A) (READ (EXP (proofChecking (typed A)))) (WRITE (EXP (\\proofChecked \\A))))
-        (RULE (VAR A) (READ (EXP (proofChecking A))) (WRITE (EXP \\\\"Proof checking error")))
+        RULE
+        (VAR A)
+        (READ (CONST A))
+        (WRITE (typed (const A)))
     )
+    (
+        RULE
+        (VAR A B)
+        (READ (IMPL (typed A) (typed B)))
+        (WRITE (typed (impl A B)))
+    )
+    
+    /axioms/
+    (
+        RULE
+        (VAR A B)
+        (READ AxmI)
+        (WRITE (typed (impl A A)))
+    )
+    (
+        RULE
+        (VAR A B)
+        (READ AxmK)
+        (WRITE (typed (impl A (impl B A))))
+    )
+    (
+        RULE
+        (VAR A B C)
+        (READ AxmS)
+        (WRITE (typed (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))))
+    )
+    
+    /modus ponens/
+    (
+        RULE
+        (VAR A B)
+        (
+            READ
+            (
+                Apply
+                (typed (impl A B))
+                (typed A)
+            )
+        )
+        (
+            WRITE
+            (typed B)
+        )
+    )
+    
+    /exit point/
+    (RULE (VAR A) (READ (proofChecking (typed A))) (WRITE \\A))
+    (RULE (VAR A) (READ (proofChecking A)) (WRITE \\"Proof checking error"))
 )
 `,
 "example-proof-input":

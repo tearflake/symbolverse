@@ -65,24 +65,24 @@ var Rewriter = (
             var syntax = `
                 (
                     REWRITE
-                    (RULE (READ (EXP start)) (WRITE (EXP (\\REWRITE expressions))))
-                    (RULE (READ (EXP start)) (WRITE (EXP (\\FETCH (ATOMIC ()))  )))
+                    (RULE (READ start) (WRITE (\\REWRITE expressions)))
+                    (RULE (READ start) (WRITE (\\FILE (ATOMIC ()))  ))
                     
-                    (RULE (READ (EXP expressions)) (WRITE (EXP (expression expressions))))
-                    (RULE (READ (EXP expressions)) (WRITE (EXP (expression ())         )))
+                    (RULE (READ expressions) (WRITE (expression expressions)))
+                    (RULE (READ expressions) (WRITE (expression ())         ))
 
-                    (RULE (READ (EXP expression)) (WRITE (EXP (\\RULE rd-wt)                )))
-                    (RULE (READ (EXP expression)) (WRITE (EXP (\\RULE ((\\VAR atoms) rd-wt)))))
+                    (RULE (READ expression) (WRITE (\\RULE rd-wt)                ))
+                    (RULE (READ expression) (WRITE (\\RULE ((\\VAR atoms) rd-wt))))
                     
-                    (RULE (READ (EXP expression)) (WRITE (EXP start                         )))
+                    (RULE (READ expression) (WRITE start                         ))
                     
-                    (RULE (READ (EXP rd-wt)) (WRITE (EXP (rd (wt ())))))
+                    (RULE (READ rd-wt) (WRITE (rd (wt ()))))
                     
-                    (RULE (READ (EXP rd)) (WRITE (EXP (\\READ  ((\\EXP (ANY ())) ())))))
-                    (RULE (READ (EXP wt)) (WRITE (EXP (\\WRITE ((\\EXP (ANY ())) ())))))
+                    (RULE (READ rd) (WRITE (\\READ  (ANY ()))))
+                    (RULE (READ wt) (WRITE (\\WRITE (ANY ()))))
                     
-                    (RULE (READ (EXP atoms)) (WRITE (EXP (ATOMIC atoms))))
-                    (RULE (READ (EXP atoms)) (WRITE (EXP (ATOMIC ())   )))
+                    (RULE (READ atoms) (WRITE (ATOMIC atoms)))
+                    (RULE (READ atoms) (WRITE (ATOMIC ())   ))
                 )
             `;
             
@@ -142,7 +142,7 @@ var Rewriter = (
                         stack.push ({parents: [node.ast, node.parents], ast: node.ast[i], level: node.level + 1, index: i});
                     }
                 }
-                else if (node.ast[0] === "FETCH") {
+                else if (node.ast[0] === "FILE") {
                     if (file) {
                         var fn = file.substring (0, file.lastIndexOf ("/")) + "/" + node.ast[1];
                         var arrRules = await compileFile (fn, node.level, node.parents, Files, true);
@@ -176,12 +176,12 @@ var Rewriter = (
                     }
                     
                     var r = {read: [], write: []};
-                    for (var j = 1; j < rule[1 + varsOffset][1].length; j++) {
-                        r.read.push (rule[1 + varsOffset][1][j]);
+                    for (var j = 1; j < rule[1 + varsOffset].length; j++) {
+                        r.read.push (rule[1 + varsOffset][j]);
                     }
                     
-                    for (var j = 1; j < rule[2 + varsOffset][1].length; j++) {
-                        r.write.push (rule[2 + varsOffset][1][j]);
+                    for (var j = 1; j < rule[2 + varsOffset].length; j++) {
+                        r.write.push (rule[2 + varsOffset][j]);
                     }
                     
                     r.read = Sexpr.flatten (r.read[0]);

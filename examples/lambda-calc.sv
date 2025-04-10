@@ -15,14 +15,14 @@ and expressiveness make it a cornerstone of theoretical computer science.
     REWRITE
     
     /entry point/
-    (RULE (VAR A) (READ (EXP (\lcToSki \A))) (WRITE (EXP (compilingToSki A))))
+    (RULE (VAR A) (READ (\lcToSki \A)) (WRITE (compilingToSki A)))
     
     /LC to SKI compiler/
-    (RULE (VAR x) (READ (EXP (lmbd x x))) (WRITE (EXP I)))
-    (RULE (VAR x E1 E2) (READ (EXP (lmbd x (E1 E2)))) (WRITE (EXP ((S (lmbd x E1)) (lmbd x E2)))))
-    (RULE (VAR x y) (READ (EXP (lmbd x y))) (WRITE (EXP (K y))))
+    (RULE (VAR x) (READ (lmbd x x)) (WRITE I))
+    (RULE (VAR x E1 E2) (READ (lmbd x (E1 E2))) (WRITE ((S (lmbd x E1)) (lmbd x E2))))
+    (RULE (VAR x y) (READ (lmbd x y)) (WRITE (K y)))
     
     /exit point/
-    (RULE (VAR A) (READ (EXP (compilingToSki A))) (WRITE (EXP \A)))
+    (RULE (VAR A) (READ (compilingToSki A)) (WRITE \A))
 )
 

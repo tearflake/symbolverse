@@ -10,28 +10,28 @@ branching choice
     (
         RULE
         (VAR A B)
-        (READ (EXP (\iff \true \A \B)))
-        (WRITE (EXP \A))
+        (READ (\iff \true \A \B))
+        (WRITE \A)
     )
     (
         RULE
         (VAR A B)
-        (READ (EXP (\iff \false \A \B)))
-        (WRITE (EXP \B))
+        (READ (\iff \false \A \B))
+        (WRITE \B)
     )
     
     /equality predicate/
     (
         RULE
         (VAR A)
-        (READ (EXP (\eq \A \A)))
-        (WRITE (EXP \true))
+        (READ (\eq \A \A))
+        (WRITE \true)
     )
     (
         RULE
         (VAR A B)
-        (READ (EXP (\eq \A \B)))
-        (WRITE (EXP \false))
+        (READ (\eq \A \B))
+        (WRITE \false)
     )
     
     ///
@@ -39,19 +39,19 @@ branching choice
     ///
     
     /truth table for `not` operator/
-    (RULE (READ (EXP (\not \true ))) (WRITE (EXP \false)))
-    (RULE (READ (EXP (\not \false))) (WRITE (EXP \true )))
+    (RULE (READ (\not \true )) (WRITE \false))
+    (RULE (READ (\not \false)) (WRITE \true ))
     
     /truth table for `and` operator/
-    (RULE (READ (EXP (\and \true  \true ))) (WRITE (EXP \true )))
-    (RULE (READ (EXP (\and \true  \false))) (WRITE (EXP \false)))
-    (RULE (READ (EXP (\and \false \true ))) (WRITE (EXP \false)))
-    (RULE (READ (EXP (\and \false \false))) (WRITE (EXP \false)))
+    (RULE (READ (\and \true  \true )) (WRITE \true ))
+    (RULE (READ (\and \true  \false)) (WRITE \false))
+    (RULE (READ (\and \false \true )) (WRITE \false))
+    (RULE (READ (\and \false \false)) (WRITE \false))
     
     /truth table for `or` operator/
-    (RULE (READ (EXP (\or \true  \true ))) (WRITE (EXP \true )))
-    (RULE (READ (EXP (\or \true  \false))) (WRITE (EXP \true )))
-    (RULE (READ (EXP (\or \false \true ))) (WRITE (EXP \true )))
-    (RULE (READ (EXP (\or \false \false))) (WRITE (EXP \false)))
+    (RULE (READ (\or \true  \true )) (WRITE \true ))
+    (RULE (READ (\or \true  \false)) (WRITE \true ))
+    (RULE (READ (\or \false \true )) (WRITE \true ))
+    (RULE (READ (\or \false \false)) (WRITE \false))
 )
 

@@ -51,108 +51,63 @@ AxmS = (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))
 (
     REWRITE
     
-    /workflow/
-    (RULE (VAR A) (READ (EXP (\check \A))) (WRITE (EXP (proofCheck A))))
-    (RULE (VAR A) (READ (EXP (proofChecked A))) (WRITE (EXP \A)))
+    /entry point/
+    (RULE (VAR A) (READ (\check \A)) (WRITE (proofChecking A)))
     
-    /proof checker/
+    /constant types/
     (
-        REWRITE
-        
-        /entry point/
-        (RULE (VAR A) (READ (EXP (\proofCheck \A))) (WRITE (EXP (proofChecking A))))
-        
-        /constant types/
-        (
-            RULE
-            (VAR A)
-            (
-                READ
-                (EXP (CONST A))
-            )
-            (
-                WRITE
-                (EXP (typed (const A)))
-            )
-        )
-        (
-            RULE
-            (VAR A B)
-            (
-                READ
-                (EXP (IMPL (typed A) (typed B)))
-            )
-            (
-                WRITE
-                (EXP (typed (impl A B)))
-            )
-        )
-        
-        /axioms/
-        (
-            RULE
-            (VAR A B)
-            (
-                READ
-                (EXP AxmI)
-            )
-            (
-                WRITE
-                (EXP (typed (impl A A)))
-            )
-        )
-        (
-            RULE
-            (VAR A B)
-            (
-                READ
-                (EXP AxmK)
-            )
-            (
-                WRITE
-                (EXP (typed (impl A (impl B A))))
-            )
-        )
-        (
-            RULE
-            (VAR A B C)
-            (
-                READ
-                (EXP AxmS)
-            )
-            (
-                WRITE
-                (EXP (typed (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))))
-            )
-        )
-        
-        /modus ponens/
-        (
-            RULE
-            (VAR A B)
-            (
-                READ
-                (
-                    EXP
-                    (
-                        Apply
-                        (typed (impl A B))
-                        (typed A)
-                    )
-                )
-            )
-            (
-                WRITE
-                (
-                    EXP
-                    (typed B)
-                )
-            )
-        )
-        
-        /exit point/
-        (RULE (VAR A) (READ (EXP (proofChecking (typed A)))) (WRITE (EXP (\proofChecked \A))))
-        (RULE (VAR A) (READ (EXP (proofChecking A))) (WRITE (EXP \\"Proof checking error")))
+        RULE
+        (VAR A)
+        (READ (CONST A))
+        (WRITE (typed (const A)))
     )
+    (
+        RULE
+        (VAR A B)
+        (READ (IMPL (typed A) (typed B)))
+        (WRITE (typed (impl A B)))
+    )
+    
+    /axioms/
+    (
+        RULE
+        (VAR A B)
+        (READ AxmI)
+        (WRITE (typed (impl A A)))
+    )
+    (
+        RULE
+        (VAR A B)
+        (READ AxmK)
+        (WRITE (typed (impl A (impl B A))))
+    )
+    (
+        RULE
+        (VAR A B C)
+        (READ AxmS)
+        (WRITE (typed (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))))
+    )
+    
+    /modus ponens/
+    (
+        RULE
+        (VAR A B)
+        (
+            READ
+            (
+                Apply
+                (typed (impl A B))
+                (typed A)
+            )
+        )
+        (
+            WRITE
+            (typed B)
+        )
+    )
+    
+    /exit point/
+    (RULE (VAR A) (READ (proofChecking (typed A))) (WRITE \A))
+    (RULE (VAR A) (READ (proofChecking A)) (WRITE \"Proof checking error"))
 )
 

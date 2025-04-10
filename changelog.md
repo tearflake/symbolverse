@@ -16,7 +16,6 @@
 - v0.2.x
     - introducing scoped rules
     - stack overflow instead of infinite recursion detection
-    - an order of magnitude speed-up
 
 ## Dec, 2024.
 
@@ -36,4 +35,8 @@
 
 - v0.3.x
     - sub-structural operations
+    - renamed `UNBOUND` keyword to `FREEVAR` in output
 
+- v1.0.x
+    - renamed `FETCH` keyword to `FILE`
+    - removed unnecessary `EXP` keyword from the syntax

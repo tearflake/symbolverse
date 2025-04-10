@@ -15,14 +15,14 @@ theory.
     REWRITE
     
     /entry point/
-    (RULE (VAR A) (READ (EXP (\interpretSki \A))) (WRITE (EXP (interpretingSki A))))
+    (RULE (VAR A) (READ (\interpretSki \A)) (WRITE (interpretingSki A)))
     
     /combinators/
-    (RULE (VAR X) (READ (EXP (I X))) (WRITE (EXP X)))
-    (RULE (VAR X Y) (READ (EXP ((K X) Y))) (WRITE (EXP X)))
-    (RULE (VAR X Y Z) (READ (EXP (((S X) Y) Z))) (WRITE (EXP ((X Z) (Y Z)))))
+    (RULE (VAR X) (READ (I X)) (WRITE X))
+    (RULE (VAR X Y) (READ ((K X) Y)) (WRITE X))
+    (RULE (VAR X Y Z) (READ (((S X) Y) Z)) (WRITE ((X Z) (Y Z))))
     
     /exit point/
-    (RULE (VAR A) (READ (EXP (interpretingSki A))) (WRITE (EXP \A)))
+    (RULE (VAR A) (READ (interpretingSki A)) (WRITE \A))
 )
 
