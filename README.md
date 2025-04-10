@@ -40,7 +40,7 @@ To get a glimpse on how a *Symbolverse* program looks like, we bring a simple ex
 )
 ```
 
-Providing the input `(div (add x x) 2)`, the example outputs `x`. While it is possible to use *Symbolverse* for any abstract programming task, it is best suited for expression transformation and symbolic reasoning.
+Passing the input `(div (add x x) 2)`, the example outputs `x`. Also, passing the input `(div (add x x) x)`, the example outputs `2`. Despite of being a minimal framework, *Symbolverse* is Turing complete system. However, while it is possible to use *Symbolverse* for any abstract programming task, it is best suited for expression transformation and symbolic reasoning.
 
 ## resources
 
