@@ -10,6 +10,29 @@ An **S-expression** (Symbolic Expression) is a simple and uniform way of represe
 
 _**Symbolverse**_ is a symbolic, rule-based programming language built around pattern matching and term rewriting. It uses a Lisp-like syntax with S-expressions and transforms input expressions through a series of rewrite rules. Variables, scoping, and escaping mechanisms allow control over pattern matching and abstraction. With support for chaining, nested rule scopes, sub-structural operations, and modular imports, Symbolverse is well-suited for declarative data transformation and symbolic reasoning tasks.
 
+## minimalistic approach
+
+The entire grammar of *Symbolverse* code files fits into only five lines of code:
+
+```
+      <start> := (REWRITE <expression>+)
+               | (FILE <ATOMIC>)
+ 
+ <expression> := (RULE (VAR <ATOMIC>+)? (READ <ANY>) (WRITE <ANY>))
+               | <start>
+```
+
+and only six builtin sunctions:
+
+```
+(CONSL <ANY>) -> <RESULT>
+(HEADL <ANY>) -> <RESULT>
+(TAILL <ANY>) -> <RESULT>
+(CONSA <ANY>) -> <RESULT>
+(HEADA <ANY>) -> <RESULT>
+(TAILA <ANY>) -> <RESULT>
+```
+
 Despite of being very minimalistic framework, *Symbolverse* represents a Turing complete system. However, while it is possible to use *Symbolverse* for any abstract programming task, it is best suited for expression transformation and symbolic reasoning.
 
 ## example program
@@ -44,7 +67,7 @@ To get a glimpse on how a *Symbolverse* program looks like, we bring a simple ex
 )
 ```
 
-Passing the input `(div (add x x) 2)`, the example outputs `x`. Also, passing the input `(div (add x x) x)`, the example outputs `2`.
+Passing the input `(div (add x x) 2)` to this program, the example outputs `x`. Also, passing the input `(div (add x x) x)`, the example outputs `2`.
 
 ## resources
 
