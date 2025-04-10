@@ -49,7 +49,7 @@ if (!arrRules.err) {
 
 Along with `Rewriter.compile (...)` function, we also have `Rewriter.compileFile (...)` function available. The only difference is that `compileFile` reads a file from a server, and it enables possible use of file fetching system within the code files.
 
-## building executables from source code
+## command line access
 
 *Symbolverse* functions as a standalone executable operating on files. To build the executables from source code, do the following:
 
@@ -62,4 +62,4 @@ Along with `Rewriter.compile (...)` function, we also have `Rewriter.compileFile
 7. run pkg: `pkg . --out-path bin/`
 8. if everything goes well, executables for Linux, Windows, and MacOS will be in `./bin/` directory
 
-Executables run from command prompt, and take three parameters: rules-file, input-file, and output-file. If we omit the output-file parameter, output is redirected to the terminal.
+Executables run from command prompt, and take three parameters: rules-file, input-file, and output-file. Rules-file and input-file are mandatory, but if we omit the output-file parameter, output is then redirected to the terminal.
