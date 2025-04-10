@@ -22,7 +22,7 @@ The entire grammar of *Symbolverse* code files fits into only five lines of rela
                | <start>
 ```
 
-and there is only six builtin functions for sub-structural transformations:
+and there is only six builtin functions used for sub-structural transformations:
 
 ```
 (CONSL <ANY> <ANY>)       -> <RESULT>
