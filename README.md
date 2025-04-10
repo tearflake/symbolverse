@@ -33,7 +33,7 @@ and there is only six builtin functions:
 (TAILA <ATOMIC>)          -> <RESULT>
 ```
 
-Given only these elements, in spite of being very minimalistic framework, *Symbolverse* is computationally complete, witnessing the Turing completeness. However, while it is possible to use *Symbolverse* for any abstract programming task, it is best suited for expression transformation and symbolic reasoning.
+Given only these elements, in spite of being very minimalistic framework, *Symbolverse* is computationally complete, witnessing the Turing completeness. However, while it is possible to use *Symbolverse* for any abstract programming task, it is best suited for data transformation and symbolic reasoning.
 
 ## example program code
 
