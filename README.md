@@ -67,7 +67,7 @@ To get a glimpse on how a *Symbolverse* program code looks like, we bring a simp
 )
 ```
 
-Passing the input `(div (add x x) 2)` to this program code, the example outputs `x`. Also, passing the input `(div (add x x) x)`, the example outputs `2`.
+By passing the input `(div (add x x) 2)` to this program code, the example outputs `x`. Also, by passing the input `(div (add x x) x)`, the example outputs `2`.
 
 ## resources
 
