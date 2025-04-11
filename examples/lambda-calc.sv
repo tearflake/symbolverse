@@ -9,6 +9,12 @@ function definitions (lambda abstractions, e.g., λx.x), and function applicatio
 Lambda calculus serves as a foundation for functional programming languages and provides a
 framework for studying computation, recursion, and the equivalence of algorithms. Its simplicity
 and expressiveness make it a cornerstone of theoretical computer science.
+
+Converting lambda calculus expressions to SKI combinator calculus involves eliminating variables
+by expressing functions solely in terms of the combinators S, K, and I. This process
+systematically replaces abstractions and applications using transformation rules, such as
+translating λx.x to I, λx.E (when x is not free in E) to K E, and λx.(E1 E2) to S (λx.E1) (λx.E2).
+This allows computation to be represented without variable binding.
 ///
 
 (
