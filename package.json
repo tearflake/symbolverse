@@ -1,15 +1,15 @@
 {
   "name": "@tearflake/symbolverse",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Symbolic term rewriting",
   "main": "symbolverse.js",
   "directories": {
-    "docs": "docs",
-    "examples": "examples",
-    "playground": "playground",
-    "src": "src"
+    "doc": "docs",
+    "example": "examples"
   },
-  "bin": "symbolverse.js",
+  "bin": {
+    "symbolverse": "symbolverse.js"
+  },
   "scripts": {
     "test": "bash ./tests.sh"
   },
