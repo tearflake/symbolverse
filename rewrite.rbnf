@@ -1,9 +1,9 @@
 ```
-         <start> := (REWRITE <expression>+)
-                  | (FILE <ATOMIC>)
-    
-    <expression> := (RULE (VAR <ATOMIC>+)? (READ <ANY>) (WRITE <ANY>))
-                  | <start>
+      <start> := (REWRITE <expression>+)
+               | (FILE <ATOMIC>)
+ 
+ <expression> := (RULE (VAR <ATOMIC>+)? (READ <ANY>) (WRITE <ANY>))
+               | <start>
 ```
 ```
 (CONSL <ANY>) -> <RESULT>
