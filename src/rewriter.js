@@ -145,10 +145,20 @@ var Rewriter = (
                 else if (node.ast[0] === "FILE") {
                     if (file) {
                         var fn = file.substring (0, file.lastIndexOf ("/")) + "/" + node.ast[1];
-                        var arrRules = await compileFile (fn, node.level, node.parents, Files, true);
+                        
+                        var tmpf = rec;
+                        while (Array.isArray (tmpf)) {
+                            if (tmpf[0] === fn) {
+                                return {err: "Recursive file reference not allowed error", file: file, path: p.concat([node.index])}
+                            }
+                            
+                            tmpf = tmpf[1];
+                        }
+                            
+                        var arrRules = await compileFile (fn, node.level, node.parents, Files, [file, rec]);
                         if (arrRules.err) {
                             if (arrRules.file) {
-                                return arrRules;
+                               return arrRules;
                             }
                             else {
                                 return {err: arrRules.err, file: file, path: arrRules.path ? arrRules.path : p.concat([node.index])}
