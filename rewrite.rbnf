@@ -1,15 +1,15 @@
 ```
-      <start> := (REWRITE <expression>+)
-               | (FILE <ATOMIC>)
- 
- <expression> := (RULE (VAR <ATOMIC>+)? (READ <ANY>) (WRITE <ANY>))
-               | <start>
+     <start> := (REWRITE <expression>+)
+              | (FILE <ATOMIC>)
+
+<expression> := (RULE (VAR <ATOMIC>+)? (READ <ANY>) (WRITE <ANY>))
+              | <start>
 ```
 ```
-(CONSL <ANY>) -> <RESULT>
-(HEADL <ANY>) -> <RESULT>
-(TAILL <ANY>) -> <RESULT>
-(CONSA <ANY>) -> <RESULT>
-(HEADA <ANY>) -> <RESULT>
-(TAILA <ANY>) -> <RESULT>
+(CONSL <ANY> <ANY>)       -> <RESULT>
+(HEADL <ANY>)             -> <RESULT>
+(TAILL <ANY>)             -> <RESULT>
+(CONSA <ATOMIC> <ATOMIC>) -> <RESULT>
+(HEADA <ATOMIC>)          -> <RESULT>
+(TAILA <ATOMIC>)          -> <RESULT>
 ```
