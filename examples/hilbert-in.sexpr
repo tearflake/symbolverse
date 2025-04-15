@@ -2,25 +2,34 @@
 (
     check
     (
-        Apply
         (
-            Apply
             (
-                Apply
                 (
-                    Apply
-                    AxmS
+                    S
                     (
-                        Apply
-                        AxmK
                         (
-                            Apply
-                            AxmS
-                            AxmI
+                            S
+                            (
+                                K
+                                S
+                            )
+                        )
+                        (
+                            K
+                            I
                         )
                     )
                 )
-                AxmK
+                (
+                    (
+                        S
+                        (
+                            K
+                            K
+                        )
+                    )
+                    I
+                )
             )
             (CONST A)
         )

@@ -10,16 +10,6 @@ Hilbert-style proof system is minimalistic, relying on a few foundational logica
 single or limited number of inference rules, such as modus ponens (if `A` and `A -> B` are
 true, then `B` is true).
 
-One of the defining features of the Hilbert system is its flexibility and generality. It is
-used to represent a variety of logical systems, including propositional logic. Proofs in this
-system consist of sequences of formulas, where each formula is either an axiom or derived from
-previous formulas using inference rules. While highly structured, the system is often
-criticized for being less intuitive and less efficient compared to more modern proof systems
-like natural deduction or sequent calculus. Despite this, the Hilbert-style proof system
-remains foundational in logic due to its simplicity and role in formalizing the foundations of
-mathematics. It serves as a cornerstone for understanding logical derivation and the
-relationships between axiomatic systems.
-
 Hilbert-style proof systems can be applied to type checking in programming by leveraging their
 formal structure to verify the correctness of type assignments in a program. In type theory,
 types can be seen as logical propositions, and well-typed programs correspond to proofs of these
@@ -40,10 +30,10 @@ To compose a proof, use these rules
 --------------------------------------------------------------
 (CONST A) = (const A)
 (IMPL A B) = (impl A B)
-AxmI = (impl A A)
-AxmK = (impl A (impl B A))
-AxmS = (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))
-(Apply (impl A B) A) = B
+I = (impl A A)
+K = (impl A (impl B A))
+S = (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))
+((impl A B) A) = B
 --------------------------------------------------------------
 ```
 ///
@@ -72,19 +62,19 @@ AxmS = (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))
     (
         RULE
         (VAR A B)
-        (READ AxmI)
+        (READ I)
         (WRITE (typed (impl A A)))
     )
     (
         RULE
         (VAR A B)
-        (READ AxmK)
+        (READ K)
         (WRITE (typed (impl A (impl B A))))
     )
     (
         RULE
         (VAR A B C)
-        (READ AxmS)
+        (READ S)
         (WRITE (typed (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))))
     )
     
@@ -95,7 +85,6 @@ AxmS = (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))
         (
             READ
             (
-                Apply
                 (typed (impl A B))
                 (typed A)
             )

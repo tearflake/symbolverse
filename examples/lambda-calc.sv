@@ -10,6 +10,20 @@ Lambda calculus serves as a foundation for functional programming languages and 
 framework for studying computation, recursion, and the equivalence of algorithms. Its simplicity
 and expressiveness make it a cornerstone of theoretical computer science.
 
+The SKI calculus is a foundational system in combinatory logic that eliminates the need for
+variables by expressing all computations through three basic combinators: S, K, and I. The SKI
+calculus can be viewed through two complementary lenses: as a computational system and as a
+logical framework. In its computational interpretation, SKI calculus operates as a minimalist
+functional evaluator, where the combinators S, K, and I serve as function transformers that enable
+the construction and reduction of expressions without variables, forming the core of combinatory
+logic. Conversely, from a logical standpoint, SKI calculus aligns with a Hilbert-style inference
+system, where S, K, and I are treated not as functions but as axiom schemes or inference rules. In
+this context, the application of combinators mirrors the process of type inference in logic or
+proof construction: for instance, the types of S, K, and I correspond to specific theorems in
+implicational logic, and their application mimics modus ponens. This duality reveals a connection
+between computation and logic, embodying the Curry-Howard correspondence, where evaluating a term
+parallels constructing a proof.
+
 Converting lambda calculus expressions to SKI combinator calculus involves eliminating variables
 by expressing functions solely in terms of the combinators S, K, and I. This process
 systematically replaces abstractions and applications using transformation rules, such as

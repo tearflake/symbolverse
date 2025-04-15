@@ -859,7 +859,40 @@ theory.
 `
 (
     interpretSki
-    ((((S (K (S I))) K) a) b)
+    (
+        (
+            (
+                (
+                    S
+                    (
+                        (
+                            S
+                            (
+                                K
+                                S
+                            )
+                        )
+                        (
+                            K
+                            I
+                        )
+                    )
+                )
+                (
+                    (
+                        S
+                        (
+                            K
+                            K
+                        )
+                    )
+                    I
+                )
+            )
+            a
+        )
+        b
+    )
 )
 `,
 
@@ -875,6 +908,20 @@ function definitions (lambda abstractions, e.g., λx.x), and function applicatio
 Lambda calculus serves as a foundation for functional programming languages and provides a
 framework for studying computation, recursion, and the equivalence of algorithms. Its simplicity
 and expressiveness make it a cornerstone of theoretical computer science.
+
+The SKI calculus is a foundational system in combinatory logic that eliminates the need for
+variables by expressing all computations through three basic combinators: S, K, and I. The SKI
+calculus can be viewed through two complementary lenses: as a computational system and as a
+logical framework. In its computational interpretation, SKI calculus operates as a minimalist
+functional evaluator, where the combinators S, K, and I serve as function transformers that enable
+the construction and reduction of expressions without variables, forming the core of combinatory
+logic. Conversely, from a logical standpoint, SKI calculus aligns with a Hilbert-style inference
+system, where S, K, and I are treated not as functions but as axiom schemes or inference rules. In
+this context, the application of combinators mirrors the process of type inference in logic or
+proof construction: for instance, the types of S, K, and I correspond to specific theorems in
+implicational logic, and their application mimics modus ponens. This duality reveals a connection
+between computation and logic, embodying the Curry-Howard correspondence, where evaluating a term
+parallels constructing a proof.
 
 Converting lambda calculus expressions to SKI combinator calculus involves eliminating variables
 by expressing functions solely in terms of the combinators S, K, and I. This process
@@ -900,7 +947,7 @@ This allows computation to be represented without variable binding.
 `,
 "example-lamb-input":
 `
-(lcToSki (((lmbd x (lmbd y (y x))) a) b))
+(lcToSki (lmbd x (lmbd y (y x))))
 `,
 
 "example-proof":
@@ -915,16 +962,6 @@ set of axioms and inference rules that allow the derivation of theorems. In its 
 Hilbert-style proof system is minimalistic, relying on a few foundational logical axioms and a
 single or limited number of inference rules, such as modus ponens (if \`A\` and \`A -> B\` are
 true, then \`B\` is true).
-
-One of the defining features of the Hilbert system is its flexibility and generality. It is
-used to represent a variety of logical systems, including propositional logic. Proofs in this
-system consist of sequences of formulas, where each formula is either an axiom or derived from
-previous formulas using inference rules. While highly structured, the system is often
-criticized for being less intuitive and less efficient compared to more modern proof systems
-like natural deduction or sequent calculus. Despite this, the Hilbert-style proof system
-remains foundational in logic due to its simplicity and role in formalizing the foundations of
-mathematics. It serves as a cornerstone for understanding logical derivation and the
-relationships between axiomatic systems.
 
 Hilbert-style proof systems can be applied to type checking in programming by leveraging their
 formal structure to verify the correctness of type assignments in a program. In type theory,
@@ -946,10 +983,10 @@ To compose a proof, use these rules
 --------------------------------------------------------------
 (CONST A) = (const A)
 (IMPL A B) = (impl A B)
-AxmI = (impl A A)
-AxmK = (impl A (impl B A))
-AxmS = (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))
-(Apply (impl A B) A) = B
+I = (impl A A)
+K = (impl A (impl B A))
+S = (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))
+((impl A B) A) = B
 --------------------------------------------------------------
 \`\`\`
 ///
@@ -978,19 +1015,19 @@ AxmS = (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))
     (
         RULE
         (VAR A B)
-        (READ AxmI)
+        (READ I)
         (WRITE (typed (impl A A)))
     )
     (
         RULE
         (VAR A B)
-        (READ AxmK)
+        (READ K)
         (WRITE (typed (impl A (impl B A))))
     )
     (
         RULE
         (VAR A B C)
-        (READ AxmS)
+        (READ S)
         (WRITE (typed (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))))
     )
     
@@ -1001,7 +1038,6 @@ AxmS = (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))
         (
             READ
             (
-                Apply
                 (typed (impl A B))
                 (typed A)
             )
@@ -1022,25 +1058,34 @@ AxmS = (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))
 (
     check
     (
-        Apply
         (
-            Apply
             (
-                Apply
                 (
-                    Apply
-                    AxmS
+                    S
                     (
-                        Apply
-                        AxmK
                         (
-                            Apply
-                            AxmS
-                            AxmI
+                            S
+                            (
+                                K
+                                S
+                            )
+                        )
+                        (
+                            K
+                            I
                         )
                     )
                 )
-                AxmK
+                (
+                    (
+                        S
+                        (
+                            K
+                            K
+                        )
+                    )
+                    I
+                )
             )
             (CONST A)
         )
