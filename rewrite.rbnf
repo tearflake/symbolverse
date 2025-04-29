@@ -2,7 +2,7 @@
      <start> := (REWRITE <expression>+)
               | (FILE <ATOMIC>)
 
-<expression> := (RULE (VAR <ATOMIC>+)? (READ <ANY>) (WRITE <ANY>))
+<expression> := (RULE (VAR <ATOMIC>+)? (READ (EXP <ANY>)) (WRITE (EXP <ANY>)))
               | <start>
 ```
 ```
