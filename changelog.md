@@ -36,7 +36,5 @@
 - v0.3.x
     - sub-structural operations
     - renamed `UNBOUND` keyword to `FREEVAR` in output
-
-- v1.0.x
     - renamed `FETCH` keyword to `FILE`
-    - removed unnecessary `EXP` keyword from the syntax
+

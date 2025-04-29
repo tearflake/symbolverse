@@ -11,7 +11,7 @@ output: \`(hello world)\`
 (
     REWRITE
 
-    (RULE (READ (\\hello \\machine)) (WRITE (\\hello \\world)))
+    (RULE (READ (EXP (\\hello \\machine))) (WRITE (EXP (\\hello \\world))))
 )
 `,
 
@@ -32,7 +32,7 @@ output: \`(hello Name)\`
 (
     REWRITE
 
-    (RULE (VAR Name) (READ (\\greet \\Name)) (WRITE (\\hello \\Name)))
+    (RULE (VAR Name) (READ (EXP (\\greet \\Name))) (WRITE (EXP (\\hello \\Name))))
 )
 `,
 "example1-2-input":
@@ -52,8 +52,8 @@ output: \`(makeToy doll/car)\`
 (
     REWRITE
 
-    (RULE (READ (\\isGood \\girl)) (WRITE (\\makeToy \\doll)))
-    (RULE (READ (\\isGood \\boy) ) (WRITE (\\makeToy \\car) ))
+    (RULE (READ (EXP (\\isGood \\girl))) (WRITE (EXP (\\makeToy \\doll))))
+    (RULE (READ (EXP (\\isGood \\boy) )) (WRITE (EXP (\\makeToy \\car) )))
 )
 `,
 "example1-3-input":
@@ -76,14 +76,14 @@ output: \`(isTitled Name astronaut/doctor)\`
     (
         RULE
         (VAR Name)
-        (READ  (\\isDoing \\Name \\drivingRocket))
-        (WRITE (\\isTitled \\Name \\astronaut)   )
+        (READ  (EXP (\\isDoing \\Name \\drivingRocket)))
+        (WRITE (EXP (\\isTitled \\Name \\astronaut)   ))
     )
     (
         RULE
         (VAR Name)
-        (READ  (\\isDoing \\Name \\healingPeople))
-        (WRITE (\\isTitled \\Name \\doctor)      )
+        (READ  (EXP (\\isDoing \\Name \\healingPeople)))
+        (WRITE (EXP (\\isTitled \\Name \\doctor)      ))
     )
 )
 `,
@@ -104,14 +104,14 @@ output: \`(shadowsDo expand/shrink)\`
 (
     REWRITE
 
-    (RULE (READ (\\sunIs \\rising) ) (WRITE (itIs morning)  ))
-    (RULE (READ (\\sunIs \\falling)) (WRITE (itIs afternoon)))
+    (RULE (READ (EXP (\\sunIs \\rising) )) (WRITE (EXP (itIs morning)  )))
+    (RULE (READ (EXP (\\sunIs \\falling))) (WRITE (EXP (itIs afternoon))))
 
-    (RULE (READ (itIs morning)  ) (WRITE (shadowsLean west)))
-    (RULE (READ (itIs afternoon)) (WRITE (shadowsLean east)))
+    (RULE (READ (EXP (itIs morning)  )) (WRITE (EXP (shadowsLean west))))
+    (RULE (READ (EXP (itIs afternoon))) (WRITE (EXP (shadowsLean east))))
 
-    (RULE (READ (shadowsLean west)) (WRITE (\\shadowsDo \\shrink)))
-    (RULE (READ (shadowsLean east)) (WRITE (\\shadowsDo \\expand)))
+    (RULE (READ (EXP (shadowsLean west))) (WRITE (EXP (\\shadowsDo \\shrink))))
+    (RULE (READ (EXP (shadowsLean east))) (WRITE (EXP (\\shadowsDo \\expand))))
 )
 `,
 "example1-5-input":
@@ -134,14 +134,14 @@ output: \`(weigthtsMoreThan object2 object1)\`
     (
         RULE
         (VAR P1 P2)
-        (READ  (\\orbitsAround \\P1 \\P2) )
-        (WRITE (attractsMoreThan P2 P1))
+        (READ  (EXP (\\orbitsAround \\P1 \\P2)   ))
+        (WRITE (EXP (attractsMoreThan P2 P1)))
     )
     (
         RULE
         (VAR P1 P2)
-        (READ  (attractsMoreThan P1 P2))
-        (WRITE (\\weightsMoreThan \\P1 \\P2))
+        (READ  (EXP (attractsMoreThan P1 P2)))
+        (WRITE (EXP (\\weightsMoreThan \\P1 \\P2)))
     )
 )
 `,
@@ -163,18 +163,18 @@ output: \`(fruitGrows Fruit)\`
     REWRITE
     
     /entry point/
-    (RULE (VAR Fruit) (READ (\\plantSeed \\Fruit)) (WRITE (plantingSeed Fruit)))
+    (RULE (VAR Fruit) (READ (EXP (\\plantSeed \\Fruit))) (WRITE (EXP (plantingSeed Fruit))))
     
     /exit point/
-    (RULE (VAR Fruit) (READ (fruitGrowing Fruit)) (WRITE (\\fruitGrows \\Fruit)))
+    (RULE (VAR Fruit) (READ (EXP (fruitGrowing Fruit))) (WRITE (EXP (\\fruitGrows \\Fruit))))
     
     (
         REWRITE
         
-        (RULE (VAR Fruit) (READ (\\plantingSeed \\Fruit)) (WRITE (treeForms Fruit)     ))
-        (RULE (VAR Fruit) (READ (treeForms Fruit)     ) (WRITE (blooms Fruit)        ))
-        (RULE (VAR Fruit) (READ (blooms Fruit)        ) (WRITE (getsPollinated Fruit)))
-        (RULE (VAR Fruit) (READ (getsPollinated Fruit)) (WRITE (\\fruitGrowing \\Fruit)))
+        (RULE (VAR Fruit) (READ (EXP (\\plantingSeed \\Fruit))) (WRITE (EXP (treeForms Fruit)     )))
+        (RULE (VAR Fruit) (READ (EXP (treeForms Fruit)     )) (WRITE (EXP (blooms Fruit)        )))
+        (RULE (VAR Fruit) (READ (EXP (blooms Fruit)        )) (WRITE (EXP (getsPollinated Fruit))))
+        (RULE (VAR Fruit) (READ (EXP (getsPollinated Fruit))) (WRITE (EXP (\\fruitGrowing \\Fruit))))
     )
 )
 `,
@@ -199,29 +199,29 @@ output: \`(Who and Whom hadPartyAt Where)\`
     (
         RULE
         (VAR Who Whom Where)
-        (READ  (\\Who \\met \\Whom \\at \\Where))
-        (WRITE (funMeeting Who Whom Where) )
+        (READ  (EXP (\\Who \\met \\Whom \\at \\Where)))
+        (WRITE (EXP (funMeeting Who Whom Where) ))
     )
     
     /exit point/
     (
         RULE
         (VAR Char1 Char2 Site)
-        (READ  (funMeeting Char1 Char2 Site)         )
-        (WRITE (\\Char1 \\and \\Char2 \\hadPartyAt \\Site))
+        (READ  (EXP (funMeeting Char1 Char2 Site)         ))
+        (WRITE (EXP (\\Char1 \\and \\Char2 \\hadPartyAt \\Site)))
     )
     
     (
         REWRITE
-        (RULE (READ \\bug1) (WRITE \\ladybug  ))
-        (RULE (READ \\bug2) (WRITE \\butterfly))
-        (RULE (READ \\bug3) (WRITE \\bee      ))
+        (RULE (READ (EXP \\bug1)) (WRITE (EXP \\ladybug  )))
+        (RULE (READ (EXP \\bug2)) (WRITE (EXP \\butterfly)))
+        (RULE (READ (EXP \\bug3)) (WRITE (EXP \\bee      )))
     )
 
     (
         REWRITE
-        (RULE (READ \\place1) (WRITE \\orchard))
-        (RULE (READ \\place2) (WRITE \\meadow ))
+        (RULE (READ (EXP \\place1)) (WRITE (EXP \\orchard)))
+        (RULE (READ (EXP \\place2)) (WRITE (EXP \\meadow )))
     )
 )
 `,
@@ -245,14 +245,14 @@ use for substructural operations:
     REWRITE
     
     /sub-atom/
-    (RULE (VAR a) (READ (\\headA \\a)) (WRITE (HEADA \\a)))
-    (RULE (VAR a) (READ (\\tailA \\a)) (WRITE (TAILA \\a)))
-    (RULE (VAR h t) (READ (\\consA \\h \\t)) (WRITE (CONSA \\h \\t)))
+    (RULE (VAR a) (READ (EXP (\\headA \\a))) (WRITE (EXP (HEADA \\a))))
+    (RULE (VAR a) (READ (EXP (\\tailA \\a))) (WRITE (EXP (TAILA \\a))))
+    (RULE (VAR h t) (READ (EXP (\\consA \\h \\t))) (WRITE (EXP (CONSA \\h \\t))))
     
     /sub-list/
-    (RULE (VAR A) (READ (\\headL \\A)) (WRITE (HEADL \\A)))
-    (RULE (VAR A) (READ (\\tailL \\A)) (WRITE (TAILL \\A)))
-    (RULE (VAR H T) (READ (\\consL \\H \\T)) (WRITE (CONSL \\H \\T)))
+    (RULE (VAR A) (READ (EXP (\\headL \\A))) (WRITE (EXP (HEADL \\A))))
+    (RULE (VAR A) (READ (EXP (\\tailL \\A))) (WRITE (EXP (TAILL \\A))))
+    (RULE (VAR H T) (READ (EXP (\\consL \\H \\T))) (WRITE (EXP (CONSL \\H \\T))))
 )
 `,
 "example1-10-input":
@@ -844,15 +844,15 @@ theory.
     REWRITE
     
     /entry point/
-    (RULE (VAR A) (READ (\\interpretSki \\A)) (WRITE (interpretingSki A)))
+    (RULE (VAR A) (READ (EXP (\\interpretSki \\A))) (WRITE (EXP (interpretingSki A))))
     
     /combinators/
-    (RULE (VAR X) (READ (I X)) (WRITE X))
-    (RULE (VAR X Y) (READ ((K X) Y)) (WRITE X))
-    (RULE (VAR X Y Z) (READ (((S X) Y) Z)) (WRITE ((X Z) (Y Z))))
+    (RULE (VAR X) (READ (EXP (I X))) (WRITE (EXP X)))
+    (RULE (VAR X Y) (READ (EXP ((K X) Y))) (WRITE (EXP X)))
+    (RULE (VAR X Y Z) (READ (EXP (((S X) Y) Z))) (WRITE (EXP ((X Z) (Y Z)))))
     
     /exit point/
-    (RULE (VAR A) (READ (interpretingSki A)) (WRITE \\A))
+    (RULE (VAR A) (READ (EXP (interpretingSki A))) (WRITE (EXP \\A)))
 )
 `,
 "example-ski-input":
@@ -934,15 +934,15 @@ This allows computation to be represented without variable binding.
     REWRITE
     
     /entry point/
-    (RULE (VAR A) (READ (\\lcToSki \\A)) (WRITE (compilingToSki A)))
+    (RULE (VAR A) (READ (EXP (\\lcToSki \\A))) (WRITE (EXP (compilingToSki A))))
     
     /LC to SKI compiler/
-    (RULE (VAR x) (READ (lmbd x x)) (WRITE I))
-    (RULE (VAR x E1 E2) (READ (lmbd x (E1 E2))) (WRITE ((S (lmbd x E1)) (lmbd x E2))))
-    (RULE (VAR x y) (READ (lmbd x y)) (WRITE (K y)))
+    (RULE (VAR x) (READ (EXP (lmbd x x))) (WRITE (EXP I)))
+    (RULE (VAR x E1 E2) (READ (EXP (lmbd x (E1 E2)))) (WRITE (EXP ((S (lmbd x E1)) (lmbd x E2)))))
+    (RULE (VAR x y) (READ (EXP (lmbd x y))) (WRITE (EXP (K y))))
     
     /exit point/
-    (RULE (VAR A) (READ (compilingToSki A)) (WRITE \\A))
+    (RULE (VAR A) (READ (EXP (compilingToSki A))) (WRITE (EXP \\A)))
 )
 `,
 "example-lamb-input":
@@ -995,40 +995,40 @@ S = (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))
     REWRITE
     
     /entry point/
-    (RULE (VAR A) (READ (\\check \\A)) (WRITE (proofChecking A)))
+    (RULE (VAR A) (READ (EXP (\\check \\A))) (WRITE (EXP (proofChecking A))))
     
     /constant types/
     (
         RULE
         (VAR A)
-        (READ (CONST A))
-        (WRITE (typed (const A)))
+        (READ (EXP (CONST A)))
+        (WRITE (EXP (typed (const A))))
     )
     (
         RULE
         (VAR A B)
-        (READ (IMPL (typed A) (typed B)))
-        (WRITE (typed (impl A B)))
+        (READ (EXP (IMPL (typed A) (typed B))))
+        (WRITE (EXP (typed (impl A B))))
     )
     
     /axioms/
     (
         RULE
         (VAR A B)
-        (READ I)
-        (WRITE (typed (impl A A)))
+        (READ (EXP I))
+        (WRITE (EXP (typed (impl A A))))
     )
     (
         RULE
         (VAR A B)
-        (READ K)
-        (WRITE (typed (impl A (impl B A))))
+        (READ (EXP K))
+        (WRITE (EXP (typed (impl A (impl B A)))))
     )
     (
         RULE
         (VAR A B C)
-        (READ S)
-        (WRITE (typed (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))))
+        (READ (EXP S))
+        (WRITE (EXP (typed (impl (impl A (impl B C)) (impl (impl A B) (impl A C))))))
     )
     
     /modus ponens/
@@ -1038,19 +1038,25 @@ S = (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))
         (
             READ
             (
-                (typed (impl A B))
-                (typed A)
+                EXP 
+                (
+                    (typed (impl A B))
+                    (typed A)
+                )
             )
         )
         (
             WRITE
-            (typed B)
+            (
+                EXP 
+                (typed B)
+            )
         )
     )
     
     /exit point/
-    (RULE (VAR A) (READ (proofChecking (typed A))) (WRITE \\A))
-    (RULE (VAR A) (READ (proofChecking A)) (WRITE \\"Proof checking error"))
+    (RULE (VAR A) (READ (EXP (proofChecking (typed A)))) (WRITE (EXP \\A)))
+    (RULE (VAR A) (READ (EXP (proofChecking A))) (WRITE (EXP \\"Proof checking error")))
 )
 `,
 "example-proof-input":

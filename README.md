@@ -1,4 +1,4 @@
-# symbolverse term rewriting framework v1.0.2
+# symbolverse term rewriting framework v0.3.9
 
 _**tags:** s-expression, rewriting, term-rewriting, term-rewriting-systems_
 
@@ -22,7 +22,7 @@ The entire grammar of *Symbolverse* code files fits into only five lines of rela
               | <start>
 ```
 
-and there is only six builtin functions used only for sub-structural transformations:
+and there are only six builtin functions used only for sub-structural transformations:
 
 ```
 (CONSL <ANY> <ANY>)       -> <RESULT>

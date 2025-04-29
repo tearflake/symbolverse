@@ -381,10 +381,10 @@ Sub-structural operations may be used when we want to specifically format input 
 Variables we exposed by previous examples are all being used at the left hand rules sides. Such variables are called *bound variables*. However, we may place variables at the right hand rule side without being referenced at the left hand rule side. Such variables are called *free variables*, and they may be described in the following example:
 
 ```
-(RULE (VAR f x y) (READ (function f)) (WRITE (f x y y)))
+(RULE (VAR F X Y) (READ (function F)) (WRITE (F X Y Y)))
 ```
 
-Here, variable `f` represent bound variable, while variables `x` and `y` are free variables. Free variables are indicated by the `FREEVAR` keyword in the final output. Each rule that produces a free variable, attaches an unique index to a variable name, relative to applied rule. Free variables may be important in pattern matching, e.g. during computing proofs of theorems. They are given a special care in this framework, being calculated using a standard unification algorithm. Thus, in the previous example, the output may be matched with the further chaining rules only if the first parameter equals the value of `f`, the second parameter matches any atomic value, while the third and the fourth elements match atomic values having the same appearance. Of course, it is possible to have compound free variables denoted by first uppercase letter, and their behavior correctly follows the mentioned unification algorithm.
+Here, variable `F` represents a bound variable, while variables `X` and `Y` are free variables. Free variables are indicated by the `FREEVAR` keyword in the final output. Each rule that produces a free variable, attaches an unique index to a variable name, relative to applied rule. Free variables may be important in pattern matching, e.g. during computing proofs of theorems. They are given special care in this framework, being calculated using a standard unification algorithm. Thus, in the previous example, the output may be matched with some further chaining rules only if the first parameter equals the value of variable `F`, the second parameter matches any atomic value (variable `X`), while the third and the fourth elements match atomic values having the same appearance (variable `Y`). Of course, it is possible to have compound contents of free variables, even containing inherited free variables, while their behavior correctly follows the unification algorithm functionality.
 
 ##### fetching external files
 
