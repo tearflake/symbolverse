@@ -18,7 +18,7 @@ The entire grammar of *Symbolverse* code files fits into only five lines of rela
      <start> := (REWRITE <expression>+)
               | (FILE <ATOMIC>)
 
-<expression> := (RULE (VAR <ATOMIC>+)? (READ <ANY>) (WRITE <ANY>))
+<expression> := (RULE (VAR <ATOMIC>+)? (READ (EXP <ANY>)) (WRITE (EXP <ANY>)))
               | <start>
 ```
 
@@ -47,22 +47,22 @@ To get a glimpse on how a *Symbolverse* program code looks like, we bring a simp
     (
         RULE
         (VAR A)
-        (READ  (\add \A \A))
-        (WRITE (\mul \2 \A))
+        (READ  (EXP (\add \A \A)))
+        (WRITE (EXP (\mul \2 \A)))
     )
     
     /reducible fraction/
     (
         RULE
         (VAR A B)
-        (READ  (\div (\mul \A \B) \A))
-        (WRITE \B                    )
+        (READ  (EXP (\div (\mul \A \B) \A)))
+        (WRITE (EXP \B                    ))
     )
     (
         RULE
         (VAR A B)
-        (READ  (\div (\mul \A \B) \B))
-        (WRITE \A                    )
+        (READ  (EXP (\div (\mul \A \B) \B)))
+        (WRITE (EXP \A                    ))
     )
 )
 ```
