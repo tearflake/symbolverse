@@ -1,4 +1,4 @@
-# symbolverse term rewriting framework v0.3.9
+# symbolverse term rewriting framework v0.3.10
 
 _**tags:** s-expression, rewriting, term-rewriting, term-rewriting-systems_
 
