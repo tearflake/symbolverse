@@ -38,9 +38,9 @@ This allows computation to be represented without variable binding.
     (RULE (VAR A) (READ (EXP (\lcToSki \A))) (WRITE (EXP (compilingToSki A))))
     
     /LC to SKI compiler/
-    (RULE (VAR x) (READ (EXP (lmbd x x))) (WRITE (EXP I)))
-    (RULE (VAR x E1 E2) (READ (EXP (lmbd x (E1 E2)))) (WRITE (EXP ((S (lmbd x E1)) (lmbd x E2)))))
-    (RULE (VAR x y) (READ (EXP (lmbd x y))) (WRITE (EXP (K y))))
+    (RULE (VAR x) (READ (EXP (lmbd x x))) (WRITE (EXP cI)))
+    (RULE (VAR x E1 E2) (READ (EXP (lmbd x (E1 E2)))) (WRITE (EXP ((cS (lmbd x E1)) (lmbd x E2)))))
+    (RULE (VAR x y) (READ (EXP (lmbd x y))) (WRITE (EXP (cK y))))
     
     /exit point/
     (RULE (VAR A) (READ (EXP (compilingToSki A))) (WRITE (EXP \A)))

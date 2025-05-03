@@ -888,9 +888,9 @@ theory.
     (RULE (VAR A) (READ (EXP (\\interpretSki \\A))) (WRITE (EXP (interpretingSki A))))
     
     /combinators/
-    (RULE (VAR X) (READ (EXP (I X))) (WRITE (EXP X)))
-    (RULE (VAR X Y) (READ (EXP ((K X) Y))) (WRITE (EXP X)))
-    (RULE (VAR X Y Z) (READ (EXP (((S X) Y) Z))) (WRITE (EXP ((X Z) (Y Z)))))
+    (RULE (VAR X) (READ (EXP (cI X))) (WRITE (EXP X)))
+    (RULE (VAR X Y) (READ (EXP ((cK X) Y))) (WRITE (EXP X)))
+    (RULE (VAR X Y Z) (READ (EXP (((cS X) Y) Z))) (WRITE (EXP ((X Z) (Y Z)))))
     
     /exit point/
     (RULE (VAR A) (READ (EXP (interpretingSki A))) (WRITE (EXP \\A)))
@@ -904,30 +904,30 @@ theory.
         (
             (
                 (
-                    S
+                    cS
                     (
                         (
-                            S
+                            cS
                             (
-                                K
-                                S
+                                cK
+                                cS
                             )
                         )
                         (
-                            K
-                            I
+                            cK
+                            cI
                         )
                     )
                 )
                 (
                     (
-                        S
+                        cS
                         (
-                            K
-                            K
+                            cK
+                            cK
                         )
                     )
-                    I
+                    cI
                 )
             )
             a
@@ -978,9 +978,9 @@ This allows computation to be represented without variable binding.
     (RULE (VAR A) (READ (EXP (\\lcToSki \\A))) (WRITE (EXP (compilingToSki A))))
     
     /LC to SKI compiler/
-    (RULE (VAR x) (READ (EXP (lmbd x x))) (WRITE (EXP I)))
-    (RULE (VAR x E1 E2) (READ (EXP (lmbd x (E1 E2)))) (WRITE (EXP ((S (lmbd x E1)) (lmbd x E2)))))
-    (RULE (VAR x y) (READ (EXP (lmbd x y))) (WRITE (EXP (K y))))
+    (RULE (VAR x) (READ (EXP (lmbd x x))) (WRITE (EXP cI)))
+    (RULE (VAR x E1 E2) (READ (EXP (lmbd x (E1 E2)))) (WRITE (EXP ((cS (lmbd x E1)) (lmbd x E2)))))
+    (RULE (VAR x y) (READ (EXP (lmbd x y))) (WRITE (EXP (cK y))))
     
     /exit point/
     (RULE (VAR A) (READ (EXP (compilingToSki A))) (WRITE (EXP \\A)))
@@ -1052,23 +1052,28 @@ S = (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))
         (WRITE (EXP (typed (impl A B))))
     )
     
+    /combinators to axioms/
+    (RULE (READ (EXP cI)) (WRITE (EXP AxI)))
+    (RULE (READ (EXP cK)) (WRITE (EXP AxK)))
+    (RULE (READ (EXP cS)) (WRITE (EXP AxS)))
+    
     /axioms/
     (
         RULE
         (VAR A B)
-        (READ (EXP I))
+        (READ (EXP AxI))
         (WRITE (EXP (typed (impl A A))))
     )
     (
         RULE
         (VAR A B)
-        (READ (EXP K))
+        (READ (EXP AxK))
         (WRITE (EXP (typed (impl A (impl B A)))))
     )
     (
         RULE
         (VAR A B C)
-        (READ (EXP S))
+        (READ (EXP AxS))
         (WRITE (EXP (typed (impl (impl A (impl B C)) (impl (impl A B) (impl A C))))))
     )
     
@@ -1108,30 +1113,30 @@ S = (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))
         (
             (
                 (
-                    S
+                    cS
                     (
                         (
-                            S
+                            cS
                             (
-                                K
-                                S
+                                cK
+                                cS
                             )
                         )
                         (
-                            K
-                            I
+                            cK
+                            cI
                         )
                     )
                 )
                 (
                     (
-                        S
+                        cS
                         (
-                            K
-                            K
+                            cK
+                            cK
                         )
                     )
-                    I
+                    cI
                 )
             )
             (CONST A)
@@ -1179,7 +1184,7 @@ Syntax of STLC in this implementation is expected to follow the following kind o
 
       <var> := <LOWERCASE-LETTER>
 
-     <type> := (CONST <UPPERCASE-LETTER-NO-SKI>)
+     <type> := (CONST <UPPERCASE-LETTER>)
              | (IMPL <type> <type>)
 \`\`\`
 
@@ -1386,9 +1391,9 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
         (RULE (VAR A) (READ (EXP (\\lcToSki \\A))) (WRITE (EXP (compilingToSki A))))
         
         /LC to SKI compiler/
-        (RULE (VAR x) (READ (EXP (lmbd x x))) (WRITE (EXP I)))
-        (RULE (VAR x E1 E2) (READ (EXP (lmbd x (E1 E2)))) (WRITE (EXP ((S (lmbd x E1)) (lmbd x E2)))))
-        (RULE (VAR x y) (READ (EXP (lmbd x y))) (WRITE (EXP (K y))))
+        (RULE (VAR x) (READ (EXP (lmbd x x))) (WRITE (EXP cI)))
+        (RULE (VAR x E1 E2) (READ (EXP (lmbd x (E1 E2)))) (WRITE (EXP ((cS (lmbd x E1)) (lmbd x E2)))))
+        (RULE (VAR x y) (READ (EXP (lmbd x y))) (WRITE (EXP (cK y))))
         
         /exit point/
         (RULE (VAR A) (READ (EXP (compilingToSki A))) (WRITE (EXP \\A)))
@@ -1405,9 +1410,9 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
         (RULE (VAR A) (READ (EXP (\\interpretSki \\A))) (WRITE (EXP (interpretingSki A))))
         
         /combinators/
-        (RULE (VAR X) (READ (EXP (I X))) (WRITE (EXP X)))
-        (RULE (VAR X Y) (READ (EXP ((K X) Y))) (WRITE (EXP X)))
-        (RULE (VAR X Y Z) (READ (EXP (((S X) Y) Z))) (WRITE (EXP ((X Z) (Y Z)))))
+        (RULE (VAR X) (READ (EXP (cI X))) (WRITE (EXP X)))
+        (RULE (VAR X Y) (READ (EXP ((cK X) Y))) (WRITE (EXP X)))
+        (RULE (VAR X Y Z) (READ (EXP (((cS X) Y) Z))) (WRITE (EXP ((X Z) (Y Z)))))
         
         /exit point/
         (RULE (VAR A) (READ (EXP (interpretingSki A))) (WRITE (EXP \\A)))
@@ -1437,23 +1442,28 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
             (WRITE (EXP (typed (impl A B))))
         )
         
+        /combinators to axioms/
+        (RULE (READ (EXP cI)) (WRITE (EXP AxI)))
+        (RULE (READ (EXP cK)) (WRITE (EXP AxK)))
+        (RULE (READ (EXP cS)) (WRITE (EXP AxS)))
+
         /axioms/
         (
             RULE
             (VAR A B)
-            (READ (EXP I))
+            (READ (EXP AxI))
             (WRITE (EXP (typed (impl A A))))
         )
         (
             RULE
             (VAR A B)
-            (READ (EXP K))
+            (READ (EXP AxK))
             (WRITE (EXP (typed (impl A (impl B A)))))
         )
         (
             RULE
             (VAR A B C)
-            (READ (EXP S))
+            (READ (EXP AxS))
             (WRITE (EXP (typed (impl (impl A (impl B C)) (impl (impl A B) (impl A C))))))
         )
         

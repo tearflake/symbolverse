@@ -1,3 +1,4 @@
+
 ///
 # STLC implementation
 
@@ -35,7 +36,7 @@ Syntax of STLC in this implementation is expected to follow the following kind o
 
       <var> := <LOWERCASE-LETTER>
 
-     <type> := (CONST <UPPERCASE-LETTER-NO-SKI>)
+     <type> := (CONST <UPPERCASE-LETTER>)
              | (IMPL <type> <type>)
 ```
 
@@ -230,7 +231,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
             (WRITE (EXP \A))
         )
     )
-        
+    
     (FILE "lambda-calc.sv")
     (FILE "ski-calc.sv")
     (FILE "hilbert.sv")

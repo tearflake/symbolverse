@@ -5,30 +5,30 @@
         (
             (
                 (
-                    S
+                    cS
                     (
                         (
-                            S
+                            cS
                             (
-                                K
-                                S
+                                cK
+                                cS
                             )
                         )
                         (
-                            K
-                            I
+                            cK
+                            cI
                         )
                     )
                 )
                 (
                     (
-                        S
+                        cS
                         (
-                            K
-                            K
+                            cK
+                            cK
                         )
                     )
-                    I
+                    cI
                 )
             )
             a
