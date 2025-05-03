@@ -79,7 +79,7 @@ Semantics of Symbolverse, as a study of meaning, reference, or truth of Symbolve
 - Program structure
     - A program starts with a top-level expression: `(RULESET <expression>+)`
     - Each `<expression>` is a rewrite rule: `(RULE (VAR <ATOMIC>+)? (READ (EXP <ANY>)) (WRITE (EXP <ANY>)))`
-        - `VAR`: Declares pattern variables local to the rule. Variables are recommended to be named with `<` prefix and `>` suffix to differentiate them from other atoms.
+        - `VAR`: Declares pattern variables local to the rule.
         - `READ`: S-expression pattern to match.
         - `WRITE`: S-expression used for rewriting (may include builtins and unbound variables).
 - Rewriting process
