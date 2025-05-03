@@ -58,28 +58,23 @@ S = (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))
         (WRITE (EXP (typed (impl A B))))
     )
     
-    /combinators to axioms/
-    (RULE (READ (EXP cI)) (WRITE (EXP AxI)))
-    (RULE (READ (EXP cK)) (WRITE (EXP AxK)))
-    (RULE (READ (EXP cS)) (WRITE (EXP AxS)))
-    
     /axioms/
     (
         RULE
         (VAR A B)
-        (READ (EXP AxI))
+        (READ (EXP <I>))
         (WRITE (EXP (typed (impl A A))))
     )
     (
         RULE
         (VAR A B)
-        (READ (EXP AxK))
+        (READ (EXP <K>))
         (WRITE (EXP (typed (impl A (impl B A)))))
     )
     (
         RULE
         (VAR A B C)
-        (READ (EXP AxS))
+        (READ (EXP <S>))
         (WRITE (EXP (typed (impl (impl A (impl B C)) (impl (impl A B) (impl A C))))))
     )
     

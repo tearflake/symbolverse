@@ -18,9 +18,9 @@ theory.
     (RULE (VAR A) (READ (EXP (\interpretSki \A))) (WRITE (EXP (interpretingSki A))))
     
     /combinators/
-    (RULE (VAR X) (READ (EXP (cI X))) (WRITE (EXP X)))
-    (RULE (VAR X Y) (READ (EXP ((cK X) Y))) (WRITE (EXP X)))
-    (RULE (VAR X Y Z) (READ (EXP (((cS X) Y) Z))) (WRITE (EXP ((X Z) (Y Z)))))
+    (RULE (VAR X) (READ (EXP (<I> X))) (WRITE (EXP X)))
+    (RULE (VAR X Y) (READ (EXP ((<K> X) Y))) (WRITE (EXP X)))
+    (RULE (VAR X Y Z) (READ (EXP (((<S> X) Y) Z))) (WRITE (EXP ((X Z) (Y Z)))))
     
     /exit point/
     (RULE (VAR A) (READ (EXP (interpretingSki A))) (WRITE (EXP \A)))

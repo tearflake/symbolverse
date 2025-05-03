@@ -5,30 +5,30 @@
         (
             (
                 (
-                    cS
+                    <S>
                     (
                         (
-                            cS
+                            <S>
                             (
-                                cK
-                                cS
+                                <K>
+                                <S>
                             )
                         )
                         (
-                            cK
-                            cI
+                            <K>
+                            <I>
                         )
                     )
                 )
                 (
                     (
-                        cS
+                        <S>
                         (
-                            cK
-                            cK
+                            <K>
+                            <K>
                         )
                     )
-                    cI
+                    <I>
                 )
             )
             (CONST A)
