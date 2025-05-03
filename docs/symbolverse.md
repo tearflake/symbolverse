@@ -257,6 +257,44 @@ output: `(weigthtsMoreThan Object2 Object1)`
 
 so that when we pass `(orbitsAround earth sun)`, we get `(weightsMoreThan sun earth)`. Again, the internal constant `attractsMoreThan` is unreachable from the outside world.
 
+#### scoped rules
+
+With *Symbolverse*, it is possible or write layered code where each layer represents a certain depth of abstraction area. The objective of these layers is separating atoms and variables so we can use them as private entities not interacting between adjacent layers. New layers are denoted within `(REWRITE ...)` sections, and can be nested. Consider the following example:
+
+```
+///
+planting cyclus
+
+ input: `(plantSeed Fruit)`
+output: `(fruitGrows Fruit)`
+///
+
+(
+    REWRITE
+    
+    /entry point/
+    (RULE (VAR Fruit) (READ (EXP (\plantSeed \Fruit))) (WRITE (EXP (plantSeed Fruit))))
+    
+    /exit point/
+    (RULE (VAR Fruit) (READ (EXP (fruitGrows Fruit))) (WRITE (EXP (\fruitGrows \Fruit))))
+    
+    (
+        REWRITE
+        
+        (RULE (VAR Fruit) (READ (EXP (\plantSeed \Fruit)   )) (WRITE (EXP (treeForms Fruit)     )))
+        (RULE (VAR Fruit) (READ (EXP (treeForms Fruit)     )) (WRITE (EXP (blooms Fruit)        )))
+        (RULE (VAR Fruit) (READ (EXP (blooms Fruit)        )) (WRITE (EXP (getsPollinated Fruit))))
+        (RULE (VAR Fruit) (READ (EXP (getsPollinated Fruit))) (WRITE (EXP (\fruitGrows \Fruit)  )))
+    )
+)
+```
+
+Here, in the first level, we used two rules only to pass the information up from and down to program input/output scope. Next, in the nested `(REWRITE ...)` section, we created a separate scope which represents a chained actions between seeding a plant and growing a fruit. To reach atoms and variables from the outer layers, we have to escape them with `\` character, like in `(READ (EXP (\plantSeed \Fruit)))` section. Similarly, atoms and variables created within that scope are not visible outside of that scope unless they are escaped with `\` character, like in `(WRITE (EXP (\fruitGrows \Fruit)))` section.
+
+It is also possible to reach more distant parent scopes by repeating a number of `\` characters where the number of repetitions denotes the depth difference to the parent scope we are referring to. This way, it is possible to refer to adjacent scopes or their children escaped atoms and variables if their escaping amount matches the referrer. There is also a possibility to escape atoms and variables at the right sides, which we may use to push down the processed values, only to pull them up after the processing is done.
+
+Summing it up, scopes represent a natural way to package and separate sets of rules where unescaped atoms and variables are considered private members. Such private members do not interact with adjacent scopes unless they are escaped from the left side. However, they may interact with parent or children scopes if their escaping amount matches referring rules.
+
 #### sub-structural term operations
 
 Sometimes we have to construct variable length lists, or concatenate atoms to produce new lists or atoms. In these cases, we can use builtin functions `CONSL` for lists, and `CONSA` for atoms. In other cases, we want to extract elements of variable length lists, or characters from atoms. In these cases, we use `HEADL` and `TAILL` for lists, and `HEADA` and `TAILA` for atoms. These functions are depicted in the following example:
@@ -326,6 +364,10 @@ Variables we exposed by previous examples are all being used at the left hand ru
 ```
 
 Here, variable `F` represents a bound variable, while variables `X` and `Y` are free variables. Free variables are indicated by the `FREEVAR` keyword in the final output. Each rule that produces a free variable, attaches an unique index to a variable name, relative to applied rule. Free variables may be important in pattern matching, e.g. during computing proofs of theorems. They are given special care in this framework, being calculated using a standard unification algorithm. Thus, in the previous example, the output may be matched with some further chaining rules only if the first parameter equals the value of variable `F`, the second parameter matches any atomic value (variable `X`), while the third and the fourth elements match atomic values having the same appearance (variable `Y`). Of course, it is possible to have compound contents of free variables, even containing inherited free variables, while their behavior correctly follows the unification algorithm functionality.
+
+#### fetching external files
+
+*Symbolverse* code may import rules saved in external files. To do that, we use `(FILE ...)` section wherever we may expect `(REWRITE ...)` section. `FILE` section accepts one parameter, a file name. The file name is expressed with or without directory, relative to path of the current code file. If we use special characters, such as spaces, we enclose the file name within double quotes. Thus, `FILE` provides us a packaging system spanned through directories of our interest. Together with constants/variables escaping system, we may form structures of any depth reachable from the inclusion source code files.
 
 ## 4. conclusion
 
