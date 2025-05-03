@@ -183,14 +183,14 @@ output: `(isTitled Name astronaut/doctor)`
     (
         RULE
         (VAR Name)
-        (READ  (EXP (isDoing \Name drivingRocket)))
-        (WRITE (EXP (isTitled \Name astronaut)   ))
+        (READ  (EXP (\isDoing \Name \drivingRocket)))
+        (WRITE (EXP (\isTitled \Name \astronaut)   ))
     )
     (
         RULE
         (VAR Name)
-        (READ  (EXP (isDoing \Name \healingPeople)))
-        (WRITE (EXP (isTitled \Name \doctor)      ))
+        (READ  (EXP (\isDoing \Name \healingPeople)))
+        (WRITE (EXP (\isTitled \Name \doctor)      ))
     )
 )
 ```
