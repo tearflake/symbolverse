@@ -66,7 +66,7 @@ var Rewriter = (
                 (
                     REWRITE
                     (RULE (READ (EXP start)) (WRITE (EXP (\\REWRITE expressions))))
-                    (RULE (READ (EXP start)) (WRITE (EXP (\\FILE (ATOMIC ()))  )))
+                    (RULE (READ (EXP start)) (WRITE (EXP (\\FILE (ATOMIC ()))   )))
                     
                     (RULE (READ (EXP expressions)) (WRITE (EXP (expression expressions))))
                     (RULE (READ (EXP expressions)) (WRITE (EXP (expression ())         )))

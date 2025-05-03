@@ -42,14 +42,14 @@ S = (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))
     REWRITE
     
     /entry point/
-    (RULE (VAR A) (READ (EXP (\check \A))) (WRITE (EXP (proofChecking A))))
+    (RULE (VAR A) (READ (EXP (\proofCheck \A))) (WRITE (EXP (proofChecking A))))
     
     /constant types/
     (
         RULE
-        (VAR A)
-        (READ (EXP (CONST A)))
-        (WRITE (EXP (typed (const A))))
+        (VAR a)
+        (READ (EXP (CONST a)))
+        (WRITE (EXP (typed (const a))))
     )
     (
         RULE

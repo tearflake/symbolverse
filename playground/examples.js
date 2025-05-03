@@ -802,28 +802,69 @@ graph-based structure that emphasizes state transitions and variable operations.
 )
 `,
 
+"example-cfg":
+`
+///
+# CFG parser generator
+
+A context-free grammar (CFG) is a formal system used to define the syntax of programming
+languages and structured data. It consists of a set of production rules that describe how
+symbols in a language can be combined to form valid strings or structures. A CFG includes
+terminal symbols (the basic symbols of the language), non-terminal symbols (placeholders
+for patterns of symbols), a start symbol, and a collection of production rules that specify
+how non-terminal symbols can be replaced by groups of terminals and/or other non-terminals.
+Unlike more restrictive grammars, context-free grammars allow production rules to be applied
+regardless of the surrounding symbols (the "context"), making them powerful tools for
+describing nested and hierarchical structures, such as arithmetic expressions, programming
+language constructs, and natural language sentences. They are widely used in the design of
+parsers and compilers.
+///
+`,
+"example-cfg-input":
+`
+/under construction/
+`,
+
 "example-imp":
 `
 ///
 # IMP framework interpreter
 
-The IMP programming framework is a minimalistic imperative language model used primarily in formal
-methods, compiler construction, and program verification. It provides a structured yet simple syntax
-that includes variable assignments, arithmetic and boolean expressions, conditional statements, and
-loops. IMP is not a practical programming language for software development but rather a theoretical
-construct used in academia to teach operational, denotational, and axiomatic semantics. It serves as
-a foundation for understanding how imperative programs execute, reasoned through various techniques.
-
-IMP is widely used in theorem proving environments, allowing researchers and students to formally
-verify program correctness. It plays a crucial role in automated reasoning, formal verification, and
-static analysis, helping in the development of provably correct software. By abstracting core
-imperative features, the IMP framework provides a clean and rigorous way to study language semantics
-and proof-based program analysis, making it a fundamental tool in programming language theory and
-formal verification research.
+IMP is a simple, foundational framework often used to illustrate the principles of imperative
+programming in programming language theory and formal semantics. It stands for Imperative language,
+and typically includes a minimal set of constructs such as variable assignments, sequential
+composition, conditional statements, and while loops. Despite its simplicity, IMP captures the
+essential features of imperative programming, where programs are viewed as sequences of commands
+that modify a program’s state. It serves as a useful model for teaching operational and
+denotational semantics, allowing researchers and students to formally reason about program
+behavior, correctness, and transformations in a structured yet approachable way.
 ///
 `,
 "example-imp-input":
 `
+/under construction/
+`,
+
+"example-log":
+`
+///
+# Hilbert-style proof finder
+
+A Hilbert-style automated proof finder is a type of formal reasoning system based on Hilbert-style
+deductive systems, which are known for their simplicity and minimal set of inference rules. In
+these systems, proofs are constructed by applying a small number of general logical axioms and a
+single inference rule, typically modus ponens, to derive conclusions from assumptions. Automated
+proof finders built on this framework attempt to systematically explore possible sequences of
+these inference steps to establish the validity of a given logical formula. While Hilbert-style
+systems are elegant and foundational in mathematical logic, they tend to produce long and less
+intuitive proofs compared to other systems like natural deduction or sequent calculus. Nonetheless,
+their simplicity makes them a useful theoretical model for studying the automation of logical
+reasoning and understanding the core mechanics of proof generation.
+///
+`,
+"example-log-input":
+`
+/under construction/
 `,
 
 "example-ski":
@@ -995,14 +1036,14 @@ S = (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))
     REWRITE
     
     /entry point/
-    (RULE (VAR A) (READ (EXP (\\check \\A))) (WRITE (EXP (proofChecking A))))
+    (RULE (VAR A) (READ (EXP (\\proofCheck \\A))) (WRITE (EXP (proofChecking A))))
     
     /constant types/
     (
         RULE
-        (VAR A)
-        (READ (EXP (CONST A)))
-        (WRITE (EXP (typed (const A))))
+        (VAR a)
+        (READ (EXP (CONST a)))
+        (WRITE (EXP (typed (const a))))
     )
     (
         RULE
@@ -1062,7 +1103,7 @@ S = (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))
 "example-proof-input":
 `
 (
-    check
+    proofCheck
     (
         (
             (
@@ -1099,6 +1140,374 @@ S = (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))
     )
 )
 `,
+"example-stlc":
+`
+///
+# STLC implementation
+
+The simply typed lambda calculus (STLC) is a foundational formal system in the study of logic,
+programming languages, and theorem proving. It extends the untyped lambda calculus by associating
+types with expressions, ensuring that only well-formed function applications are permitted. In
+this system, each term has a type, and functions explicitly declare the type of their arguments
+and results. This typing discipline prevents many forms of nonsensical expressions that are
+possible in the untyped system, such as applying a boolean to a number. As a result, the STLC
+forms a robust framework for representing and manipulating proofs as computational objects.
+
+In theorem proving, especially in systems based on the Curry-Howard correspondence, the STLC
+serves as a means to encode logical propositions as types and proofs as terms. Under this
+correspondence, proving a theorem is equivalent to constructing a term of a given type. For
+example, a proof of a proposition like \`A -> B\` is represented by a function that, given a proof
+of  \`A\`, produces a proof of \`B\`. This tight connection between logic and computation allows
+automated theorem provers and proof assistants to leverage type checking as a means of proof
+verification. While the STLC lacks the expressive power of richer type systems (like dependent
+types), it offers a clear and elegant foundation for understanding the relationship between
+types, computation, and logical deduction.
+
+In this implementation, primitive terms are represented as constants. They have to be explicitly
+typed with \`(assert <LOWERCASE-LETTER> <type>)\` syntax. Defining constants is allowed only
+outside of all of \`(lmbd ... ...)\` expressions, and applied as shown in input example. Also,
+all the variables within lambda expressions have to be bound.
+
+Syntax of STLC in this implementation is expected to follow the following kind of BNF rules:
+
+\`\`\`
+    <start> := stlc <lexp>
+
+     <lexp> := (lmbd (typed <var> <type>) <lexp>)
+             | (<lexp> <lexp>)
+             | <var>
+
+      <var> := <LOWERCASE-LETTER>
+
+     <type> := (CONST <UPPERCASE-LETTER-NO-SKI>)
+             | (IMPL <type> <type>)
+\`\`\`
+
+The implementation features constructing compound types from annotated type rules, combined with
+previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI calculus interpreter.
+///
+
+(
+    REWRITE
+    
+    /begin/
+    (RULE (VAR A) (READ (EXP (\\stlc \\A))) (WRITE (EXP (evaluating A A))))
+    
+    /type check/
+    (
+        RULE
+        (VAR A B)
+        (READ (EXP (evaluating A B)))
+        (WRITE (EXP (typeEq (composeTypes A) (lift (proofCheck (lcToSki (getTypes A)))) B)))
+    )
+
+    /success/
+    (
+        RULE
+        (VAR A B)
+        (READ (EXP (typeEq A A B)))
+        (WRITE (EXP (finish (result (value (interpretSki (lcToSki (getValues B)))) (type A)))))
+    )
+
+    /failure/
+    (
+        RULE
+        (VAR A B C)
+        (READ (EXP (typeEq A B C)))
+        (WRITE (EXP (finish "Typing error")))
+    )
+    
+    /end/
+    (RULE (VAR A B) (READ (EXP (finish A))) (WRITE (EXP \\A)))
+
+    /lift/
+    (
+        REWRITE
+        (RULE (VAR A) (READ (EXP (\\lift \\A))) (WRITE (EXP (lifting A))))
+        
+        (RULE (READ (EXP const)) (WRITE (EXP CONST)))
+        (RULE (READ (EXP impl)) (WRITE (EXP IMPL)))
+        
+        (RULE (VAR A) (READ (EXP (lifting A))) (WRITE (EXP \\A)))
+    )
+    
+    /getTypes/
+    (
+        REWRITE
+        (RULE (VAR A) (READ (EXP (\\getTypes \\A))) (WRITE (EXP (gettingTypes A))))
+        
+        (RULE (VAR A B) (READ (EXP (typed A B))) (WRITE (EXP A)))
+        (RULE (VAR A B) (READ (EXP (assert A B))) (WRITE (EXP B)))
+        
+        (RULE (VAR A) (READ (EXP (gettingTypes A))) (WRITE (EXP \\A)))
+    )
+    
+    /getValues/
+    (
+        REWRITE
+        (RULE (VAR A) (READ (EXP (\\getValues \\A))) (WRITE (EXP (gettingValues A))))
+        
+        (RULE (VAR A B) (READ (EXP (typed A B))) (WRITE (EXP A)))
+        (RULE (VAR A B) (READ (EXP (assert A B))) (WRITE (EXP A)))
+        
+        (RULE (VAR A) (READ (EXP (gettingValues A))) (WRITE (EXP \\A)))
+    )
+    
+    ///////////////////////////
+    /composing annotated types/
+    ///////////////////////////
+    
+    (
+        RULE
+        (VAR A)
+        (READ (EXP (composeTypes A)))
+        (WRITE (EXP (composeApplicationTypes (composeAbstractionTypes A))))
+    )
+    
+    /abstraction types/
+    (
+        REWRITE
+        (
+            RULE
+            (VAR A)
+            (READ (EXP (\\composeAbstractionTypes \\A)))
+            (WRITE (EXP (composingAbstractionTypes A)))
+        )
+        
+        (
+            RULE
+            (VAR x M ParameterType)
+            (
+                READ
+                (
+                    EXP
+                    (
+                        lmbd
+                        (typed x ParameterType)
+                        M
+                    )
+                )
+            )
+            (
+                WRITE
+                (
+                    EXP
+                    (IMPL ParameterType (replace M x ParameterType))
+                )
+            )
+        )
+        
+        (
+            RULE
+            (VAR A ResultType)
+            (
+                READ
+                (
+                    EXP
+                    (assert A ResultType)
+                )
+            )
+            (
+                WRITE
+                (
+                    EXP
+                    ResultType
+                )
+            )
+        )
+        
+        (RULE (VAR A) (READ (EXP (composingAbstractionTypes A))) (WRITE (EXP \\A)))
+        
+        /replace util/
+        (
+            REWRITE
+            
+            (
+                RULE
+                (VAR Exp a B)
+                (READ (EXP (\\replace \\Exp \\a \\B)))
+                (WRITE (EXP (replacing (traverse Exp a B))))
+            )
+            
+            (RULE (VAR a1 B   ) (READ (EXP (traverse a1 a1 B))) (WRITE (EXP B)))
+            (RULE (VAR a1 a2 B) (READ (EXP (traverse a1 a2 B))) (WRITE (EXP a1)))
+            
+            (
+                RULE
+                (VAR L R A B)
+                (READ (EXP (traverse (L R) A B)))
+                (WRITE (EXP ((traverse L A B) (traverse R A B))))
+            )
+            (
+                RULE
+                (VAR L R A B)
+                (READ (EXP (traverse (IMPL L R) A B)))
+                (WRITE (EXP (IMPL (traverse L A B) (traverse R A B))))
+            )
+            
+            (RULE (VAR A) (READ (EXP (replacing A))) (WRITE (EXP \\A)))
+        )
+    )
+        
+    /application types/
+    (
+        REWRITE
+        
+        (
+            RULE
+            (VAR A)
+            (READ (EXP (\\composeApplicationTypes \\A)))
+            (WRITE (EXP (composingApplicationTypes A)))
+        )
+        
+        (
+            RULE
+            (VAR A B)
+            (READ (EXP ((IMPL A B) A)))
+            (WRITE (EXP B))
+        )
+        
+        (
+            RULE
+            (VAR A)
+            (READ (EXP (composingApplicationTypes A)))
+            (WRITE (EXP \\A))
+        )
+    )
+    
+    ////////////////////
+    /LC to SKI compiler/
+    ////////////////////
+    
+    (
+        REWRITE
+        
+        /entry point/
+        (RULE (VAR A) (READ (EXP (\\lcToSki \\A))) (WRITE (EXP (compilingToSki A))))
+        
+        /LC to SKI compiler/
+        (RULE (VAR x) (READ (EXP (lmbd x x))) (WRITE (EXP I)))
+        (RULE (VAR x E1 E2) (READ (EXP (lmbd x (E1 E2)))) (WRITE (EXP ((S (lmbd x E1)) (lmbd x E2)))))
+        (RULE (VAR x y) (READ (EXP (lmbd x y))) (WRITE (EXP (K y))))
+        
+        /exit point/
+        (RULE (VAR A) (READ (EXP (compilingToSki A))) (WRITE (EXP \\A)))
+    )
+    
+    //////////////////////////
+    /SKI calculus interpreter/
+    //////////////////////////
+    
+    (
+        REWRITE
+        
+        /entry point/
+        (RULE (VAR A) (READ (EXP (\\interpretSki \\A))) (WRITE (EXP (interpretingSki A))))
+        
+        /combinators/
+        (RULE (VAR X) (READ (EXP (I X))) (WRITE (EXP X)))
+        (RULE (VAR X Y) (READ (EXP ((K X) Y))) (WRITE (EXP X)))
+        (RULE (VAR X Y Z) (READ (EXP (((S X) Y) Z))) (WRITE (EXP ((X Z) (Y Z)))))
+        
+        /exit point/
+        (RULE (VAR A) (READ (EXP (interpretingSki A))) (WRITE (EXP \\A)))
+    )
+    
+    /////////////////////////////
+    /Hilbert style proof checker/
+    /////////////////////////////
+    
+    (
+        REWRITE
+        
+        /entry point/
+        (RULE (VAR A) (READ (EXP (\\proofCheck \\A))) (WRITE (EXP (proofChecking A))))
+        
+        /constant types/
+        (
+            RULE
+            (VAR a)
+            (READ (EXP (CONST a)))
+            (WRITE (EXP (typed (const a))))
+        )
+        (
+            RULE
+            (VAR A B)
+            (READ (EXP (IMPL (typed A) (typed B))))
+            (WRITE (EXP (typed (impl A B))))
+        )
+        
+        /axioms/
+        (
+            RULE
+            (VAR A B)
+            (READ (EXP I))
+            (WRITE (EXP (typed (impl A A))))
+        )
+        (
+            RULE
+            (VAR A B)
+            (READ (EXP K))
+            (WRITE (EXP (typed (impl A (impl B A)))))
+        )
+        (
+            RULE
+            (VAR A B C)
+            (READ (EXP S))
+            (WRITE (EXP (typed (impl (impl A (impl B C)) (impl (impl A B) (impl A C))))))
+        )
+        
+        /modus ponens/
+        (
+            RULE
+            (VAR A B)
+            (
+                READ
+                (
+                    EXP 
+                    (
+                        (typed (impl A B))
+                        (typed A)
+                    )
+                )
+            )
+            (
+                WRITE
+                (
+                    EXP 
+                    (typed B)
+                )
+            )
+        )
+        
+        /exit point/
+        (RULE (VAR A) (READ (EXP (proofChecking (typed A)))) (WRITE (EXP \\A)))
+        (RULE (VAR A) (READ (EXP (proofChecking A))) (WRITE (EXP \\"Proof checking error")))
+    )
+)
+`,
+"example-stlc-input":
+`
+(
+    stlc
+    (
+        (
+            (
+                lmbd
+                (typed x (CONST A))
+                (
+                    lmbd
+                    (typed y (IMPL (CONST A) (CONST B)))
+                    (y x)
+                )
+            )
+            (assert a (CONST A))
+        )
+        (assert b (IMPL (CONST A) (CONST B)))
+    )
+)
+`,
+
 
 "example-seq1":
 `

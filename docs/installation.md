@@ -6,7 +6,7 @@ There may be two possible uses of *Symbolverse* regarding its installation: Java
 
 *Symbolverse* may expose its functionality through javascript API (Application Programming Interface), both in browser and in Node.js.
 
-To access the API from Node.js, install this package: `npm i @tearflake/symbolverse`, and include the following line in your code:
+To access the API from Node.js, install it by: `npm install git+ssh://github.com/tearflake/symbolverse`, and include the following line in your code:
 
 ```
 const Rewriter = require('@tearflake/symbolverse');
