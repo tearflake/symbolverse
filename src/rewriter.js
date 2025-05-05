@@ -410,8 +410,14 @@ var Rewriter = (
                                         var resP1From = 2;
                                         var resP2From = getNextWhole (item.write, resP1From);
                                         var resTo = getNextWhole (item.write, resP2From);
-                                        if (resP2From + 1 < resTo && resTo === item.write.length - 1) {
-                                            var res = ["(", ...item.write.slice (resP1From, resP2From), ...item.write.slice (resP2From + 1, resTo - 1), ")"];
+                                        if (resP2From < resTo && resTo === item.write.length - 1) {
+                                            if (resP2From + 1 === resTo) {
+                                                var res = ["(", ...item.write.slice (resP1From, resP2From), ...item.write.slice (resP2From, resTo), ")"];
+                                            }
+                                            else {
+                                                var res = ["(", ...item.write.slice (resP1From, resP2From), ...item.write.slice (resP2From + 1, resTo - 1), ")"];
+                                            }
+                                            
                                             stack.push ({
                                                 phase: "test-whole",
                                                 write: res,
