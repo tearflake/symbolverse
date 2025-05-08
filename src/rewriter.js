@@ -25,8 +25,7 @@ var Rewriter = (
             else {
                 var output = produce (rules, input)
                 if (output.err) {
-                    var msg = Sexpr.getNode (strInput, output.path);
-                    return {err: output.err, found: msg.found, pos: msg.pos};
+                    return {err: output.err};
                 }
                 else {
                     return output;
@@ -238,7 +237,7 @@ var Rewriter = (
             while (stack.length > 1) {
                 if (stack.length >= 1024) {
                     item = stack[stack.length - 2];
-                    return {err: "Maximum call stack exceeded", path: item.phase === "test-parts" ? item.path.slice (0, item.path.length - 1) : item.path};
+                    return {err: "Maximum call stack exceeded"}
                 }
 
                 item = stack[stack.length - 1];
@@ -317,7 +316,10 @@ var Rewriter = (
                                 }
                                 else if (item.curRule.level > 0) {
                                     var cpd = getCommonParDist (item.curRule.parents, rules[item.ruleIndex].parents);
-                                    if ((cpd.d1 === 0 && cpd.d2 === 0) || (item.curRule.rule.maxLvlW <= item.curRule.level + cpd.d1 && rules[item.ruleIndex].rule.maxLvlR <= rules[item.ruleIndex].level + cpd.d2)) {
+                                    if ((cpd.d1 === 0 && cpd.d2 === 0) || 
+                                        rules[item.ruleIndex].rule.maxLvlR <= item.curRule.level + cpd.d1
+                                        //(item.curRule.rule.maxLvlW <= item.curRule.level + cpd.d1 && rules[item.ruleIndex].rule.maxLvlR <= rules[item.ruleIndex].level + cpd.d2)
+                                    ) {
                                         break;
                                     }
                                 }
