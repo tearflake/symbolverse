@@ -924,7 +924,7 @@ that modify a program’s state. It serves as a useful model for teaching operat
 denotational semantics, allowing researchers and students to formally reason about program
 behavior, correctness, and transformations in a structured yet approachable way.
 
-This example accepts input in the following BNF:
+This example expects input in the following BNF:
 
 \`\`\`
    <program> := (imp <statement>)
