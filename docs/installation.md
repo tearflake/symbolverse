@@ -51,7 +51,7 @@ Along with `Rewriter.compile (...)` function, we also have `Rewriter.compileFile
 
 ## command line access
 
-*Symbolverse* functions as a standalone executable operating on files. To build the executables from source code, do the following:
+*Symbolverse* may function as a standalone executable operating on files. To build the executables from source code, do the following:
 
 1. make sure you have git, Node.js, and npm installed in your system
 2. enter OS command prompt

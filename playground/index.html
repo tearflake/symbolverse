@@ -188,11 +188,13 @@
 
 <br/-->
 
-<div class="droplbl">2. computing platforms</div>
+<div class="droplbl">2. computing platforms tour</div>
 
 <div class="droplbl">&nbsp;&nbsp;&nbsp;&nbsp;2.1. imperative programming</div>
 
-        <a href="javascript:populate('example-imp'); ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - IMP interpreter (WIP)</a>
+        <a href="javascript:populate('example-boolarith');  ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - truth values: Boolean algebra</a>
+        <a href="javascript:populate('example-peanoarith'); ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - integers: Peano arithmetic</a>
+        <a href="javascript:populate('example-imp');        ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - IMP interpreter</a>
 
 <br/>
 
@@ -205,34 +207,17 @@
 
 <br-->
 
-<div class="droplbl">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.2.1. lambda calculus</div>
-
-        <a href="javascript:populate('example-lamb'); ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - LC to SKI compiler</a>
-
-<br/>
-
-<div class="droplbl">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.2.2. type inference</div>
-
-        <a href="javascript:populate('example-proof'    );">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Hilbert-style proof checker</a>
-
-<br>
-
-<div class="droplbl">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.2.3. program evaluator</div>
-
-        <a href="javascript:populate('example-ski');  ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - SKI calculus interpreter</a>
-
-<br/>
-
-<div class="droplbl">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.2.4. putting it all together</div>
-
-        <a href="javascript:populate('example-stlc');  ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - STLC implementation</a>
+        <a href="javascript:populate('example-lamb'); ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - lambda calculus:  LC to SKI compiler</a>
+        <a href="javascript:populate('example-proof'    );">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - type inference:  Hilbert-style proof checker</a>
+        <a href="javascript:populate('example-ski');  ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - program evaluator:  SKI calculus interpreter</a>
+        <a href="javascript:populate('example-stlc');  ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - putting it all together:  STLC implementation</a>
 
 <br/>
 
 
 <div class="droplbl">&nbsp;&nbsp;&nbsp;&nbsp;2.3. logic programming</div>
 
-        <a href="javascript:populate('example-log'); ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Hilbert-style proof finder (WIP)</a>
+        <a href="javascript:populate('example-log'); ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Hilbert program: SKI expressions enumerator</a>
 
 <br/>
         </nobr></b>
@@ -473,7 +458,7 @@
                 setTimeout (function (){
                     var output = Rewriter.rewrite (rules, input1.getValue ());
                     if (output.err) {
-                        output1.value = "input:\n" + output.err + " at " + "(" + (output.pos.y + 1) + ", " + (output.pos.x + 1) + ")" + (rules.found ? ", found: " + rules.found : "");
+                        output1.value = "input:\n" + output.err + (output.pos ? " at " + "(" + (output.pos.y + 1) + ", " + (output.pos.x + 1) + ")" : "") + (rules.found ? ", found: " + rules.found : "");
                         document.getElementById("tm").innerHTML = "";
                     } else {
                         var trewritten = (Date.now () - tm)

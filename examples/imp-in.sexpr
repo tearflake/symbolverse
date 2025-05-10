@@ -1,0 +1,38 @@
+
+/Fibonacci number generator: store number index in `param`; read the fibonacci number in `result`/
+
+(
+    imp
+    (
+        seq
+        (assign param 7)
+        (
+            if
+            (eq param 1)
+            (assign result 0)
+            (
+                if
+                (eq param 2)
+                (assign result 1)
+                (
+                    seq
+                    (assign i 2)
+                    (assign a1 0)
+                    (assign a2 1)
+                    (
+                        while
+                        (not (eq i param))
+                        (
+                            seq
+                            (assign result (add a1 a2))
+                            (assign a1 a2)
+                            (assign a2 result)
+                            (assign i (add i 1))
+                        )
+                    )
+                )
+            )
+        )
+    )
+)
+

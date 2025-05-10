@@ -21,22 +21,22 @@ types), it offers a clear and elegant foundation for understanding the relations
 types, computation, and logical deduction.
 
 In this implementation, primitive terms are represented as constants. They have to be explicitly
-typed with `(assert <LOWERCASE-LETTER> <type>)` syntax. Defining constants is allowed only
+typed with `(assert <LOWERCASE-ATOM> <type>)` syntax. Defining constants is allowed only
 outside of all of `(lmbd ... ...)` expressions, and applied as shown in input example. Also,
 all the variables within lambda expressions have to be bound.
 
-Syntax of STLC in this implementation is expected to follow the following kind of BNF rules:
+Syntax of STLC in this implementation is expected to comply the following kind of BNF rules:
 
 ```
-    <start> := stlc <lexp>
+    <start> := (stlc <lexp>)
 
      <lexp> := (lmbd (typed <var> <type>) <lexp>)
              | (<lexp> <lexp>)
              | <var>
 
-      <var> := <LOWERCASE-LETTER>
+      <var> := <LOWERCASE-ATOM>
 
-     <type> := (CONST <UPPERCASE-LETTER>)
+     <type> := (CONST <UPPERCASE-ATOM>)
              | (IMPL <type> <type>)
 ```
 
@@ -63,7 +63,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
         RULE
         (VAR A B)
         (READ (EXP (typeEq A A B)))
-        (WRITE (EXP (finish (result (value (interpretSki (lcToSki (getValues B)))) (type A)))))
+        (WRITE (EXP (return (result (value (interpretSki (lcToSki (getValues B)))) (type A)))))
     )
 
     /failure/
@@ -71,43 +71,43 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
         RULE
         (VAR A B C)
         (READ (EXP (typeEq A B C)))
-        (WRITE (EXP (finish "Typing error")))
+        (WRITE (EXP (return "Typing error")))
     )
     
     /end/
-    (RULE (VAR A B) (READ (EXP (finish A))) (WRITE (EXP \A)))
+    (RULE (VAR A B) (READ (EXP (return A))) (WRITE (EXP \A)))
 
-    /lift/
+    /lift lettercase/
     (
         REWRITE
-        (RULE (VAR A) (READ (EXP (\lift \A))) (WRITE (EXP (lifting A))))
+        (RULE (VAR A) (READ (EXP (\lift \A))) (WRITE (EXP (return A))))
         
         (RULE (READ (EXP const)) (WRITE (EXP CONST)))
         (RULE (READ (EXP impl)) (WRITE (EXP IMPL)))
         
-        (RULE (VAR A) (READ (EXP (lifting A))) (WRITE (EXP \A)))
+        (RULE (VAR A) (READ (EXP (return A))) (WRITE (EXP \A)))
     )
     
     /getTypes/
     (
         REWRITE
-        (RULE (VAR A) (READ (EXP (\getTypes \A))) (WRITE (EXP (gettingTypes A))))
+        (RULE (VAR A) (READ (EXP (\getTypes \A))) (WRITE (EXP (return A))))
         
         (RULE (VAR A B) (READ (EXP (typed A B))) (WRITE (EXP A)))
         (RULE (VAR A B) (READ (EXP (assert A B))) (WRITE (EXP B)))
         
-        (RULE (VAR A) (READ (EXP (gettingTypes A))) (WRITE (EXP \A)))
+        (RULE (VAR A) (READ (EXP (return A))) (WRITE (EXP \A)))
     )
     
     /getValues/
     (
         REWRITE
-        (RULE (VAR A) (READ (EXP (\getValues \A))) (WRITE (EXP (gettingValues A))))
+        (RULE (VAR A) (READ (EXP (\getValues \A))) (WRITE (EXP (return A))))
         
         (RULE (VAR A B) (READ (EXP (typed A B))) (WRITE (EXP A)))
         (RULE (VAR A B) (READ (EXP (assert A B))) (WRITE (EXP A)))
         
-        (RULE (VAR A) (READ (EXP (gettingValues A))) (WRITE (EXP \A)))
+        (RULE (VAR A) (READ (EXP (return A))) (WRITE (EXP \A)))
     )
     
     ///////////////////////////
@@ -128,7 +128,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
             RULE
             (VAR A)
             (READ (EXP (\composeAbstractionTypes \A)))
-            (WRITE (EXP (composingAbstractionTypes A)))
+            (WRITE (EXP (return A)))
         )
         
         (
@@ -173,7 +173,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
             )
         )
         
-        (RULE (VAR A) (READ (EXP (composingAbstractionTypes A))) (WRITE (EXP \A)))
+        (RULE (VAR A) (READ (EXP (return A))) (WRITE (EXP \A)))
         
         /replace util/
         (
@@ -183,7 +183,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
                 RULE
                 (VAR Exp a B)
                 (READ (EXP (\replace \Exp \a \B)))
-                (WRITE (EXP (replacing (traverse Exp a B))))
+                (WRITE (EXP (return (traverse Exp a B))))
             )
             
             (RULE (VAR a1 B   ) (READ (EXP (traverse a1 a1 B))) (WRITE (EXP B)))
@@ -202,7 +202,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
                 (WRITE (EXP (IMPL (traverse L A B) (traverse R A B))))
             )
             
-            (RULE (VAR A) (READ (EXP (replacing A))) (WRITE (EXP \A)))
+            (RULE (VAR A) (READ (EXP (return A))) (WRITE (EXP \A)))
         )
     )
         
@@ -214,7 +214,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
             RULE
             (VAR A)
             (READ (EXP (\composeApplicationTypes \A)))
-            (WRITE (EXP (composingApplicationTypes A)))
+            (WRITE (EXP (return A)))
         )
         
         (
@@ -227,13 +227,119 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
         (
             RULE
             (VAR A)
-            (READ (EXP (composingApplicationTypes A)))
+            (READ (EXP (return A)))
             (WRITE (EXP \A))
         )
     )
     
-    (FILE "lambda-calc.sv")
-    (FILE "ski-calc.sv")
-    (FILE "hilbert.sv")
+    ////////////////////
+    /LC to SKI compiler/
+    ////////////////////
+    
+    (
+        REWRITE
+        
+        /entry point/
+        (RULE (VAR A) (READ (EXP (\lcToSki \A))) (WRITE (EXP (return A))))
+        
+        /LC to SKI compiler/
+        (RULE (VAR x) (READ (EXP (lmbd x x))) (WRITE (EXP <I>)))
+        (RULE (VAR x E1 E2) (READ (EXP (lmbd x (E1 E2)))) (WRITE (EXP ((<S> (lmbd x E1)) (lmbd x E2)))))
+        (RULE (VAR x y) (READ (EXP (lmbd x y))) (WRITE (EXP (<K> y))))
+        
+        /exit point/
+        (RULE (VAR A) (READ (EXP (return A))) (WRITE (EXP \A)))
+    )
+    
+    //////////////////////////
+    /SKI calculus interpreter/
+    //////////////////////////
+    
+    (
+        REWRITE
+        
+        /entry point/
+        (RULE (VAR A) (READ (EXP (\interpretSki \A))) (WRITE (EXP (return A))))
+        
+        /combinators/
+        (RULE (VAR X) (READ (EXP (<I> X))) (WRITE (EXP X)))
+        (RULE (VAR X Y) (READ (EXP ((<K> X) Y))) (WRITE (EXP X)))
+        (RULE (VAR X Y Z) (READ (EXP (((<S> X) Y) Z))) (WRITE (EXP ((X Z) (Y Z)))))
+        
+        /exit point/
+        (RULE (VAR A) (READ (EXP (return A))) (WRITE (EXP \A)))
+    )
+    
+    /////////////////////////////
+    /Hilbert style proof checker/
+    /////////////////////////////
+    
+    (
+        REWRITE
+        
+        /entry point/
+        (RULE (VAR A) (READ (EXP (\proofCheck \A))) (WRITE (EXP (return A))))
+        
+        /constant types/
+        (
+            RULE
+            (VAR a)
+            (READ (EXP (CONST a)))
+            (WRITE (EXP (typed (const a))))
+        )
+        (
+            RULE
+            (VAR A B)
+            (READ (EXP (IMPL (typed A) (typed B))))
+            (WRITE (EXP (typed (impl A B))))
+        )
+        
+        /axioms/
+        (
+            RULE
+            (VAR A B)
+            (READ (EXP <I>))
+            (WRITE (EXP (typed (impl A A))))
+        )
+        (
+            RULE
+            (VAR A B)
+            (READ (EXP <K>))
+            (WRITE (EXP (typed (impl A (impl B A)))))
+        )
+        (
+            RULE
+            (VAR A B C)
+            (READ (EXP <S>))
+            (WRITE (EXP (typed (impl (impl A (impl B C)) (impl (impl A B) (impl A C))))))
+        )
+        
+        /modus ponens/
+        (
+            RULE
+            (VAR A B)
+            (
+                READ
+                (
+                    EXP 
+                    (
+                        (typed (impl A B))
+                        (typed A)
+                    )
+                )
+            )
+            (
+                WRITE
+                (
+                    EXP 
+                    (typed B)
+                )
+            )
+        )
+        
+        /exit point/
+        (RULE (VAR A) (READ (EXP (return (typed A)))) (WRITE (EXP \A)))
+        (RULE (VAR A) (READ (EXP (return A))) (WRITE (EXP \"Proof checking error")))
+    )
 )
 

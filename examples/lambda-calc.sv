@@ -35,7 +35,7 @@ This allows computation to be represented without variable binding.
     REWRITE
     
     /entry point/
-    (RULE (VAR A) (READ (EXP (\lcToSki \A))) (WRITE (EXP (compilingToSki A))))
+    (RULE (VAR A) (READ (EXP (\lcToSki \A))) (WRITE (EXP (return A))))
     
     /LC to SKI compiler/
     (RULE (VAR x) (READ (EXP (lmbd x x))) (WRITE (EXP <I>)))
@@ -43,6 +43,6 @@ This allows computation to be represented without variable binding.
     (RULE (VAR x y) (READ (EXP (lmbd x y))) (WRITE (EXP (<K> y))))
     
     /exit point/
-    (RULE (VAR A) (READ (EXP (compilingToSki A))) (WRITE (EXP \A)))
+    (RULE (VAR A) (READ (EXP (return A))) (WRITE (EXP \A)))
 )
 
