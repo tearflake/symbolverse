@@ -935,7 +935,7 @@ This example expects input in the following BNF:
               | <while>
               | skip
 
-<assignment> := (assign <IDENTIFIER> <expression>)
+<assignment> := (asgn <IDENTIFIER> <expression>)
 
   <sequence> := (seq <statement>+)
 
@@ -974,7 +974,7 @@ This example expects input in the following BNF:
         
         (RULE (VAR A) (READ (EXP (\\denormInstr \\A))) (WRITE (EXP (return A))))
         
-        (RULE (VAR A B) (READ (EXP (assign (A (B ()))))) (WRITE (EXP (assign A B))))
+        (RULE (VAR A B) (READ (EXP (asgn (A (B ()))))) (WRITE (EXP (asgn A B))))
         (RULE (VAR A B C) (READ (EXP (if (A (B (C ())))))) (WRITE (EXP (if A B C))))
         (RULE (VAR A B) (READ (EXP (while (A (B ()))))) (WRITE (EXP (while A B))))
         
@@ -993,7 +993,7 @@ This example expects input in the following BNF:
         (RULE (VAR Vars) (READ (EXP (do (seq ()) Vars))) (WRITE (EXP Vars)))
         (RULE (VAR A B Vars) (READ (EXP (do (seq (A B)) Vars))) (WRITE (EXP (do (seq B) (do A Vars)))))
         
-        (RULE (VAR A B Vars) (READ (EXP (do (assign A B) Vars))) (WRITE (EXP (bounce (calc (doAssign A B Vars))))))
+        (RULE (VAR A B Vars) (READ (EXP (do (asgn A B) Vars))) (WRITE (EXP (bounce (calc (doAssign A B Vars))))))
         
         (RULE (VAR A B C Vars) (READ (EXP (do (if A B C) Vars))) (WRITE (EXP (iff (bounce (calc (replaceExp A Vars))) B C Vars))))
         (RULE (VAR B C Vars) (READ (EXP (iff true B C Vars))) (WRITE (EXP (do B Vars))))
@@ -1371,29 +1371,29 @@ This example expects input in the following BNF:
     imp
     (
         seq
-        (assign param 7)
+        (asgn param 7)
         (
             if
             (eq param 1)
-            (assign result 0)
+            (asgn result 0)
             (
                 if
                 (eq param 2)
-                (assign result 1)
+                (asgn result 1)
                 (
                     seq
-                    (assign i 2)
-                    (assign a1 0)
-                    (assign a2 1)
+                    (asgn i 2)
+                    (asgn a1 0)
+                    (asgn a2 1)
                     (
                         while
                         (not (eq i param))
                         (
                             seq
-                            (assign result (add a1 a2))
-                            (assign a1 a2)
-                            (assign a2 result)
-                            (assign i (add i 1))
+                            (asgn result (add a1 a2))
+                            (asgn a1 a2)
+                            (asgn a2 result)
+                            (asgn i (add i 1))
                         )
                     )
                 )
