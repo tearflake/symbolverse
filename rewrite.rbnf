@@ -1,5 +1,5 @@
 ```
-     <start> := (REWRITE <expression>+)
+     <start> := (DREWRITE <expression>+)
               | (FILE <ATOMIC>)
 
 <expression> := (RULE (VAR <ATOMIC>+)? (READ (EXP <ANY>)) (WRITE (EXP <ANY>)))
