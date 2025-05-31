@@ -1,5 +1,5 @@
 
-/Fibonacci number generator: store number index in `param`; read the fibonacci number in `result`/
+/Fibonacci number generator: store number index in `param`; read the indexed number in `result`/
 
 (
     imp

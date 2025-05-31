@@ -16,7 +16,7 @@ Operations defined in this example:
 ///
 
 (
-    REWRITE
+    DREWRITE
     (RULE (VAR A) (READ (EXP (\bool \A))) (WRITE (EXP (return A))))
     
     /truth table for `not` operator/

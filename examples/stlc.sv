@@ -14,7 +14,7 @@ In theorem proving, especially in systems based on the Curry-Howard corresponden
 serves as a means to encode logical propositions as types and proofs as terms. Under this
 correspondence, proving a theorem is equivalent to constructing a term of a given type. For
 example, a proof of a proposition like `A -> B` is represented by a function that, given a proof
-of  `A`, produces a proof of `B`. This tight connection between logic and computation allows
+of `A`, produces a proof of `B`. This tight connection between logic and computation allows
 automated theorem provers and proof assistants to leverage type checking as a means of proof
 verification. While the STLC lacks the expressive power of richer type systems (like dependent
 types), it offers a clear and elegant foundation for understanding the relationship between
@@ -45,7 +45,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
 ///
 
 (
-    REWRITE
+    DREWRITE
     
     /begin/
     (RULE (VAR A) (READ (EXP (\stlc \A))) (WRITE (EXP (evaluating A A))))
@@ -79,7 +79,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
 
     /lift lettercase/
     (
-        REWRITE
+        DREWRITE
         (RULE (VAR A) (READ (EXP (\lift \A))) (WRITE (EXP (return A))))
         
         (RULE (READ (EXP const)) (WRITE (EXP CONST)))
@@ -90,7 +90,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
     
     /getTypes/
     (
-        REWRITE
+        DREWRITE
         (RULE (VAR A) (READ (EXP (\getTypes \A))) (WRITE (EXP (return A))))
         
         (RULE (VAR A B) (READ (EXP (typed A B))) (WRITE (EXP A)))
@@ -101,7 +101,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
     
     /getValues/
     (
-        REWRITE
+        DREWRITE
         (RULE (VAR A) (READ (EXP (\getValues \A))) (WRITE (EXP (return A))))
         
         (RULE (VAR A B) (READ (EXP (typed A B))) (WRITE (EXP A)))
@@ -123,7 +123,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
     
     /abstraction types/
     (
-        REWRITE
+        DREWRITE
         (
             RULE
             (VAR A)
@@ -177,7 +177,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
         
         /replace util/
         (
-            REWRITE
+            DREWRITE
             
             (
                 RULE
@@ -208,7 +208,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
         
     /application types/
     (
-        REWRITE
+        DREWRITE
         
         (
             RULE
@@ -232,114 +232,8 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
         )
     )
     
-    ////////////////////
-    /LC to SKI compiler/
-    ////////////////////
-    
-    (
-        REWRITE
-        
-        /entry point/
-        (RULE (VAR A) (READ (EXP (\lcToSki \A))) (WRITE (EXP (return A))))
-        
-        /LC to SKI compiler/
-        (RULE (VAR x) (READ (EXP (lmbd x x))) (WRITE (EXP <I>)))
-        (RULE (VAR x E1 E2) (READ (EXP (lmbd x (E1 E2)))) (WRITE (EXP ((<S> (lmbd x E1)) (lmbd x E2)))))
-        (RULE (VAR x y) (READ (EXP (lmbd x y))) (WRITE (EXP (<K> y))))
-        
-        /exit point/
-        (RULE (VAR A) (READ (EXP (return A))) (WRITE (EXP \A)))
-    )
-    
-    //////////////////////////
-    /SKI calculus interpreter/
-    //////////////////////////
-    
-    (
-        REWRITE
-        
-        /entry point/
-        (RULE (VAR A) (READ (EXP (\interpretSki \A))) (WRITE (EXP (return A))))
-        
-        /combinators/
-        (RULE (VAR X) (READ (EXP (<I> X))) (WRITE (EXP X)))
-        (RULE (VAR X Y) (READ (EXP ((<K> X) Y))) (WRITE (EXP X)))
-        (RULE (VAR X Y Z) (READ (EXP (((<S> X) Y) Z))) (WRITE (EXP ((X Z) (Y Z)))))
-        
-        /exit point/
-        (RULE (VAR A) (READ (EXP (return A))) (WRITE (EXP \A)))
-    )
-    
-    /////////////////////////////
-    /Hilbert style proof checker/
-    /////////////////////////////
-    
-    (
-        REWRITE
-        
-        /entry point/
-        (RULE (VAR A) (READ (EXP (\proofCheck \A))) (WRITE (EXP (return A))))
-        
-        /constant types/
-        (
-            RULE
-            (VAR a)
-            (READ (EXP (CONST a)))
-            (WRITE (EXP (typed (const a))))
-        )
-        (
-            RULE
-            (VAR A B)
-            (READ (EXP (IMPL (typed A) (typed B))))
-            (WRITE (EXP (typed (impl A B))))
-        )
-        
-        /axioms/
-        (
-            RULE
-            (VAR A B)
-            (READ (EXP <I>))
-            (WRITE (EXP (typed (impl A A))))
-        )
-        (
-            RULE
-            (VAR A B)
-            (READ (EXP <K>))
-            (WRITE (EXP (typed (impl A (impl B A)))))
-        )
-        (
-            RULE
-            (VAR A B C)
-            (READ (EXP <S>))
-            (WRITE (EXP (typed (impl (impl A (impl B C)) (impl (impl A B) (impl A C))))))
-        )
-        
-        /modus ponens/
-        (
-            RULE
-            (VAR A B)
-            (
-                READ
-                (
-                    EXP 
-                    (
-                        (typed (impl A B))
-                        (typed A)
-                    )
-                )
-            )
-            (
-                WRITE
-                (
-                    EXP 
-                    (typed B)
-                )
-            )
-        )
-        
-        /exit point/
-        (RULE (VAR A) (READ (EXP (return (typed A)))) (WRITE (EXP \A)))
-        (RULE (VAR A) (READ (EXP (return A))) (WRITE (EXP \"Proof checking error")))
-    )
+    (FILE "lambda-calc.sv")
+    (FILE "ski-calc.sv")
+    (FILE "hilbert.sv")
 )
 

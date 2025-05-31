@@ -23,7 +23,7 @@ Below, regardless of accessing from Node.js or browser, use the API as:
 ```
 var strRules = `
     (
-        REWRITE
+        DREWRITE
         (
             RULE 
             (READ  (EXP (\\hello \\machine)))

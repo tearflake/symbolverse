@@ -63,8 +63,8 @@ var Rewriter = (
         var compile = async function (rules, file, level, parents, Files, rec) {
             var syntax = `
                 (
-                    REWRITE
-                    (RULE (READ (EXP start)) (WRITE (EXP (\\REWRITE expressions))))
+                    DREWRITE
+                    (RULE (READ (EXP start)) (WRITE (EXP (\\DREWRITE expressions))))
                     (RULE (READ (EXP start)) (WRITE (EXP (\\FILE (ATOMIC ()))   )))
                     
                     (RULE (READ (EXP expressions)) (WRITE (EXP (expression expressions))))
@@ -132,13 +132,17 @@ var Rewriter = (
             stack.push ({ast: arr, level: level, parents});
             while (stack.length > 0){
                 var node = stack.pop ();
-                if (node.ast[0] === "REWRITE") {
+                if (node.ast[0] === "DREWRITE") {
                     if (node.index) {
                         p.pop ();
                         p.push (node.index)
                     }
                     
-                    for(var i = node.ast.length - 1; i >= 1 ; i--) {
+                    for(var i = node.ast.length - 1; i >= 1 && node.ast[i] !== "RULE" ; i--) {
+                        stack.push ({parents: [node.ast, node.parents], ast: node.ast[i], level: node.level + 1, index: i});
+                    }
+                    
+                    for(var i = node.ast.length - 1; i >= 1 && node.ast[i] === "RULE" ; i--) {
                         stack.push ({parents: [node.ast, node.parents], ast: node.ast[i], level: node.level + 1, index: i});
                     }
                 }
@@ -237,7 +241,7 @@ var Rewriter = (
             while (stack.length > 1) {
                 if (stack.length >= 1024) {
                     item = stack[stack.length - 2];
-                    return {err: "Maximum call stack exceeded"}
+                    return {err: "Maximum call stack size exceeded"}
                 }
 
                 item = stack[stack.length - 1];
@@ -349,12 +353,12 @@ var Rewriter = (
                                         if (Ruler.levelSplit (item.write[2]).esc === Ruler.levelSplit (item.write[3]).esc) {
                                             var res1 = Ruler.levelSplit (item.write[2]).atom;
                                             if (res1 === "NIL") {
-                                                res1 = ""
+                                                res1 = "";
                                             }
                                             
                                             var res2 = Ruler.levelSplit (item.write[3]).atom;
                                             if (res2 === "NIL") {
-                                                res2 = ""
+                                                res2 = "";
                                             }
 
                                             if (res1 + res2 === "") {
@@ -474,7 +478,16 @@ var Rewriter = (
                                     }
                                 }
                             } else {
-                                var v = Ruler.unify (item.write, item.fromW, item.toW, rules[item.ruleIndex].rule.read, 0, rules[item.ruleIndex].rule.read.length, rules[item.ruleIndex].level, rules[item.ruleIndex].vars);
+                                try {
+                                    var v = Ruler.unify (item.write, item.fromW, item.toW, rules[item.ruleIndex].rule.read, 0, rules[item.ruleIndex].rule.read.length, rules[item.ruleIndex].level, rules[item.ruleIndex].vars);
+                                } catch (e) {
+                                    if (e.message === "Maximum call stack size exceeded") {
+                                        v = undefined;
+                                    }
+                                    else {
+                                        throw e;
+                                    }
+                                }
                                 if (v) {
                                     var substed = Ruler.subst (rules[item.ruleIndex].rule.write, v.vars);
                                     stack.push ({

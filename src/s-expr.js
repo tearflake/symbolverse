@@ -30,6 +30,7 @@ var Sexpr = (
         err[8] = "Expected whitespace error";
         err[9] = "Expected newline error";
         err[10] = "Incorrect escaping error";
+        err[11] = "Can not use reserved character '*'";
         
         var parse = function (text) {
             var m = createMatrix (text);
@@ -190,6 +191,9 @@ var Sexpr = (
                     else {
                         currAtom = escaped;
                         while (' /()"'.indexOf (currChar) === -1 && currChar !== undefined) {
+                            if (currChar === '*') {
+                                return {err: err[11], pos: fixPos ({y: pos[y], x: pos[x]}, m)};
+                            }
                             currAtom += currChar;
                             pos[x]++;
                             currChar = m[pos[y]][pos[x]];

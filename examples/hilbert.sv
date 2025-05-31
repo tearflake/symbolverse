@@ -39,7 +39,7 @@ S = (impl (impl A (impl B C)) (impl (impl A B) (impl A C)))
 ///
 
 (
-    REWRITE
+    DREWRITE
     
     /entry point/
     (RULE (VAR A) (READ (EXP (\proofCheck \A))) (WRITE (EXP (proofChecking A))))
