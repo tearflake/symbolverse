@@ -1,4 +1,4 @@
-# Symbolverse Specification
+# Symbolverse
 
 > **[about document]**  
 > Introduction to *Symbolverse* term rewriting framework operating on S-expressions
