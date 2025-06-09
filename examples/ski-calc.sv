@@ -12,7 +12,7 @@ theory.
 ///
 
 (
-    DREWRITE
+    REWRITE
     
     /entry point/
     (RULE (VAR A) (READ (EXP (\interpretSki \A))) (WRITE (EXP (interpretingSki A))))

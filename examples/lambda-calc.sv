@@ -32,7 +32,7 @@ This allows computation to be represented without variable binding.
 ///
 
 (
-    DREWRITE
+    REWRITE
     
     /entry point/
     (RULE (VAR A) (READ (EXP (\lcToSki \A))) (WRITE (EXP (return A))))

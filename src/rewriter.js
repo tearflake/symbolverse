@@ -63,8 +63,8 @@ var Rewriter = (
         var compile = async function (rules, file, level, parents, Files, rec) {
             var syntax = `
                 (
-                    DREWRITE
-                    (RULE (READ (EXP start)) (WRITE (EXP (\\DREWRITE expressions))))
+                    REWRITE
+                    (RULE (READ (EXP start)) (WRITE (EXP (\\REWRITE expressions))))
                     (RULE (READ (EXP start)) (WRITE (EXP (\\FILE (ATOMIC ()))   )))
                     
                     (RULE (READ (EXP expressions)) (WRITE (EXP (expression expressions))))
@@ -132,7 +132,7 @@ var Rewriter = (
             stack.push ({ast: arr, level: level, parents});
             while (stack.length > 0){
                 var node = stack.pop ();
-                if (node.ast[0] === "DREWRITE") {
+                if (node.ast[0] === "REWRITE") {
                     if (node.index) {
                         p.pop ();
                         p.push (node.index)

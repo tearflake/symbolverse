@@ -38,7 +38,4 @@
     - renamed `UNBOUND` keyword to `FREEVAR` in output
     - renamed `FETCH` keyword to `FILE`
 
-## Mar, 2025.
 
-- v0.3.x
-    - renamed `REWRITE` keyword to `DREWRITE` 

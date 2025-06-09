@@ -50,7 +50,7 @@ The act of applying rewrite rules to a term is called reduction. Repeated applic
 In computer science, the syntax of a computer language is the set of rules that defines the combinations of symbols that are considered to be correctly structured statements or expressions in that language. Symbolverse language itself resembles a kind of S-expression. S-expressions consist of lists of atoms or other S-expressions where lists are surrounded by parenthesis. In Symbolverse, the first list element to the left determines a type of a list. There are a few predefined list types used for data transformation depicted by the following relaxed kind of Backus-Naur form syntax rules:
 
 ```
-     <start> := (DREWRITE <expression>+)
+     <start> := (REWRITE <expression>+)
               | (FILE <ATOMIC>)
 
 <expression> := (RULE (VAR <ATOMIC>+)? (READ (EXP <ANY>)) (WRITE (EXP <ANY>)))
@@ -77,7 +77,7 @@ In addition to the exposed grammar, user comments have no meaning to the system,
 Semantics of Symbolverse, as a study of meaning, reference, or truth of Symbolverse, may be defined in different ways. For this occasion, we choose a nested bulleted list explanation of how different Symbolverse code elements behave:
 
 - Program structure
-    - A program starts with a top-level expression: `(DREWRITE <expression>+)`
+    - A program starts with a top-level expression: `(REWRITE <expression>+)`
     - Each `<expression>` is a rewrite rule: `(RULE (VAR <ATOMIC>+)? (READ (EXP <ANY>)) (WRITE (EXP <ANY>)))`
         - `VAR`: Declares pattern variables local to the rule.
         - `READ`: S-expression pattern to match.
@@ -121,7 +121,7 @@ output: `(hello world)`
 ///
 
 (
-    DREWRITE
+    REWRITE
 
     (RULE (READ (EXP (\hello \machine))) (WRITE (EXP (\hello \world))))
 )
@@ -140,7 +140,7 @@ output: `(hello Name)`
 ///
 
 (
-    DREWRITE
+    REWRITE
 
     (RULE (VAR Name) (READ (EXP (\greet \Name))) (WRITE (EXP (\hello \Name))))
 )
@@ -161,7 +161,7 @@ output: `(makeToy doll/car)`
 ///
 
 (
-    DREWRITE
+    REWRITE
 
     (RULE (READ (EXP (\isGood \girl))) (WRITE (EXP (\makeToy \doll))))
     (RULE (READ (EXP (\isGood \boy) )) (WRITE (EXP (\makeToy \car) )))
@@ -181,7 +181,7 @@ output: `(isTitled Name astronaut/doctor)`
 ///
 
 (
-    DREWRITE
+    REWRITE
 
     (
         RULE
@@ -213,7 +213,7 @@ output: `(shadowsDo expand/shrink)`
 ///
 
 (
-    DREWRITE
+    REWRITE
 
     (RULE (READ (EXP (\sunIs \rising) )) (WRITE (EXP (itIs morning)  )))
     (RULE (READ (EXP (\sunIs \falling))) (WRITE (EXP (itIs afternoon))))
@@ -241,7 +241,7 @@ output: `(weigthtsMoreThan Object2 Object1)`
 ///
 
 (
-    DREWRITE
+    REWRITE
 
     (
         RULE
@@ -262,7 +262,7 @@ so that when we pass `(orbitsAround earth sun)`, we get `(weightsMoreThan sun ea
 
 #### scoped rules
 
-With *Symbolverse*, it is possible or write layered code where each layer represents a certain depth of abstraction area. The objective of these layers is separating atoms and variables so we can use them as private entities not interacting between adjacent layers. New layers are denoted within `(DREWRITE ...)` sections, and can be nested. Consider the following example:
+With *Symbolverse*, it is possible or write layered code where each layer represents a certain depth of abstraction area. The objective of these layers is separating atoms and variables so we can use them as private entities not interacting between adjacent layers. New layers are denoted within `(REWRITE ...)` sections, and can be nested. Consider the following example:
 
 ```
 ///
@@ -273,7 +273,7 @@ output: `(fruitGrows Fruit)`
 ///
 
 (
-    DREWRITE
+    REWRITE
     
     /entry point/
     (RULE (VAR Fruit) (READ (EXP (\plantSeed \Fruit))) (WRITE (EXP (plantSeed Fruit))))
@@ -282,7 +282,7 @@ output: `(fruitGrows Fruit)`
     (RULE (VAR Fruit) (READ (EXP (fruitGrows Fruit))) (WRITE (EXP (\fruitGrows \Fruit))))
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR Fruit) (READ (EXP (\plantSeed \Fruit)   )) (WRITE (EXP (treeForms Fruit)     )))
         (RULE (VAR Fruit) (READ (EXP (treeForms Fruit)     )) (WRITE (EXP (blooms Fruit)        )))
@@ -292,7 +292,7 @@ output: `(fruitGrows Fruit)`
 )
 ```
 
-Here, in the first level, we used two rules only to pass the information up from and down to program input/output scope. Next, in the nested `(DREWRITE ...)` section, we created a separate scope which represents a chained actions between seeding a plant and growing a fruit. To reach atoms and variables from the outer layers, we have to escape them with `\` character, like in `(READ (EXP (\plantSeed \Fruit)))` section. Similarly, atoms and variables created within that scope are not visible outside of that scope unless they are escaped with `\` character, like in `(WRITE (EXP (\fruitGrows \Fruit)))` section.
+Here, in the first level, we used two rules only to pass the information up from and down to program input/output scope. Next, in the nested `(REWRITE ...)` section, we created a separate scope which represents a chained actions between seeding a plant and growing a fruit. To reach atoms and variables from the outer layers, we have to escape them with `\` character, like in `(READ (EXP (\plantSeed \Fruit)))` section. Similarly, atoms and variables created within that scope are not visible outside of that scope unless they are escaped with `\` character, like in `(WRITE (EXP (\fruitGrows \Fruit)))` section.
 
 It is also possible to reach more distant parent scopes by repeating a number of `\` characters where the number of repetitions denotes the depth difference to the parent scope we are referring to. This way, it is possible to refer to adjacent scopes or their children escaped atoms and variables if their escaping amount matches the referrer. There is also a possibility to escape atoms and variables at the right sides, which we may use to push down the processed values, only to pull them up after the processing is done.
 
@@ -304,7 +304,7 @@ Sometimes we have to construct variable length lists, or concatenate atoms to pr
 
 ```
 (
-    DREWRITE
+    REWRITE
     
     /sub-atom/
     (RULE (VAR A) (READ (EXP (\headA A))) (WRITE (EXP (HEADA \A))))
@@ -370,7 +370,7 @@ Here, variable `F` represents a bound variable, while variables `X` and `Y` are 
 
 #### fetching external files
 
-*Symbolverse* code may import rules saved in external files. To do that, we use `(FILE ...)` section wherever we may expect `(DREWRITE ...)` section. `FILE` section accepts one parameter, a file name. The file name is expressed with or without directory, relative to path of the current code file. If we use special characters, such as spaces, we enclose the file name within double quotes. Thus, `FILE` provides us a packaging system spanned through directories of our interest. Together with constants/variables escaping system, we may form structures of any depth reachable from the inclusion source code files.
+*Symbolverse* code may import rules saved in external files. To do that, we use `(FILE ...)` section wherever we may expect `(REWRITE ...)` section. `FILE` section accepts one parameter, a file name. The file name is expressed with or without directory, relative to path of the current code file. If we use special characters, such as spaces, we enclose the file name within double quotes. Thus, `FILE` provides us a packaging system spanned through directories of our interest. Together with constants/variables escaping system, we may form structures of any depth reachable from the inclusion source code files.
 
 ## 4. conclusion
 

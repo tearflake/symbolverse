@@ -48,7 +48,7 @@ This example expects input in the following BNF:
 ///
 
 (
-    DREWRITE
+    REWRITE
     
     (RULE (VAR A) (READ (EXP (\imp \A))) (WRITE (EXP (return (denormVars (interpret (denormInstr (normalize A))))))))
     
@@ -57,7 +57,7 @@ This example expects input in the following BNF:
     /denormalize instructions/
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR A) (READ (EXP (\denormInstr \A))) (WRITE (EXP (return A))))
         
@@ -71,7 +71,7 @@ This example expects input in the following BNF:
     /interpreter/
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR A) (READ (EXP (\interpret \A))) (WRITE (EXP (return (do A ())))))
         
@@ -98,7 +98,7 @@ This example expects input in the following BNF:
         /assign/
         
         (
-            DREWRITE
+            REWRITE
             
             (
                 RULE
@@ -132,7 +132,7 @@ This example expects input in the following BNF:
         /substitute variables/
 
         (
-            DREWRITE
+            REWRITE
             
             (RULE (VAR A Lst) (READ (EXP (\replaceExp \A \Lst))) (WRITE (EXP (return (traverse A Lst)))))
             
@@ -158,7 +158,7 @@ This example expects input in the following BNF:
             (RULE (VAR A) (READ (EXP (return A))) (WRITE (EXP \A)))
             
             (
-                DREWRITE
+                REWRITE
                 
                 (RULE (VAR a Lst) (READ (EXP (\replaceVar \a \Lst))) (WRITE (EXP (return (loop a Lst)))))
                 
@@ -176,7 +176,7 @@ This example expects input in the following BNF:
     ///////////////////////
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR A) (READ (EXP (\calc \A))) (WRITE (EXP (return A))))
         
@@ -201,7 +201,7 @@ This example expects input in the following BNF:
     /normalize/
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR A) (READ (EXP (\normalize \A))) (WRITE (EXP (return (norm A)))))
         
@@ -215,7 +215,7 @@ This example expects input in the following BNF:
     /denormalize/
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR A) (READ (EXP (\denormalize \A))) (WRITE (EXP (return (denorm A)))))
         
@@ -229,7 +229,7 @@ This example expects input in the following BNF:
     /denormalize variables/
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR A) (READ (EXP (\denormVars \A))) (WRITE (EXP (return (denorm1 A)))))
         

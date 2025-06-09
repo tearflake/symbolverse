@@ -26,7 +26,7 @@ Operations defined in this example:
 ///
 
 (
-    DREWRITE
+    REWRITE
     
     (RULE (VAR A) (READ (EXP (\peano \A))) (WRITE (EXP (return (unToDec (unary (decToUn A)))))))
 
@@ -37,7 +37,7 @@ Operations defined in this example:
     ////////////////////
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR A) (READ (EXP (\decToUn \A))) (WRITE (EXP (return (decToUn (splitNum A))))))
         
@@ -110,7 +110,7 @@ Operations defined in this example:
     ////////////////////
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR A) (READ (EXP (\unToDec \A))) (WRITE (EXP (return (joinNum (unToDec A))))))
         
@@ -162,7 +162,7 @@ Operations defined in this example:
     ////////////////////
     
     (
-        DREWRITE
+        REWRITE
 
         (RULE (VAR A) (READ (EXP (\unary \A))) (WRITE (EXP (return A))))
         

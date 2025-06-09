@@ -9,7 +9,7 @@ output: \`(hello world)\`
 ///
 
 (
-    DREWRITE
+    REWRITE
 
     (RULE (READ (EXP (\\hello \\machine))) (WRITE (EXP (\\hello \\world))))
 )
@@ -30,7 +30,7 @@ output: \`(hello Name)\`
 ///
 
 (
-    DREWRITE
+    REWRITE
 
     (RULE (VAR Name) (READ (EXP (\\greet \\Name))) (WRITE (EXP (\\hello \\Name))))
 )
@@ -50,7 +50,7 @@ output: \`(makeToy doll/car)\`
 ///
 
 (
-    DREWRITE
+    REWRITE
 
     (RULE (READ (EXP (\\isGood \\girl))) (WRITE (EXP (\\makeToy \\doll))))
     (RULE (READ (EXP (\\isGood \\boy) )) (WRITE (EXP (\\makeToy \\car) )))
@@ -71,7 +71,7 @@ output: \`(isTitled Name astronaut/doctor)\`
 ///
 
 (
-    DREWRITE
+    REWRITE
 
     (
         RULE
@@ -102,7 +102,7 @@ output: \`(shadowsDo expand/shrink)\`
 ///
 
 (
-    DREWRITE
+    REWRITE
 
     (RULE (READ (EXP (\\sunIs \\rising) )) (WRITE (EXP (itIs morning)  )))
     (RULE (READ (EXP (\\sunIs \\falling))) (WRITE (EXP (itIs afternoon))))
@@ -129,7 +129,7 @@ output: \`(weigthtsMoreThan object2 object1)\`
 ///
 
 (
-    DREWRITE
+    REWRITE
 
     (
         RULE
@@ -160,7 +160,7 @@ output: \`(fruitGrows Fruit)\`
 ///
 
 (
-    DREWRITE
+    REWRITE
     
     /entry point/
     (RULE (VAR Fruit) (READ (EXP (\\plantSeed \\Fruit))) (WRITE (EXP (plantingSeed Fruit))))
@@ -169,7 +169,7 @@ output: \`(fruitGrows Fruit)\`
     (RULE (VAR Fruit) (READ (EXP (fruitGrowing Fruit))) (WRITE (EXP (\\fruitGrows \\Fruit))))
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR Fruit) (READ (EXP (\\plantingSeed \\Fruit))) (WRITE (EXP (treeForms Fruit)     )))
         (RULE (VAR Fruit) (READ (EXP (treeForms Fruit)     )) (WRITE (EXP (blooms Fruit)        )))
@@ -193,7 +193,7 @@ output: \`(Who and Whom hadPartyAt Where)\`
 ///
 
 (
-    DREWRITE
+    REWRITE
     
     /entry point/
     (
@@ -212,14 +212,14 @@ output: \`(Who and Whom hadPartyAt Where)\`
     )
     
     (
-        DREWRITE
+        REWRITE
         (RULE (READ (EXP \\bug1)) (WRITE (EXP \\ladybug  )))
         (RULE (READ (EXP \\bug2)) (WRITE (EXP \\butterfly)))
         (RULE (READ (EXP \\bug3)) (WRITE (EXP \\bee      )))
     )
 
     (
-        DREWRITE
+        REWRITE
         (RULE (READ (EXP \\place1)) (WRITE (EXP \\orchard)))
         (RULE (READ (EXP \\place2)) (WRITE (EXP \\meadow )))
     )
@@ -242,7 +242,7 @@ use for substructural operations:
 ///
 
 (
-    DREWRITE
+    REWRITE
     
     /sub-atom/
     (RULE (VAR a) (READ (EXP (\\headA \\a))) (WRITE (EXP (HEADA \\a))))
@@ -292,7 +292,7 @@ Operations defined in this example:
 ///
 
 (
-    DREWRITE
+    REWRITE
     (RULE (VAR A) (READ (EXP (\\bool \\A))) (WRITE (EXP (return A))))
     
     /truth table for \`not\` operator/
@@ -358,7 +358,7 @@ Operations defined in this example:
 ///
 
 (
-    DREWRITE
+    REWRITE
     
     (RULE (VAR A) (READ (EXP (\\peano \\A))) (WRITE (EXP (return (unToDec (unary (decToUn A)))))))
 
@@ -369,7 +369,7 @@ Operations defined in this example:
     ////////////////////
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR A) (READ (EXP (\\decToUn \\A))) (WRITE (EXP (return (decToUn (splitNum A))))))
         
@@ -442,7 +442,7 @@ Operations defined in this example:
     ////////////////////
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR A) (READ (EXP (\\unToDec \\A))) (WRITE (EXP (return (joinNum (unToDec A))))))
         
@@ -494,7 +494,7 @@ Operations defined in this example:
     ////////////////////
     
     (
-        DREWRITE
+        REWRITE
 
         (RULE (VAR A) (READ (EXP (\\unary \\A))) (WRITE (EXP (return A))))
         
@@ -574,7 +574,7 @@ Defined operations:
 ///
 
 (
-    DREWRITE
+    REWRITE
     
     (RULE (VAR A) (READ (EXP (\\natnum \\A))) (WRITE (EXP (return (binToDec (binary (decToBin A)))))))
     
@@ -590,7 +590,7 @@ Defined operations:
     /////////////////////
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR A) (READ (EXP (\\decToBin \\A))) (WRITE (EXP (return (decToBin (splitNum A))))))
         
@@ -663,7 +663,7 @@ Defined operations:
     /////////////////////
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR A) (READ (EXP (\\binToDec \\A))) (WRITE (EXP (return (joinNum (binToDec A))))))
         
@@ -721,7 +721,7 @@ Defined operations:
     /////////////////////
     
     (
-        DREWRITE
+        REWRITE
 
         (RULE (VAR A) (READ (EXP (\\binary \\A))) (WRITE (EXP (return A))))
 
@@ -1010,7 +1010,7 @@ This example expects input in the following BNF:
 ///
 
 (
-    DREWRITE
+    REWRITE
     
     (RULE (VAR A) (READ (EXP (\\imp \\A))) (WRITE (EXP (return (denormVars (interpret (denormInstr (normalize A))))))))
     
@@ -1019,7 +1019,7 @@ This example expects input in the following BNF:
     /denormalize instructions/
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR A) (READ (EXP (\\denormInstr \\A))) (WRITE (EXP (return A))))
         
@@ -1033,7 +1033,7 @@ This example expects input in the following BNF:
     /interpreter/
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR A) (READ (EXP (\\interpret \\A))) (WRITE (EXP (return (do A ())))))
         
@@ -1060,7 +1060,7 @@ This example expects input in the following BNF:
         /assign/
         
         (
-            DREWRITE
+            REWRITE
             
             (
                 RULE
@@ -1094,7 +1094,7 @@ This example expects input in the following BNF:
         /substitute variables/
 
         (
-            DREWRITE
+            REWRITE
             
             (RULE (VAR A Lst) (READ (EXP (\\replaceExp \\A \\Lst))) (WRITE (EXP (return (traverse A Lst)))))
             
@@ -1120,7 +1120,7 @@ This example expects input in the following BNF:
             (RULE (VAR A) (READ (EXP (return A))) (WRITE (EXP \\A)))
             
             (
-                DREWRITE
+                REWRITE
                 
                 (RULE (VAR a Lst) (READ (EXP (\\replaceVar \\a \\Lst))) (WRITE (EXP (return (loop a Lst)))))
                 
@@ -1138,7 +1138,7 @@ This example expects input in the following BNF:
     ///////////////////////
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR A) (READ (EXP (\\calc \\A))) (WRITE (EXP (return A))))
         
@@ -1162,7 +1162,7 @@ This example expects input in the following BNF:
     ///////////////////
     
     (
-        DREWRITE
+        REWRITE
         (RULE (VAR A) (READ (EXP (\\bool \\A))) (WRITE (EXP (return A))))
         
         /truth table for \`not\` operator/
@@ -1189,7 +1189,7 @@ This example expects input in the following BNF:
     ////////////////////
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR A) (READ (EXP (\\peano \\A))) (WRITE (EXP (return (unToDec (unary (decToUn A)))))))
 
@@ -1200,7 +1200,7 @@ This example expects input in the following BNF:
         ////////////////////
         
         (
-            DREWRITE
+            REWRITE
             
             (RULE (VAR A) (READ (EXP (\\decToUn \\A))) (WRITE (EXP (return (decToUn (splitNum A))))))
             
@@ -1273,7 +1273,7 @@ This example expects input in the following BNF:
         ////////////////////
         
         (
-            DREWRITE
+            REWRITE
             
             (RULE (VAR A) (READ (EXP (\\unToDec \\A))) (WRITE (EXP (return (joinNum (unToDec A))))))
             
@@ -1325,7 +1325,7 @@ This example expects input in the following BNF:
         ////////////////////
         
         (
-            DREWRITE
+            REWRITE
 
             (RULE (VAR A) (READ (EXP (\\unary \\A))) (WRITE (EXP (return A))))
             
@@ -1370,7 +1370,7 @@ This example expects input in the following BNF:
     /normalize/
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR A) (READ (EXP (\\normalize \\A))) (WRITE (EXP (return (norm A)))))
         
@@ -1384,7 +1384,7 @@ This example expects input in the following BNF:
     /denormalize/
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR A) (READ (EXP (\\denormalize \\A))) (WRITE (EXP (return (denorm A)))))
         
@@ -1398,7 +1398,7 @@ This example expects input in the following BNF:
     /denormalize variables/
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR A) (READ (EXP (\\denormVars \\A))) (WRITE (EXP (return (denorm1 A)))))
         
@@ -1485,7 +1485,7 @@ The example accepts a Peano integer, denoting the depth of the combinatorial tre
 ///
 
 (
-    DREWRITE
+    REWRITE
     
     /entry point/
     
@@ -1541,7 +1541,7 @@ The example accepts a Peano integer, denoting the depth of the combinatorial tre
     /cartesian product/
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR A B) (READ (EXP (\\product \\A \\B))) (WRITE (EXP (return (enumL A B ())))))
 
@@ -1569,7 +1569,7 @@ The example accepts a Peano integer, denoting the depth of the combinatorial tre
     /reverse list/
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR A) (READ (EXP (\\reverse \\A))) (WRITE (EXP (return (rev A)))))
         
@@ -1582,7 +1582,7 @@ The example accepts a Peano integer, denoting the depth of the combinatorial tre
     /concatenate two lists/
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR A B) (READ (EXP (\\concatenate \\A \\B))) (WRITE (EXP (return (concat A B)))))
         
@@ -1595,7 +1595,7 @@ The example accepts a Peano integer, denoting the depth of the combinatorial tre
     /denormalize list/
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR A) (READ (EXP (\\denormalize \\A))) (WRITE (EXP (return (denorm A)))))
         
@@ -1627,7 +1627,7 @@ theory.
 ///
 
 (
-    DREWRITE
+    REWRITE
     
     /entry point/
     (RULE (VAR A) (READ (EXP (\\interpretSki \\A))) (WRITE (EXP (return A))))
@@ -1717,7 +1717,7 @@ This allows computation to be represented without variable binding.
 ///
 
 (
-    DREWRITE
+    REWRITE
     
     /entry point/
     (RULE (VAR A) (READ (EXP (\\lcToSki \\A))) (WRITE (EXP (return A))))
@@ -1778,7 +1778,7 @@ To compose a proof, use these rules
 ///
 
 (
-    DREWRITE
+    REWRITE
     
     /entry point/
     (RULE (VAR A) (READ (EXP (\\proofCheck \\A))) (WRITE (EXP (return A))))
@@ -1933,7 +1933,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
 ///
 
 (
-    DREWRITE
+    REWRITE
     
     /begin/
     (RULE (VAR A) (READ (EXP (\\stlc \\A))) (WRITE (EXP (evaluating A A))))
@@ -1967,7 +1967,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
 
     /lift lettercase/
     (
-        DREWRITE
+        REWRITE
         (RULE (VAR A) (READ (EXP (\\lift \\A))) (WRITE (EXP (return A))))
         
         (RULE (READ (EXP const)) (WRITE (EXP CONST)))
@@ -1978,7 +1978,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
     
     /getTypes/
     (
-        DREWRITE
+        REWRITE
         (RULE (VAR A) (READ (EXP (\\getTypes \\A))) (WRITE (EXP (return A))))
         
         (RULE (VAR A B) (READ (EXP (typed A B))) (WRITE (EXP A)))
@@ -1989,7 +1989,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
     
     /getValues/
     (
-        DREWRITE
+        REWRITE
         (RULE (VAR A) (READ (EXP (\\getValues \\A))) (WRITE (EXP (return A))))
         
         (RULE (VAR A B) (READ (EXP (typed A B))) (WRITE (EXP A)))
@@ -2011,7 +2011,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
     
     /abstraction types/
     (
-        DREWRITE
+        REWRITE
         (
             RULE
             (VAR A)
@@ -2065,7 +2065,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
         
         /replace util/
         (
-            DREWRITE
+            REWRITE
             
             (
                 RULE
@@ -2096,7 +2096,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
         
     /application types/
     (
-        DREWRITE
+        REWRITE
         
         (
             RULE
@@ -2125,7 +2125,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
     ////////////////////
     
     (
-        DREWRITE
+        REWRITE
         
         /entry point/
         (RULE (VAR A) (READ (EXP (\\lcToSki \\A))) (WRITE (EXP (return A))))
@@ -2144,7 +2144,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
     //////////////////////////
     
     (
-        DREWRITE
+        REWRITE
         
         /entry point/
         (RULE (VAR A) (READ (EXP (\\interpretSki \\A))) (WRITE (EXP (return A))))
@@ -2163,7 +2163,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
     /////////////////////////////
     
     (
-        DREWRITE
+        REWRITE
         
         /entry point/
         (RULE (VAR A) (READ (EXP (\\proofCheck \\A))) (WRITE (EXP (return A))))
@@ -2264,7 +2264,7 @@ output: \`willBeAcademic Name\`
 ///
 
 (
-    DREWRITE
+    REWRITE
     
     (
         RULE
@@ -2299,7 +2299,7 @@ output: \`isAComputerExpert Name\`
 ///
 
 (
-    DREWRITE
+    REWRITE
     
     (RULE (VAR Name) (READ (EXP (\\buildsARobot \\Name))) (WRITE (EXP (\\mastersSoftware \\Name))))
     (RULE (VAR Name) (READ (EXP (\\buildsARobot \\Name))) (WRITE (EXP (\\mastersHardware \\Name))))
@@ -2376,7 +2376,7 @@ Datalog syntax in this implementation is determined by the following kind of BNF
 ///
 
 (
-    DREWRITE
+    REWRITE
     
     (
         RULE
@@ -2428,7 +2428,7 @@ Datalog syntax in this implementation is determined by the following kind of BNF
     /deduction/
     
     (
-        DREWRITE
+        REWRITE
         
         (
             RULE
@@ -2463,7 +2463,7 @@ Datalog syntax in this implementation is determined by the following kind of BNF
         (RULE (VAR A) (READ (EXP (return A))) (WRITE (EXP \\A)))
     )
     (
-        DREWRITE
+        REWRITE
         
         (
             RULE
@@ -2579,7 +2579,7 @@ Datalog syntax in this implementation is determined by the following kind of BNF
         (RULE (VAR A) (READ (EXP (return A))) (WRITE (EXP \\A)))
     )
     (
-        DREWRITE
+        REWRITE
         
         (
             RULE
@@ -2614,7 +2614,7 @@ Datalog syntax in this implementation is determined by the following kind of BNF
         (RULE (VAR A) (READ (EXP (return A))) (WRITE (EXP \\A)))
     )
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR E1 E2) (READ (EXP (\\apply \\E1 \\E2))) (WRITE (EXP (return (apply E1 E2)))))
         
@@ -2659,7 +2659,7 @@ Datalog syntax in this implementation is determined by the following kind of BNF
     /get n-th element/
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR A B) (READ (EXP (\\getNthElement \\A \\B))) (WRITE (EXP (return (iter A B zero)))))
         
@@ -2673,7 +2673,7 @@ Datalog syntax in this implementation is determined by the following kind of BNF
     /concatenate lists/
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR A B) (READ (EXP (\\concatenate \\A \\B))) (WRITE (EXP (return (concat A B)))))
         
@@ -2687,7 +2687,7 @@ Datalog syntax in this implementation is determined by the following kind of BNF
     /normalize/
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR A) (READ (EXP (\\normalize \\A))) (WRITE (EXP (return (norm A)))))
         
@@ -2701,7 +2701,7 @@ Datalog syntax in this implementation is determined by the following kind of BNF
     /denormalize/
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR A) (READ (EXP (\\denormalize \\A))) (WRITE (EXP (return (denorm A)))))
         

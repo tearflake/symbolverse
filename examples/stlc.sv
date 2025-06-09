@@ -45,7 +45,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
 ///
 
 (
-    DREWRITE
+    REWRITE
     
     /begin/
     (RULE (VAR A) (READ (EXP (\stlc \A))) (WRITE (EXP (evaluating A A))))
@@ -79,7 +79,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
 
     /lift lettercase/
     (
-        DREWRITE
+        REWRITE
         (RULE (VAR A) (READ (EXP (\lift \A))) (WRITE (EXP (return A))))
         
         (RULE (READ (EXP const)) (WRITE (EXP CONST)))
@@ -90,7 +90,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
     
     /getTypes/
     (
-        DREWRITE
+        REWRITE
         (RULE (VAR A) (READ (EXP (\getTypes \A))) (WRITE (EXP (return A))))
         
         (RULE (VAR A B) (READ (EXP (typed A B))) (WRITE (EXP A)))
@@ -101,7 +101,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
     
     /getValues/
     (
-        DREWRITE
+        REWRITE
         (RULE (VAR A) (READ (EXP (\getValues \A))) (WRITE (EXP (return A))))
         
         (RULE (VAR A B) (READ (EXP (typed A B))) (WRITE (EXP A)))
@@ -123,7 +123,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
     
     /abstraction types/
     (
-        DREWRITE
+        REWRITE
         (
             RULE
             (VAR A)
@@ -177,7 +177,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
         
         /replace util/
         (
-            DREWRITE
+            REWRITE
             
             (
                 RULE
@@ -208,7 +208,7 @@ previous examples of LC to SKI compiler, Hilbert-style proof checker and SKI cal
         
     /application types/
     (
-        DREWRITE
+        REWRITE
         
         (
             RULE

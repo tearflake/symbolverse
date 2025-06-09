@@ -15,7 +15,7 @@ Defined operations:
 ///
 
 (
-    DREWRITE
+    REWRITE
     
     (RULE (VAR A) (READ (EXP (\natnum \A))) (WRITE (EXP (return (binToDec (binary (decToBin A)))))))
     
@@ -31,7 +31,7 @@ Defined operations:
     /////////////////////
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR A) (READ (EXP (\decToBin \A))) (WRITE (EXP (return (decToBin (splitNum A))))))
         
@@ -104,7 +104,7 @@ Defined operations:
     /////////////////////
     
     (
-        DREWRITE
+        REWRITE
         
         (RULE (VAR A) (READ (EXP (\binToDec \A))) (WRITE (EXP (return (joinNum (binToDec A))))))
         
@@ -162,7 +162,7 @@ Defined operations:
     /////////////////////
     
     (
-        DREWRITE
+        REWRITE
 
         (RULE (VAR A) (READ (EXP (\binary \A))) (WRITE (EXP (return A))))
 

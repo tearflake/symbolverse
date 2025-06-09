@@ -1,4 +1,4 @@
-# symbolverse term rewriting framework v0.3.11
+# symbolverse term rewriting framework v0.3.12
 
 _**tags:** s-expression, rewriting, term-rewriting, term-rewriting-systems_
 
@@ -15,7 +15,7 @@ _**Symbolverse**_ is a symbolic, rule-based programming framework built around p
 The entire grammar of *Symbolverse* code files fits into only five lines of relaxed BNF code:
 
 ```
-     <start> := (DREWRITE <expression>+)
+     <start> := (REWRITE <expression>+)
               | (FILE <ATOMIC>)
 
 <expression> := (RULE (VAR <ATOMIC>+)? (READ (EXP <ANY>)) (WRITE (EXP <ANY>)))
@@ -41,7 +41,7 @@ To get a glimpse on how a *Symbolverse* program code looks like, we bring a simp
 
 ```
 (
-    DREWRITE
+    REWRITE
     
     /expression addition/
     (
