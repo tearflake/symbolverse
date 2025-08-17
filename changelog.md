@@ -34,8 +34,11 @@
 ## Apr, 2025.
 
 - v0.3.x
-    - sub-structural operations
+    - builtin sub-structural operations
     - renamed `UNBOUND` keyword to `FREEVAR` in output
     - renamed `FETCH` keyword to `FILE`
 
+## Aug, 2025.
 
+- v0.5.x
+    - finished some examples

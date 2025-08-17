@@ -7,7 +7,7 @@
 > Advanced users in term rewriting
 > 
 > **[abstract]**  
-> ... Symbolverse aims to be a minimalistic term rewriting system defined by very simple S-expression based syntax and semantics. It partially inherits its simplicity from operating on S-expressions, embracing them within only necessary rule components. In spite of the minimalistic rule appearance, all the benefits of term rewriting remain uncompromised in creating Symbolverse code. Such appearance empowers the programmer with a choice to introduce terms as simple or as complex as needed. This is corroborated by a gradual learning curve more focused on created content than on the underlying defining system. With further exploration of terms bound within rules, one may utilize various degrees of expressiveness driven by a computationally complete foundations...
+> ... Symbolverse intends to be a minimalistic term rewriting system defined by very simple S-expression based syntax and semantics. It partially inherits its simplicity from operating on S-expressions, embracing them within only necessary rule components. In spite of the minimalistic rule appearance, all the benefits of term rewriting remain uncompromised in creating Symbolverse code. Such appearance empowers the programmer with a choice to introduce terms as simple or as complex as needed. This is corroborated by a gradual learning curve more focused on created content than on the underlying defining system. With further exploration of terms bound within rules, one may utilize various degrees of expressiveness driven by a computationally complete foundations...
 
 ## table of contents
 
@@ -24,7 +24,7 @@ Term rewriting is a formal method used to systematically transform expressions o
 
 Using S-expressions as terms in a term rewriting system provides a simple and effective way to represent and manipulate expressions. S-expressions, with their uniform, tree-like structure of nested lists and atoms, naturally align with the hierarchical nature of terms in rewriting systems. This structure makes it easy to parse and apply rewriting rules, where patterns within the S-expressions can be matched and transformed according to specified rules.
 
-*Symbolverse* aims to be a minimalistic term rewriting system defined by very simple S-expression based syntax and semantics. It partially inherits its simplicity from operating on S-expressions, embracing them within only necessary rule components. In spite of the minimalistic rule appearance, all the benefits of term rewriting remain uncompromised in creating Symbolverse code. Such appearance empowers the programmer with a choice to introduce terms as simple or as complex as needed. This is corroborated by a gradual learning curve more focused on created content than on the underlying defining system. With further exploration of terms bound within rules, one may utilize various degrees of expressiveness driven by a computationally complete foundations.
+*Symbolverse* intends to be a minimalistic term rewriting system defined by very simple S-expression based syntax and semantics. It partially inherits its simplicity from operating on S-expressions, embracing them within only necessary rule components. In spite of the minimalistic rule appearance, all the benefits of term rewriting remain uncompromised in creating Symbolverse code. Such appearance empowers the programmer with a choice to introduce terms as simple or as complex as needed. This is corroborated by a gradual learning curve more focused on created content than on the underlying defining system. With further exploration of terms bound within rules, one may utilize various degrees of expressiveness driven by a computationally complete foundations.
 
 ## 2. theoretical background
 
@@ -62,10 +62,10 @@ The above grammar defines the syntax of Symbolverse. To interpret these grammar 
 As an intertwined part of the above grammar, anywhere inside `<ANY>` elements of the `WRITE` side, there may be placed any of the six builtin functions:  
 
 ```
-(CONSA <ATOMIC> <ATOMIC>) -> <RESULT>
+(PREPENDA <ATOMIC> <ATOMIC>) -> <RESULT>
 (HEADA <ATOMIC>)          -> <RESULT>
 (TAILA <ATOMIC>)          -> <RESULT>
-(CONSL <ANY> <ANY>)       -> <RESULT>
+(PREPENDL <ANY> <ANY>)       -> <RESULT>
 (HEADL <ANY>)             -> <RESULT>
 (TAILL <ANY>)             -> <RESULT>
 ```
@@ -94,11 +94,11 @@ Semantics of Symbolverse, as a study of meaning, reference, or truth of Symbolve
     - Rewriting process ends when there are no more rules match. Output is the rewritten S-expression.
 - Built‑in functions
     - String (Atom) operations (operate on atomic values):
-        - `(CONSA <a1> <a2>)` prepends atom `<a1>` to atom `<a2>`
+        - `(PREPENDA <a1> <a2>)` prepends atom `<a1>` to atom `<a2>`
         - `(HEADA <a>)` returns the first character of the atom `<a>`
         - `(TAILA <a>)` returns the rest of the atom `<a>`
     - List (S‑expr) operations (operate on list values):
-        - `(CONSL <l1> <l2>)` prepends element `<l1>` to the list `<l2>`
+        - `(PREPENDL <l1> <l2>)` prepends element `<l1>` to the list `<l2>`
         - `(HEADL <l>)` returns the first element of the list `<l>`
         - `(TAILL <l>)` returns the remaining elements of the list `<l>`
 
@@ -300,7 +300,7 @@ Summing it up, scopes represent a natural way to package and separate sets of ru
 
 #### sub-structural term operations
 
-Sometimes we have to construct variable length lists, or concatenate atoms to produce new lists or atoms. In these cases, we can use builtin functions `CONSL` for lists, and `CONSA` for atoms. In other cases, we want to extract elements of variable length lists, or characters from atoms. In these cases, we use `HEADL` and `TAILL` for lists, and `HEADA` and `TAILA` for atoms. These functions are depicted in the following example:
+Sometimes we have to construct variable length lists, or concatenate atoms to produce new lists or atoms. In these cases, we can use builtin functions `PREPENDL` for lists, and `PREPENDA` for atoms. In other cases, we want to extract elements of variable length lists, or characters from atoms. In these cases, we use `HEADL` and `TAILL` for lists, and `HEADA` and `TAILA` for atoms. These functions are depicted in the following example:
 
 ```
 (
@@ -309,12 +309,12 @@ Sometimes we have to construct variable length lists, or concatenate atoms to pr
     /sub-atom/
     (RULE (VAR A) (READ (EXP (\headA A))) (WRITE (EXP (HEADA \A))))
     (RULE (VAR A) (READ (EXP (\tailA A))) (WRITE (EXP (TAILA \A))))
-    (RULE (VAR H T) (READ (EXP (\consA \H \T))) (WRITE (EXP (CONSA \H \T))))
+    (RULE (VAR H T) (READ (EXP (\prependA \H \T))) (WRITE (EXP (PREPENDA \H \T))))
     
     /sub-list/
     (RULE (VAR A) (READ (EXP (\headL \A))) (WRITE (EXP (HEADL \A))))
     (RULE (VAR A) (READ (EXP (\tailL \A))) (WRITE (EXP (TAILL \A))))
-    (RULE (VAR H T) (READ (EXP (\consL \H \T))) (WRITE (EXP (CONSL \H \T))))
+    (RULE (VAR H T) (READ (EXP (\prependL \H \T))) (WRITE (EXP (PREPENDL \H \T))))
 )
 ```
 
@@ -326,13 +326,13 @@ Thus, we can pass an input to the previous example:
         atoms
         (headA 123)
         (tailA 123)
-        (consA 1 23)
+        (prependA 1 23)
     )
     (
         lists
         (headL (1 2 3))
         (tailL (1 2 3))
-        (consL 1 (2 3))
+        (prependL 1 (2 3))
     )
 )
 ```

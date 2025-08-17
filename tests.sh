@@ -14,3 +14,5 @@ node symbolverse examples/hilbert.sv examples/hilbert-in.sexpr
 
 node symbolverse examples/stlc.sv examples/stlc-in.sexpr
 
+node symbolverse examples/datalog.sv examples/datalog-in.sexpr
+

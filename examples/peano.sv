@@ -121,8 +121,8 @@ Operations defined in this example:
         /join digits/
         
         (RULE (VAR a) (READ (EXP (joinNum a))) (WRITE (EXP a)))
-        (RULE (VAR a b) (READ (EXP (joinNum a b))) (WRITE (EXP (CONSA a b))))
-        (RULE (VAR A b) (READ (EXP (joinNum (A b)))) (WRITE (EXP (CONSA (joinNum A) b))))
+        (RULE (VAR a b) (READ (EXP (joinNum a b))) (WRITE (EXP (PREPENDA a b))))
+        (RULE (VAR A b) (READ (EXP (joinNum (A b)))) (WRITE (EXP (PREPENDA (joinNum A) b))))
         
         /convert bool/
         

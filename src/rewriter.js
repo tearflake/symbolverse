@@ -8,7 +8,8 @@ var Rewriter = (
             compile: obj.compile,
             compileFile: obj.compileFile,
             rewrite: obj.rewrite,
-            stringify: obj.stringify
+            stringify: obj.stringify,
+            debugInfo: obj.debugInfo
         };
     }
 ) (
@@ -16,7 +17,7 @@ var Rewriter = (
         "use strict";
         
         var internalRulesCount = 0;
-                
+        
         var rewrite = function (rules, strInput) {
             var input = Sexpr.parse (strInput);
             if (input.err) {
@@ -212,10 +213,10 @@ var Rewriter = (
             }
 
             if (!rec) {
-                rules.push ({vars: ["h", "t"], rule: {read: ["(", "CONSA", "h", "t", ")"], write: ["INTERNAL"]}, level: 1, parents: [arr]});
+                rules.push ({vars: ["h", "t"], rule: {read: ["(", "PREPENDA", "h", "t", ")"], write: ["INTERNAL"]}, level: 1, parents: [arr]});
                 rules.push ({vars: ["a"], rule: {read: ["(", "HEADA", "a", ")"], write: ["INTERNAL"]}, level: 1, parents: [arr]});
                 rules.push ({vars: ["a"], rule: {read: ["(", "TAILA", "a", ")"], write: ["INTERNAL"]}, level: 1, parents: [arr]});
-                rules.push ({vars: ["H", "T"], rule: {read: ["(", "CONSL", "H", "T", ")"], write: ["INTERNAL"]}, level: 1, parents: [arr]});
+                rules.push ({vars: ["H", "T"], rule: {read: ["(", "PREPENDL", "H", "T", ")"], write: ["INTERNAL"]}, level: 1, parents: [arr]});
                 rules.push ({vars: ["L"], rule: {read: ["(", "HEADL", "L", ")"], write: ["INTERNAL"]}, level: 1, parents: [arr]});
                 rules.push ({vars: ["L"], rule: {read: ["(", "TAILL", "L", ")"], write: ["INTERNAL"]}, level: 1, parents: [arr]});
                 internalRulesCount = 6;
@@ -227,6 +228,7 @@ var Rewriter = (
         var produce = function (rules, top) {
             var stack, item, uvars = [];
             
+            Rewriter.debugInfo.appliedRules = 0;
             Ruler.resetVarIdx ();
             top = Sexpr.flatten(top);
             stack = [{phase: "top"}];
@@ -349,7 +351,7 @@ var Rewriter = (
                             }
                             else if (item.ruleIndex >= rules.length - internalRulesCount) {
                                 if (item.curRule !==  undefined) {
-                                    if (rules[item.ruleIndex].rule.read[1] === "CONSA" && item.write.length === 5 && Ruler.levelSplit (item.write[1]).atom === "CONSA") {
+                                    if (rules[item.ruleIndex].rule.read[1] === "PREPENDA" && item.write.length === 5 && Ruler.levelSplit (item.write[1]).atom === "PREPENDA") {
                                         if (Ruler.levelSplit (item.write[2]).esc === Ruler.levelSplit (item.write[3]).esc) {
                                             var res1 = Ruler.levelSplit (item.write[2]).atom;
                                             if (res1 === "NIL") {
@@ -412,7 +414,7 @@ var Rewriter = (
                                             break;
                                         }
                                     }
-                                    else if (rules[item.ruleIndex].rule.read[1] === "CONSL" && Ruler.levelSplit (item.write[1]).atom === "CONSL") {
+                                    else if (rules[item.ruleIndex].rule.read[1] === "PREPENDL" && Ruler.levelSplit (item.write[1]).atom === "PREPENDL") {
                                         var resP1From = 2;
                                         var resP2From = getNextWhole (item.write, resP1From);
                                         var resTo = getNextWhole (item.write, resP2From);
@@ -489,6 +491,7 @@ var Rewriter = (
                                     }
                                 }
                                 if (v) {
+                                    Rewriter.debugInfo.appliedRules++;
                                     var substed = Ruler.subst (rules[item.ruleIndex].rule.write, v.vars);
                                     stack.push ({
                                         phase: "test-whole",
@@ -596,7 +599,8 @@ var Rewriter = (
             compile: compile,
             compileFile: compileFile,
             rewrite: rewrite,
-            stringify: stringify
+            stringify: stringify,
+            debugInfo: {appliedRules: 0}
         }
     }) ()
 );

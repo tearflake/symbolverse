@@ -1,4 +1,4 @@
-# symbolverse term rewriting framework v0.3.12
+# symbolverse term rewriting framework v0.5.0
 
 _**tags:** s-expression, rewriting, term-rewriting, term-rewriting-systems_
 
@@ -20,17 +20,6 @@ The entire grammar of *Symbolverse* code files fits into only five lines of rela
 
 <expression> := (RULE (VAR <ATOMIC>+)? (READ (EXP <ANY>)) (WRITE (EXP <ANY>)))
               | <start>
-```
-
-and there are only six builtin functions used only for sub-structural transformations:
-
-```
-(CONSL <ANY> <ANY>)       -> <RESULT>
-(HEADL <ANY>)             -> <RESULT>
-(TAILL <ANY>)             -> <RESULT>
-(CONSA <ATOMIC> <ATOMIC>) -> <RESULT>
-(HEADA <ATOMIC>)          -> <RESULT>
-(TAILA <ATOMIC>)          -> <RESULT>
 ```
 
 Given these elements, in spite of being very minimalistic framework, *Symbolverse* is computationally complete, witnessing the Turing completeness. However, while it is possible to use *Symbolverse* for any abstract programming task, it is best suited for data transformation and symbolic reasoning.

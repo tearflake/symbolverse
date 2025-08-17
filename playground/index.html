@@ -191,38 +191,33 @@
 
 <div class="droplbl">2. computing platforms tour</div>
 
+    <a href="javascript:populate('example-boolarith');  ">&nbsp;&nbsp;&nbsp;&nbsp; - Boolean algebra</a>
+    <!--a href="javascript:populate('example-peanoarith'); ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - integers: Peano arithmetic</a-->
+    <a href="javascript:populate('example-numarith'); ">&nbsp;&nbsp;&nbsp;&nbsp; - natural numbers</a>
+
+<br/>
+
 <div class="droplbl">&nbsp;&nbsp;&nbsp;&nbsp;2.1. imperative programming</div>
 
-        <a href="javascript:populate('example-boolarith');  ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - truth values: Boolean algebra</a>
-        <a href="javascript:populate('example-peanoarith'); ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - integers: Peano arithmetic</a>
-        <!--a href="javascript:populate('example-numarith'); ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - integers: natural numbers</a-->
-        <a href="javascript:populate('example-imp');        ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - simplistic platform: IMP interpreter</a>
+        <a href="javascript:populate('example-imp');        ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - IMP interpreter</a>
 
 <br/>
 
 <div class="droplbl">&nbsp;&nbsp;&nbsp;&nbsp;2.2. functional programming</div>
 
-<!--div class="droplbl">&nbsp;&nbsp;&nbsp;&nbsp; 3.1. imperative programming</div>
-
-        <a href="javascript:populate('example-fsm'    );">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - FSM control flow interpreter</a>
-        <a href="javascript:populate('example-imp'    );">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - IMP to FSM compiler</a>
-
-<br-->
-
         <a href="javascript:populate('example-lamb'); ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - lambda calculus:  LC to SKI compiler</a>
-        <a href="javascript:populate('example-proof'    );">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - type inference:  Hilbert-style proof checker</a>
+        <a href="javascript:populate('example-proof');">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - type inference:  Hilbert-style proof checker</a>
         <a href="javascript:populate('example-ski');  ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - program evaluator:  SKI calculus interpreter</a>
-        <a href="javascript:populate('example-stlc');  ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - putting it all together:  STLC implementation</a>
+        <a href="javascript:populate('example-stlc'); ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - putting it all together:  STLC implementation</a>
 
 <br/>
 
-
-<!--div class="droplbl">&nbsp;&nbsp;&nbsp;&nbsp;2.3. logic programming</div-->
+<div class="droplbl">&nbsp;&nbsp;&nbsp;&nbsp;2.3. logic programming</div>
 
         <!--a href="javascript:populate('example-log'); ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Hilbert program: SKI expressions enumerator</a-->
-        <!--a href="javascript:populate('example-datalog'); ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Datalog implementation</a>
+        <a href="javascript:populate('example-datalog'); ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Datalog implementation</a>
 
-<br/-->
+<br/>
         </nobr></b>
     </div>
 </td>
@@ -465,7 +460,7 @@
                         document.getElementById("tm").innerHTML = "";
                     } else {
                         var trewritten = (Date.now () - tm)
-                        document.getElementById("tm").innerHTML = "(rules compiled in " + tcompiled + "ms)" + " (input rewritten in " + trewritten + "ms)";
+                        document.getElementById("tm").innerHTML = "(rules compiled in " + tcompiled + "ms)" + " (input rewritten in " + trewritten + "ms, " + Rewriter.debugInfo.appliedRules + " rule applications)";
                         output1.value = Rewriter.stringify (output);
                     }
                 }, 0);
