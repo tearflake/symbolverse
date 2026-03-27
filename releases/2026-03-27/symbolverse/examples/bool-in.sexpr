@@ -1,0 +1,13 @@
+
+(
+    bool
+    (
+        not
+        (
+            and
+            (not true)
+            (not false)
+        )
+    )
+)
+

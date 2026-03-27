@@ -1,0 +1,20 @@
+
+(
+    stlc
+    (
+        (
+            (
+                lmbd
+                (typed x (CONST A))
+                (
+                    lmbd
+                    (typed y (IMPL (CONST A) (CONST B)))
+                    (y x)
+                )
+            )
+            (assert a (CONST A))
+        )
+        (assert b (IMPL (CONST A) (CONST B)))
+    )
+)
+
