@@ -1,3 +1,0 @@
-
-(lcToSki (lmbd x (lmbd y (y x))))
-
