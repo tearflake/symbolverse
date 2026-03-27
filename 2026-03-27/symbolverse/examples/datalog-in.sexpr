@@ -1,0 +1,31 @@
+
+(
+    DATALOG
+    (
+        DATA
+        (
+            RULE
+            (HEAD (parent Xerces Brooke))
+            (BODY)
+        )
+        (
+            RULE
+            (HEAD (parent Brooke Damocles))
+            (BODY)
+        )
+        (
+            RULE
+            (VAR X Y)
+            (HEAD (ancestor X Y))
+            (BODY (parent X Y))
+        )
+        (
+            RULE
+            (VAR X Y Z)
+            (HEAD (ancestor X Y))
+            (BODY (parent X Z) (ancestor Z Y))
+        )
+    )
+    (QUERY (ancestor Xerces Damocles))
+)
+

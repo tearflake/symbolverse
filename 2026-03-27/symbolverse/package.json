@@ -1,0 +1,32 @@
+{
+  "name": "@tearflake/symbolverse",
+  "version": "0.5.0",
+  "description": "Symbolic term rewriting",
+  "main": "symbolverse.js",
+  "directories": {
+    "doc": "docs",
+    "example": "examples"
+  },
+  "bin": {
+    "symbolverse": "symbolverse.js"
+  },
+  "scripts": {
+    "test": "bash ./tests.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tearflake/symbolverse.git"
+  },
+  "keywords": [
+    "s-expression",
+    "rewriting",
+    "term-rewriting",
+    "term-rewriting-systems"
+  ],
+  "author": "tearflake",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tearflake/symbolverse/issues"
+  },
+  "homepage": "https://github.com/tearflake/symbolverse#readme"
+}
