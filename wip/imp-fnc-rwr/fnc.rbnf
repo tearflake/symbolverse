@@ -1,0 +1,7 @@
+<functional> := (FUNCTIONAL <lmbd>)
+ 
+<lmbd> := (LMBD <ATOMIC>+ <lmbd>)
+        | (<lmbd> <lmbd>+)
+        | <ATOMIC>
+        | (EXP <ANY>)
+

@@ -1,0 +1,94 @@
+///////////////////////////////
+// ✨ Rewriting (Pseudocode) //
+///////////////////////////////
+
+// Data structures
+
+Atom        : String            // atoms
+SExpr       : Atom | [ SExpr ]      // nested symbolic expressions (list form)
+Env         : Map<Atom, SExpr>      // environment variables
+Rule        : {
+    vars: [Atom],                   // variables
+    consume: SExpr,                 // CONSUME pattern
+    produce: SExpr                  // PRODUCE template
+}
+Rewrite     : {ruleset: [ Rule ]}   // ruleset
+
+// Interpreter Loop
+
+function rewrite(expr: SExpr, rewrite: Rewrite): SExpr
+    changed = true
+    while changed
+        changed = false
+        expr, didChange = rewriteOnce(expr, rewrite)
+        if didChange
+            changed = true
+
+    return expr
+
+// One-Step Rewriting
+
+function rewriteOnce(expr: SExpr, rewrite: Rewrite): (SExpr, Bool)
+    // Try to rewrite deepest subexpressions first (inside-out)
+    if expr is not Atom
+        expr = expr.copy()
+        for i in range(expr.length)
+            newExpr, changed = rewriteOnce(expr[i], rewrite)
+            if changed
+                expr[i] = newExpr
+                return expr, true
+
+    // Then try to rewrite expr
+    for rule in rewrite.ruleset
+        matchEnv = tryMatch(expr, rule.consume, rule.vars, [])
+        if matchEnv != null
+            // substitute vars
+            newExpr = substitute(rule.produce, matchEnv)
+            return newExpr, true
+
+    return expr, false
+
+// Pattern Matching
+
+function tryMatch(expr: SExpr, pattern: SExpr, vars: [], env: Env): Env | null
+    if pattern is Atom
+        if pattern not in vars
+            return (expr == pattern) ? env : null
+
+        if pattern not in env
+            env[pattern] = expr
+            return env
+            
+        else if env[pattern] == expr
+            return env
+
+        return null
+
+    if expr is not list or expr.length != pattern.length
+        return null
+
+    for i in range(pattern.length)
+        env = tryMatch(expr[i], pattern[i], vars, env)
+        if env == null
+            return null
+
+    return env
+
+// Substitution
+
+function substitute(expr: SExpr, env: Env): SExpr
+    if expr is Atom
+        if isQuoted(expr)
+            return expr
+
+        if expr in env
+            return env[expr]
+
+        Error("Free variables not allowed: " + expr)
+
+    else
+        return [ substitute(e, env) for e in expr ]
+
+function isQuoted(a)
+    return a.charAt(0) == '"' and a.charAt(a.length - 1) == '"'
+
