@@ -1,0 +1,145 @@
+//////////////////////////////////////////
+// Symbolprose Interpreter (Pseudocode) //
+//////////////////////////////////////////
+
+// Data structures
+
+Atom        : string                  // atoms
+SExpr       : Atom | [SExpr]              // nested symbolic expressions (list form)
+Env         : Map<String, SExpr>          // enviroment variables
+}
+Graph       :
+    edges: Map<String, [Edge]>,
+    parent: Graph,
+    children : Map<String, Graph>
+}
+Edge        : {
+    instructions: [Instr],                // instructions
+    target: String                        // target node
+}
+Instr       : {
+    name: "ASGN",
+    var: SExpr,
+    value: SExpr
+} | {
+    name: "TEST",
+    lft: SExpr,
+    rgt: SExpr
+}
+
+// Core interpreter
+
+function run(graph: Graph, params: SExpr): SExpr
+    return unquote(runLowLevel(graph, quote(params)));
+
+function runLowLevel(graph: Graph, params: SExpr): SExpr
+    env["PARAMS"] = params
+    env["RESULT"] = "NIL"
+
+    node = "BEGIN"
+    idx = 0
+    fallback = []
+    loop1: while node != "END"
+        if node in graph.edges
+            edges = graph.edges[node]
+        
+        else
+            Error("Unknown node: " + node)
+        
+        loop2: for i = idx to edges.length - 1
+            edge = edges[i]
+            for instr in edge.instructions
+                else if instr.name = "ASGN"
+                    env[instr.var] = evalExpr(instr.value, graph.children, env)
+                
+                else if instr.name = "TEST"
+                    a = evalExpr(instr.lft, graph.children, env)
+                    b = evalExpr(instr.rgt, graph.children, env)
+                    if not deepEqual(a, b)
+                        continue loop2
+
+            fallback.push([node, i])            
+            node = edge.target
+            idx = 0
+            continue loop1
+        
+        if fallback.length > 0
+            [node, idx] = fallback.pop()
+        
+        else
+            Error("No more fallback edges")
+
+    return env["RESULT"]
+
+// Expression evaluator
+
+function evalExpr(value: SExpr, graph: Graph, env: Env): SExpr
+    if value is Atom
+        if value in env
+            return env[value]
+
+        else
+            return value
+        
+    expr = [evalExpr(v, graph, env) for v in value];
+    
+    if value[0] == "RUN"
+        if value[1] in env
+            value[1] = env[value[1]];
+        
+        return compute(value, graph, env)
+
+    return expr 
+
+// Compute subgraph
+
+function compute (expr: SExpr, graph: Graph, env: Env): SExpr
+    parent = graph;
+    while parent
+        child = parent.children[expr[1]]
+        if child
+            return runLowLevel(child, evalExpr(expr[2], graph, env))
+
+        parent = parent.parent
+    
+    if expr[1] == "stdlib"
+        if expr[2][0] in internalFunc
+            return internalFunc[expr[2][0]](evalExpr(expr[2], graph, env), env)
+        
+        else
+            Error("Undefined stdlib function" + expr[2][0]);
+    
+    Error("Undefined function" + expr[1]);
+
+// Expression matching
+
+function deepEqual(a: SExpr, b: SExpr): Bool
+    if (a is Atom) and (b is Atom)
+        return (a == b) ? true : false
+
+    else if (a is list) and (b is list) and (length(a) == length(b))
+        for i in range(a)
+            if not deepEqual(a[i], b[i])
+                return false
+        
+        return true
+
+    return false
+
+// Utility functions
+
+function quote(value: SExpr): SExpr
+    if value is Atom
+        return '"' + value + '"'
+        
+    return [evalExpr(v) for v in value];
+
+function unquote(value: SExpr): SExpr
+    if value is Atom
+        if value.charAt(0) == '"' and value.charAt(value.length - 1) == '"'
+            return value.substring(1, value.length - 1)
+        else
+            return value
+            
+    return [evalExpr(v) for v in value];
+
