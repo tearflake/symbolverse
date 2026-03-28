@@ -1,0 +1,71 @@
+///////////////////////////////////////////////////
+// ✨ Event driven state processing (Pseudocode) //
+///////////////////////////////////////////////////
+
+// Data structures
+
+Process: {
+    triggers: Trigger[]
+}
+
+Trigger: {
+    event: Event,
+    actions: Action[]
+}
+
+Event: {
+  variable: String,
+  value: String
+}
+
+Action: {
+    kind: "ASSIGN",
+    variable: String,
+    value: String
+} | {
+    kind: "RETURN",
+    variable: string
+}
+
+// Main process
+
+function process(program: Process, env: String[]): Value | null
+    queue = []
+    enqueue(queue, {variable: "state", value: "BEGIN"})
+
+    return processQueue(program, env, queue)
+
+function processQueue(program: Program, env: String[], queue: Event[]): Value | null
+    while queue.length > 0
+        evt = dequeue(queue)
+        env[evt.variable] = evt.value
+        matching = findTriggers(program.triggers, evt)
+        for trig of matching
+            result = executeActions(trig.actions, env, queue)
+            if (result != null)
+                return result
+
+    return null
+
+function findTriggers(triggers: Trigger[], evt: Event): Trigger[] 
+    return triggers.filter(trig =>
+        trig.event.variable === evt.variable &&
+        trig.event.value === evt.value
+    )
+
+function executeActions(actions: Action[], env: String[], queue: Event[]): Value | null
+    for const action of actions
+        if action.kind == "ASSIGN"
+            enqueue(queue, {variable: action.variable, value: action.value})
+
+        if action.kind == "RETURN"
+            return env[action.variable]
+
+    return null
+
+function enqueue(queue: Event[], evt: Event): void
+    queue.push(evt)
+
+function dequeue(queue: Event[]): Event
+    return queue.shift()
+

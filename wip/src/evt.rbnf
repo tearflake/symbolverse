@@ -1,0 +1,9 @@
+<start> := (EVT <trig>+) 
+
+<trig> := (TRIGGER <event> <action>)
+
+<event> := (ON <ATOMIC> <ANY>)
+
+<action> := (ASSIGN <ATOMIC> <ANY>)+
+          | (RETURN <ATOMIC>)
+

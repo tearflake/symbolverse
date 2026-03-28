@@ -1,0 +1,4 @@
+<start> := (RWR <rule>+)
+
+<rule> := (RULE (READ <ANY>) (WRITE <ANY>))
+
