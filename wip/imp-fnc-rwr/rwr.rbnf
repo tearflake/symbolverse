@@ -1,4 +1,0 @@
-<rewriting> := (REWRITER <rule>+)
-
-<rule> := (RULE (READ <ANY>) (WRITE <ANY>))
-

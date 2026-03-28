@@ -1,6 +1,0 @@
-<start> := (IMPERATIVE <instr>+)
-
-<instr> := (LABEL <ATOMIC>)
-         | (ASSGN <ATOMIC> <ANY>)
-         | (JMPNE <ANY> <ANY> <ATOMIC>)
-
