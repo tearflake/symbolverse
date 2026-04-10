@@ -56,9 +56,9 @@ By passing the input `(mul (add x 0) 1)` to this program code, the example outpu
 
 There are a few resources about *Symbolverse* to check out:
 
-- Explore code examples at [online playground](https://tearflake.github.io/symbolverse/playground/).
-- Read the [Symbolverse specification](https://tearflake.github.io/symbolverse/docs/symbolverse).
-- Follow the [installation instructions](https://tearflake.github.io/symbolverse/docs/installation).
+- Explore code examples at [online playground](https://tearflake.github.io/proseverse/releases/2026-03-27/symbolverse/playground/).
+- Read the [Symbolverse specification](https://tearflake.github.io/proseverse/releases/2026-03-27/symbolverse/docs/symbolverse).
+- Follow the [installation instructions](https://tearflake.github.io/proseverse/releases/2026-03-27/symbolverse/docs/installation).
 
 ## licensing
 
