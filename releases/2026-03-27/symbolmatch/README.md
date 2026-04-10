@@ -39,8 +39,8 @@ Symbolmatch is a parser combinator framework that operates on **S-expressions**.
 
 ## Getting Started
 
-1. Review the [Symbolmatch Specification](https://tearflake.github.io/symbolmatch/docs/symbolmatch) for details of the grammar and semantics.  
-2. Review the examples in [Symbolmatch Playground](https://tearflake.github.io/symbolmatch/playground/) as a guide to build your own grammars.  
+1. Review the [Symbolmatch Specification](https://tearflake.github.io/proseverse/releases/2026-03-27/symbolmatch/docs/symbolmatch) for details of the grammar and semantics.  
+2. Review the examples in [Symbolmatch Playground](https://tearflake.github.io/proseverse/releases/2026-03-27/symbolmatch/playground/) as a guide to build your own grammars.  
 3. Clone the repository.  
 4. Refer to `./symbolmatch.js` in your javascript project  
 
