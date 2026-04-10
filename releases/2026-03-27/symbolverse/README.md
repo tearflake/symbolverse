@@ -58,7 +58,7 @@ There are a few resources about *Symbolverse* to check out:
 
 - Explore code examples at [online playground](https://tearflake.github.io/proseverse/releases/2026-03-27/symbolverse/playground/).
 - Read the [Symbolverse specification](https://tearflake.github.io/proseverse/releases/2026-03-27/symbolverse/docs/symbolverse).
-- Follow the [installation instructions](https://tearflake.github.io/proseverse/releases/2026-03-27/symbolverse/docs/installation).
+- Follow the [installation instructions](https://tearflake.github.io/proseverse/releases/2026-03-27/symbolverse/docs/installation) (to-do: fix paths).
 
 ## licensing
 
