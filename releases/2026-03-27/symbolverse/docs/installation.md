@@ -1,3 +1,8 @@
+```
+// under construction //
+//  to-do: fix paths  //
+```
+
 # symbolverse installation instructions
 
 There may be two possible uses of *Symbolverse* regarding its installation: Javascript API access or command line access. In this document we cover both use cases.
